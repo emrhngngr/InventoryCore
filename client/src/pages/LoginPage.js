@@ -19,7 +19,7 @@ const LoginPage = () => {
       // Token'ı localStorage'da saklıyoruz
       localStorage.setItem("token", response.data.token);
       console.log("Login Success:", response.data);
-      window.location.href = "/"; // Kullanıcıyı ana sayfaya yönlendiriyoruz
+      window.location.href = "/user/dashboard"; // Kullanıcıyı ana sayfaya yönlendiriyoruz
     } catch (err) {
       setError(
         err.response?.data?.message || "Giriş sırasında bir hata oluştu."

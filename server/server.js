@@ -13,7 +13,19 @@ app.use(express.json());
 database();
 
 app.use("/api/users", require("./routes/userRoutes.js"));
+app.use("/api/admins", require("./routes/adminRoutes.js"));
 app.use("/api/products", require("./routes/productRoutes"));
+
+// Tüm diğer route'lara uymayan istekler için
+app.use((req, res, next) => {
+    res.status(404).json({ message: "Sayfa bulunamadı" });
+  });
+  app.use((err, req, res, next) => {
+    console.error(err.stack); // Hata detaylarını loglama
+    res.status(500).json({ message: "Bir hata oluştu, lütfen daha sonra tekrar deneyin" });
+  });
+  
+  
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server ${PORT} portunda çalışıyor`));

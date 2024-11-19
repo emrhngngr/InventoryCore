@@ -6,8 +6,8 @@ const Navbar = () => {
 
   // Çıkış işlemi: Token'ı silip kullanıcıyı login sayfasına yönlendir
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    localStorage.removeItem("adminToken");
+    navigate("/admin/login");
   };
 
   return (
@@ -15,7 +15,7 @@ const Navbar = () => {
       <h1 className="text-xl font-bold">Uygulama</h1>
       <div>
         {/* Eğer token varsa, çıkış butonunu göster */}
-        {localStorage.getItem("token") ? (
+        {localStorage.getItem("adminToken") ? (
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-500 rounded hover:bg-red-600"
