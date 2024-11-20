@@ -10,6 +10,10 @@ import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminProducts from "./pages/Admin/AdminProducts";
+import AdminClasses from "./pages/Admin/AdminClasses";
+import AdminUsers from "./pages/Admin/AdminUsers";
 
 function App() {
   return (
@@ -19,11 +23,14 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLogin />} />
 
         {/* Admin Rotaları */}
         <Route path="/admin/*" element={<AdminRoute />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout> } />
+          <Route path="products" element={<AdminLayout><AdminProducts /></AdminLayout> } />
+          <Route path="classes" element={<AdminLayout><AdminClasses /></AdminLayout> } />
+          <Route path="users" element={<AdminLayout><AdminUsers /></AdminLayout> } />
           {/* Diğer admin sayfaları buraya eklenebilir */}
         </Route>
 

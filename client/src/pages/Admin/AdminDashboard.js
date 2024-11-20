@@ -1,12 +1,11 @@
 import React from "react";
-import Navbar from "../../components/Admin/navbar.js";
 
 const AdminPage = () => {
   return (
-    <div>
-      <Navbar />
-      AdminPage
-    </div>
+    <>
+      <h1 className="text-3xl font-semibold">Admin DDashboard icerik</h1>
+      <p className="mt-4">Burada admin panelinin ana içeriği olacak.</p>
+    </>
   );
 };
 
