@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -9,27 +9,30 @@ const AdminProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [dynamicAttributes, setDynamicAttributes] = useState({});
   const [currentProduct, setCurrentProduct] = useState({
-    _id: '',
-    name: '',
-    category: '',
-    dynamicAttributes: {}
+    _id: "",
+    name: "",
+    category: "",
+    dynamicAttributes: {},
+    amount: 0,
+    criticalityDegree: 1,
+    privacyDegree: 1,
   });
-  
+
   // New state for filtering products by category
-  const [selectedTableCategory, setSelectedTableCategory] = useState('');
+  const [selectedTableCategory, setSelectedTableCategory] = useState("");
 
   // Fetch products and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [productsResponse, categoriesResponse] = await Promise.all([
-          axios.get('http://localhost:5000/api/products'),
-          axios.get('http://localhost:5000/api/categories')
+          axios.get("http://localhost:5000/api/products"),
+          axios.get("http://localhost:5000/api/categories"),
         ]);
         setProducts(productsResponse.data);
         setCategories(categoriesResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
     fetchData();
@@ -39,9 +42,12 @@ const AdminProducts = () => {
   const openAddModal = () => {
     setIsEditMode(false);
     setCurrentProduct({
-      name: '',
-      category: '',
-      dynamicAttributes: {}
+      name: "",
+      category: "",
+      dynamicAttributes: {},
+      amount: 0,
+      criticalityDegree: 1,
+      privacyDegree: 1,
     });
     setSelectedCategory(null);
     setIsModalOpen(true);
@@ -50,96 +56,121 @@ const AdminProducts = () => {
   // Open modal for editing existing product
   const openEditModal = (product) => {
     setIsEditMode(true);
-    const category = categories.find(cat => cat._id === product.category._id);
-    
+    const category = categories.find((cat) => cat._id === product.category._id);
+
     setCurrentProduct({
       _id: product._id,
       name: product.name,
       category: product.category._id,
-      dynamicAttributes: product.dynamicAttributes || {}
+      dynamicAttributes: product.dynamicAttributes || {},
+      amount: product.amount,
+      criticalityDegree: product.criticalityDegree,
+      privacyDegree: product.privacyDegree,
     });
-    
+
     setSelectedCategory(category);
-    
+
     // Prepare dynamic attributes
     const attributes = {};
-    category.attributes.forEach(attr => {
-      attributes[attr] = product.dynamicAttributes?.[attr] || '';
+    category.attributes.forEach((attr) => {
+      attributes[attr] = product.dynamicAttributes?.[attr] || "";
     });
     setDynamicAttributes(attributes);
-    
+
     setIsModalOpen(true);
   };
 
   // Handle category selection
   const handleCategoryChange = (categoryId) => {
-    const category = categories.find(cat => cat._id === categoryId);
+    const category = categories.find((cat) => cat._id === categoryId);
     setSelectedCategory(category);
-    setCurrentProduct(prev => ({
+    setCurrentProduct((prev) => ({
       ...prev,
       category: categoryId,
-      dynamicAttributes: {}
+      dynamicAttributes: {},
     }));
-    
+
     // Create dynamic attribute inputs
     const attributes = {};
-    category.attributes.forEach(attr => {
-      attributes[attr] = '';
+    category.attributes.forEach((attr) => {
+      attributes[attr] = "";
     });
     setDynamicAttributes(attributes);
   };
 
   // Handle dynamic attribute changes
   const handleAttributeChange = (attr, value) => {
-    setDynamicAttributes(prev => ({
+    setDynamicAttributes((prev) => ({
       ...prev,
-      [attr]: value
+      [attr]: value,
     }));
-    setCurrentProduct(prev => ({
+    setCurrentProduct((prev) => ({
       ...prev,
       dynamicAttributes: {
         ...prev.dynamicAttributes,
-        [attr]: value
-      }
+        [attr]: value,
+      },
     }));
   };
 
   // Save product (create or update)
   const saveProduct = async () => {
+    if (
+      currentProduct.criticalityDegree < 1 ||
+      currentProduct.privacyDegree < 1 ||
+      currentProduct.privacyDegree > 5 ||
+      currentProduct.criticalityDegree > 5
+    ) {
+      alert(
+        "Kritiklik derecesi ve gizlilik derecesi en az 1 ve en fazla 5 olmalıdır."
+      );
+      return;
+    }
+    if (currentProduct.amount < 0) {
+      alert("Adet negatif bir değer olamaz.");
+      return;
+    }
+
     try {
       if (isEditMode) {
         // Update existing product
-        const response = await axios.put(`http://localhost:5000/api/products/${currentProduct._id}`, {
-          ...currentProduct,
-          dynamicAttributes
-        });
-        
-        // Update products list
-        setProducts(prev => 
-          prev.map(p => p._id === response.data._id ? response.data : p)
+        const response = await axios.put(
+          `http://localhost:5000/api/products/${currentProduct._id}`,
+          {
+            ...currentProduct,
+            dynamicAttributes,
+          }
+        );
+
+        setProducts((prev) =>
+          prev.map((p) => (p._id === response.data._id ? response.data : p))
         );
       } else {
         // Create new product
-        const response = await axios.post('http://localhost:5000/api/products', {
-          ...currentProduct,
-          dynamicAttributes
-        });
-        
-        // Add new product to list
-        setProducts(prev => [...prev, response.data]);
+        const response = await axios.post(
+          "http://localhost:5000/api/products",
+          {
+            ...currentProduct,
+            dynamicAttributes,
+          }
+        );
+
+        setProducts((prev) => [...prev, response.data]);
       }
-      
-      // Reset form and close modal
+
       setIsModalOpen(false);
       setCurrentProduct({
-        name: '',
-        category: '',
-        dynamicAttributes: {}
+        name: "",
+        category: "",
+        dynamicAttributes: {},
+        amount: 0,
+        criticalityDegree: 1,
+        privacyDegree: 1,
       });
       setSelectedCategory(null);
       setDynamicAttributes({});
     } catch (error) {
-      console.error('Error saving product:', error);
+      console.error("Error saving product:", error);
     }
   };
 
@@ -147,54 +178,53 @@ const AdminProducts = () => {
   const deleteProduct = async (productId) => {
     try {
       await axios.delete(`http://localhost:5000/api/products/${productId}`);
-      
+
       // Remove product from list
-      setProducts(prev => prev.filter(p => p._id !== productId));
+      setProducts((prev) => prev.filter((p) => p._id !== productId));
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
     }
   };
 
   // Get all unique attributes for a specific category or all categories
   const getAttributesForCategory = (categoryId = null) => {
     const allAttributes = new Set();
-    
+
     // If a specific category is selected, get its attributes
     if (categoryId) {
-      const category = categories.find(cat => cat._id === categoryId);
+      const category = categories.find((cat) => cat._id === categoryId);
       return category ? category.attributes : [];
     }
-    
+
     // Otherwise, collect attributes from all categories
-    categories.forEach(category => {
-      category.attributes.forEach(attr => allAttributes.add(attr));
+    categories.forEach((category) => {
+      category.attributes.forEach((attr) => allAttributes.add(attr));
     });
-    
+
     return Array.from(allAttributes);
   };
 
   // Filter products based on selected category
-  const filteredProducts = selectedTableCategory 
-    ? products.filter(product => product.category?._id === selectedTableCategory)
+  const filteredProducts = selectedTableCategory
+    ? products.filter(
+        (product) => product.category?._id === selectedTableCategory
+      )
     : products;
 
   return (
     <div className="p-4">
       {/* Top Row with Add Product and Category Filter */}
-      <div className='w-full flex justify-between items-center mb-4'>
+      <div className="w-full flex justify-between items-center mb-4">
         {/* Category Filter Dropdown */}
         <div className="w-1/3">
-          <select 
+          <select
             value={selectedTableCategory}
             onChange={(e) => setSelectedTableCategory(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
           >
             <option value="">Tüm Kategoriler</option>
-            {categories.map(category => (
-              <option 
-                key={category._id} 
-                value={category._id}
-              >
+            {categories.map((category) => (
+              <option key={category._id} value={category._id}>
                 {category.name}
               </option>
             ))}
@@ -202,9 +232,9 @@ const AdminProducts = () => {
         </div>
 
         {/* Add Product Button */}
-        <button 
+        <button
           onClick={openAddModal}
-          className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition'
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
           Ürün Ekle
         </button>
@@ -215,7 +245,7 @@ const AdminProducts = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-96">
             <h2 className="text-xl font-bold mb-4">
-              {isEditMode ? 'Ürünü Düzenle' : 'Yeni Ürün Ekle'}
+              {isEditMode ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
             </h2>
 
             {/* Product Name Input */}
@@ -223,14 +253,72 @@ const AdminProducts = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Ürün Adı
               </label>
-              <input 
+              <input
                 type="text"
                 value={currentProduct.name}
-                onChange={(e) => setCurrentProduct(prev => ({
-                  ...prev, 
-                  name: e.target.value
-                }))}
+                onChange={(e) =>
+                  setCurrentProduct((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
+                }
                 placeholder="Ürün adını girin"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adet
+              </label>
+              <input
+                type="number"
+                min="0"
+                value={currentProduct.amount}
+                onChange={(e) =>
+                  setCurrentProduct((prev) => ({
+                    ...prev,
+                    amount: e.target.value,
+                  }))
+                }
+                placeholder="Ürün adını girin"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Kritiklik Derecesi
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="5"
+                value={currentProduct.criticalityDegree}
+                onChange={(e) =>
+                  setCurrentProduct((prev) => ({
+                    ...prev,
+                    criticalityDegree: e.target.value,
+                  }))
+                }
+                placeholder="1-5"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gizlilik Derecesi
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="5"
+                value={currentProduct.privacyDegree}
+                onChange={(e) =>
+                  setCurrentProduct((prev) => ({
+                    ...prev,
+                    privacyDegree: e.target.value,
+                  }))
+                }
+                placeholder="1-5"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
@@ -240,17 +328,14 @@ const AdminProducts = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Kategori Seç
               </label>
-              <select 
+              <select
                 onChange={(e) => handleCategoryChange(e.target.value)}
                 value={currentProduct.category}
                 className="w-full px-3 py-2 border rounded-md"
               >
                 <option value="">Kategori seçin</option>
-                {categories.map(category => (
-                  <option 
-                    key={category._id} 
-                    value={category._id}
-                  >
+                {categories.map((category) => (
+                  <option key={category._id} value={category._id}>
                     {category.name}
                   </option>
                 ))}
@@ -263,15 +348,17 @@ const AdminProducts = () => {
                 <h3 className="text-md font-semibold mb-2">
                   {selectedCategory.name} Özellikleri
                 </h3>
-                {selectedCategory.attributes.map(attr => (
+                {selectedCategory.attributes.map((attr) => (
                   <div key={attr} className="mb-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {attr}
                     </label>
-                    <input 
+                    <input
                       type="text"
-                      value={dynamicAttributes[attr] || ''}
-                      onChange={(e) => handleAttributeChange(attr, e.target.value)}
+                      value={dynamicAttributes[attr] || ""}
+                      onChange={(e) =>
+                        handleAttributeChange(attr, e.target.value)
+                      }
                       placeholder={`${attr} girin`}
                       className="w-full px-3 py-2 border rounded-md"
                     />
@@ -282,18 +369,18 @@ const AdminProducts = () => {
 
             {/* Modal Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
               >
                 İptal
               </button>
-              <button 
+              <button
                 onClick={saveProduct}
                 disabled={!currentProduct.name || !currentProduct.category}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
               >
-                {isEditMode ? 'Güncelle' : 'Oluştur'}
+                {isEditMode ? "Güncelle" : "Oluştur"}
               </button>
             </div>
           </div>
@@ -305,14 +392,6 @@ const AdminProducts = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="p-4">
-                <div className="flex items-center">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                </div>
-              </th>
               <th scope="col" className="px-6 py-3">
                 Ürün Adı
               </th>
@@ -320,50 +399,60 @@ const AdminProducts = () => {
                 Kategori
               </th>
               {/* Dynamically generate attribute columns */}
-              {getAttributesForCategory(selectedTableCategory).map(attr => (
+              {getAttributesForCategory(selectedTableCategory).map((attr) => (
                 <th key={attr} scope="col" className="px-6 py-3">
                   {attr}
                 </th>
               ))}
+              <th scope="col" className="px-6 py-3">
+                Adet
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Kritik Derecesi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Gizlilik Derecesi
+              </th>
               <th scope="col" className="px-6 py-3">
                 İşlemler
               </th>
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map(product => (
-              <tr 
-                key={product._id} 
+            {filteredProducts.map((product) => (
+              <tr
+                key={product._id}
                 className="bg-white border-b hover:bg-gray-50"
               >
-                <td className="w-4 p-4">
-                  <div className="flex items-center">
-                    <input 
-                      type="checkbox" 
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                  </div>
-                </td>
                 <td className="px-6 py-4 font-medium text-gray-900">
                   {product.name}
                 </td>
                 <td className="px-6 py-4">
-                  {product.category?.name || 'Kategori Yok'}
+                  {product.category?.name || "Kategori Yok"}
                 </td>
                 {/* Dynamically render attribute values */}
-                {getAttributesForCategory(selectedTableCategory).map(attr => (
+                {getAttributesForCategory(selectedTableCategory).map((attr) => (
                   <td key={attr} className="px-6 py-4">
-                    {product.dynamicAttributes?.[attr] || '-'}
+                    {product.dynamicAttributes?.[attr] || "-"}
                   </td>
                 ))}
+                <td className="px-6 py-4 font-medium text-gray-900">
+                  {product.amount}
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900">
+                  {product.criticalityDegree}
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900">
+                  {product.privacyDegree}
+                </td>
                 <td className="px-6 py-4 flex space-x-2">
-                  <button 
+                  <button
                     onClick={() => openEditModal(product)}
                     className="text-blue-600 hover:underline"
                   >
                     Düzenle
                   </button>
-                  <button 
+                  <button
                     onClick={() => deleteProduct(product._id)}
                     className="text-red-600 hover:underline"
                   >

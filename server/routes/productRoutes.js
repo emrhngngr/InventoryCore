@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 
 // Create a new product
 router.post("/", async (req, res) => {
-  const { name, category, dynamicAttributes } = req.body;
+  const { name, category, dynamicAttributes, amount, criticalityDegree, privacyDegree } = req.body;
 
   try {
     const existingCategory = await Category.findById(category);
@@ -26,7 +26,10 @@ router.post("/", async (req, res) => {
     const newProduct = new Product({
       name,
       category,
-      dynamicAttributes
+      dynamicAttributes,
+      amount,
+      criticalityDegree,
+      privacyDegree
     });
 
     const savedProduct = await newProduct.save();
@@ -41,7 +44,7 @@ router.post("/", async (req, res) => {
 // Update a product
 router.put("/:id", async (req, res) => {
   try {
-    const { name, category, dynamicAttributes } = req.body;
+    const { name, category, dynamicAttributes, amount,criticalityDegree, privacyDegree} = req.body;
 
     // Validate category exists
     const existingCategory = await Category.findById(category);
@@ -53,8 +56,11 @@ router.put("/:id", async (req, res) => {
       req.params.id, 
       { 
         name, 
-        category, 
-        dynamicAttributes 
+        category,
+        dynamicAttributes,
+        amount,
+        criticalityDegree,
+        privacyDegree
       }, 
       { new: true }
     ).populate('category');

@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { fetchCategories, updateCategory, deleteCategory } from '../../services/categoryService';
+import React, { useEffect, useState } from "react";
+import {
+  deleteCategory,
+  fetchCategories,
+  updateCategory,
+} from "../../services/categoryService";
 
 const AdminClasses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [categoryName, setCategoryName] = useState('');
-  const [attributes, setAttributes] = useState(['']);
+  const [categoryName, setCategoryName] = useState("");
+  const [attributes, setAttributes] = useState([""]);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
     setIsEditMode(false);
-    setCategoryName('');
-    setAttributes(['']);
+    setCategoryName("");
+    setAttributes([""]);
     setCurrentCategory(null);
   };
 
@@ -32,7 +36,7 @@ const AdminClasses = () => {
     getCategories();
   }, []);
 
-  const addAttributeField = () => setAttributes([...attributes, '']);
+  const addAttributeField = () => setAttributes([...attributes, ""]);
 
   const handleAttributeChange = (value, index) => {
     const updatedAttributes = [...attributes];
@@ -75,8 +79,8 @@ const AdminClasses = () => {
     e.preventDefault();
 
     const isCategoryExist = categories.some(
-      (category) => 
-        category.name.toLowerCase() === categoryName.toLowerCase() && 
+      (category) =>
+        category.name.toLowerCase() === categoryName.toLowerCase() &&
         category._id !== currentCategory?._id
     );
 
@@ -88,9 +92,9 @@ const AdminClasses = () => {
     try {
       if (isEditMode && currentCategory) {
         // Update existing category
-        const updatedCategory = { 
-          name: categoryName, 
-          attributes 
+        const updatedCategory = {
+          name: categoryName,
+          attributes,
         };
         await updateCategory(currentCategory._id, updatedCategory);
         alert("Kategori başarıyla güncellendi!");
@@ -110,10 +114,10 @@ const AdminClasses = () => {
   };
   return (
     <div>
-      <div className='w-full top-0 flex justify-end bg-gray-400'>
+      <div className="w-full top-0 flex justify-end">
         <div>
           <button
-            className='px-4 py-2 bg-slate-500 rounded'
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
             onClick={openModal}
           >
             Kategori Ekle
@@ -122,34 +126,38 @@ const AdminClasses = () => {
       </div>
 
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table className="w-full text-sm text-left text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">Kategori İsmi</th>
-              <th scope="col" className="px-6 py-3">Attribute'ler</th>
-              <th scope="col" className="px-6 py-3">İşlemler</th>
+              <th scope="col" className="px-6 py-3">
+                Kategori İsmi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Attribute'ler
+              </th>
+              <th scope="col" className="px-6 py-3">
+                İşlemler
+              </th>
             </tr>
           </thead>
           <tbody>
             {categories.map((category) => (
               <tr
                 key={category._id}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="bg-white border-b hover:bg-gray-50"
               >
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <td className="px-6 py-4 font-medium text-gray-900">
                   {category.name}
                 </td>
-                <td className="px-6 py-4">
-                  {category.attributes.join(', ')}
-                </td>
+                <td className="px-6 py-4">{category.attributes.join(", ")}</td>
                 <td className="px-6 py-4 flex space-x-2">
-                  <button 
+                  <button
                     onClick={() => handleEditCategory(category)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Düzenle
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleRemoveCategory(category._id)}
                     className="text-red-500 hover:text-red-700"
                   >
@@ -162,7 +170,6 @@ const AdminClasses = () => {
         </table>
       </div>
 
-      {/* Modal (unchanged from previous version) */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-1/2">
@@ -171,7 +178,9 @@ const AdminClasses = () => {
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="categoryName" className="block mb-2">Kategori İsmi</label>
+                <label htmlFor="categoryName" className="block mb-2">
+                  Kategori İsmi
+                </label>
                 <input
                   type="text"
                   id="categoryName"
@@ -189,7 +198,9 @@ const AdminClasses = () => {
                       type="text"
                       className="w-full p-2 border rounded"
                       value={attribute}
-                      onChange={(e) => handleAttributeChange(e.target.value, index)}
+                      onChange={(e) =>
+                        handleAttributeChange(e.target.value, index)
+                      }
                       placeholder={`Attribute ${index + 1}`}
                       required
                     />
@@ -221,8 +232,8 @@ const AdminClasses = () => {
                 >
                   İptal
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="px-4 py-2 bg-blue-500 text-white rounded"
                 >
                   {isEditMode ? "Güncelle" : "Kaydet"}

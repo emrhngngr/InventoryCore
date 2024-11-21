@@ -5,18 +5,18 @@ const User = require('../models/User');
 const router = express.Router();
 
 // Kullanıcı kaydı
-router.post('/register', async (req, res) => {
-    try {
-        const { name, email, password, isAdmin } = req.body;
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ name, email, password: hashedPassword, isAdmin });
-        await newUser.save();
-        res.status(201).send('Kullanıcı kaydedildi');
-    } catch (error) {
-        res.status(500).send('Kayıt başarısız');
-    }
-});
+// router.post('/register', async (req, res) => {
+//     try {
+//         const { name, email, password, isAdmin } = req.body;
+//         const salt = await bcrypt.genSalt(10);
+//         const hashedPassword = await bcrypt.hash(password, salt);
+//         const newUser = new User({ name, email, password: hashedPassword, isAdmin });
+//         await newUser.save();
+//         res.status(201).send('Kullanıcı kaydedildi');
+//     } catch (error) {
+//         res.status(500).send('Kayıt başarısız');
+//     }
+// });
 
 // Kullanıcı girişi
 router.post('/login', async (req, res) => {
