@@ -2,14 +2,15 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 const AdminRoute = () => {
-  const token = localStorage.getItem("adminToken");
+  // localStorage'dan admin token kontrolü
+  const adminToken = localStorage.getItem("adminToken");
 
-  // Token yoksa veya user admin değilse yönlendir
-  if (!token) {
-    return <Navigate to="/admin/login" replace />;
+  // Eğer token yoksa giriş sayfasına yönlendir
+  if (!adminToken) {
+    return <Navigate to="/admin" />;
   }
 
-  // Eğer admin ise, alt route'ları render et
+  // Eğer token varsa istenen bileşeni render et
   return <Outlet />;
 };
 

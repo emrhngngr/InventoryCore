@@ -1,12 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaUser, FaCloudSun} from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 const TopBar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null); // Dropdown menüsünün referansı
   const userIconRef = useRef(null); // Kullanıcı simgesinin referansı
 
-  // Dropdown menüsünün dışına tıklanırsa menüyü kapatma
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/");
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -15,7 +21,7 @@ const TopBar = () => {
         userIconRef.current &&
         !userIconRef.current.contains(event.target)
       ) {
-        setIsOpen(false); // Eğer dışarıya tıklanırsa menüyü kapat
+        setIsOpen(false);
       }
     };
 
@@ -58,18 +64,18 @@ const TopBar = () => {
               className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200"
             >
               <div className="p-2">
-                <a
+                <button
                   href="#!"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
                 >
                   Profil
-                </a>
-                <a
-                  href="#!"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
                 >
                   Çıkış
-                </a>
+                </button>
               </div>
             </div>
           )}

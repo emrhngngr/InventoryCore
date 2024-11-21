@@ -30,7 +30,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       <div className="mt-12">
         {/* Başlık */}
         <div
-          className={`m-6 font-bold text-2xl text-center text-gray-300 transition-all duration-300 ${
+          className={`m-6 font-bold text-2xl text-center text-gray-600 transition-all duration-300 ${
             isSidebarOpen ? "h-auto" : "h-12"
           } flex items-center justify-center`}
         >

@@ -12,7 +12,7 @@ import UserDashboard from "./pages/UserDashboard";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminProducts from "./pages/Admin/AdminProducts";
-import AdminClasses from "./pages/Admin/AdminClasses";
+import AdminClasses from "./pages/Admin/AdminCategories";
 import AdminUsers from "./pages/Admin/AdminUsers";
 
 function App() {

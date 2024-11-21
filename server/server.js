@@ -15,6 +15,7 @@ database();
 app.use("/api/users", require("./routes/userRoutes.js"));
 app.use("/api/admins", require("./routes/adminRoutes.js"));
 app.use("/api/products", require("./routes/productRoutes"));
+app.use("/api/categories", require("./routes/categoryRoutes.js"));
 
 // Tüm diğer route'lara uymayan istekler için
 app.use((req, res, next) => {
