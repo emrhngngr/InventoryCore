@@ -39,19 +39,19 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
         {/* Menü */}
         <ul>
-          <li onClick={() => navigate("/admin/dashboard")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
+          <li onClick={() => navigate("/user/dashboard")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
             <MdDashboard className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Ana Sayfa</span>}
           </li>
-          <li onClick={() => navigate("/admin/products")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
+          <li onClick={() => navigate("/user/products")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
             <FaShoppingBag className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Ürünler</span>}
           </li>
-          <li onClick={() => navigate("/admin/classes")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
+          <li onClick={() => navigate("/user/classes")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
             <FaBriefcase className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Sınıflar</span>}
           </li>
-          <li onClick={() => navigate("/admin/users")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
+          <li onClick={() => navigate("/user/users")} className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md">
             <MdPerson className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Üyeler</span>}
           </li>

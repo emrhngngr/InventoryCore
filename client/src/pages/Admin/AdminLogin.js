@@ -18,7 +18,7 @@ const AdminLogin = () => {
         password,
       });
       localStorage.setItem("adminToken", response.data.token);
-      navigate("/admin/dashboard"); // Admin Dashboard'a yönlendirme
+      navigate("/admin/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Giriş başarısız.");
     }

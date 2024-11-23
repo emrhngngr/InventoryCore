@@ -50,7 +50,7 @@ const AdminClasses = () => {
     if (attributes.length > 1) {
       setAttributes(attributes.filter((_, index) => index !== indexToRemove));
     } else {
-      alert("En az bir attribute olmalıdır!");
+      alert("En az bir özellik olmalıdır!");
     }
   };
 
@@ -133,7 +133,7 @@ const AdminClasses = () => {
                 Kategori İsmi
               </th>
               <th scope="col" className="px-6 py-3">
-                Attribute'ler
+                Özellikler
               </th>
               <th scope="col" className="px-6 py-3">
                 İşlemler
@@ -191,7 +191,7 @@ const AdminClasses = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block mb-2">Attributes</label>
+                <label className="block mb-2">Özellikler</label>
                 {attributes.map((attribute, index) => (
                   <div key={index} className="flex items-center mb-2 space-x-2">
                     <input
@@ -201,7 +201,7 @@ const AdminClasses = () => {
                       onChange={(e) =>
                         handleAttributeChange(e.target.value, index)
                       }
-                      placeholder={`Attribute ${index + 1}`}
+                      placeholder={`Özellikler ${index + 1}`}
                       required
                     />
                     {/* Delete attribute button (only if more than one attribute) */}

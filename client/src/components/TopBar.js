@@ -9,7 +9,7 @@ const TopBar = () => {
   const userIconRef = useRef(null); // Kullanıcı simgesinin referansı
 
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
+    localStorage.removeItem("token");
     navigate("/");
   };
 
