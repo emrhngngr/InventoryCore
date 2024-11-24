@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import api from "../../api/api";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -8,6 +9,8 @@ const AdminProducts = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [dynamicAttributes, setDynamicAttributes] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   const [currentProduct, setCurrentProduct] = useState({
     _id: "",
     name: "",
@@ -21,13 +24,27 @@ const AdminProducts = () => {
   // New state for filtering products by category
   const [selectedTableCategory, setSelectedTableCategory] = useState("");
 
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await api.get("http://localhost:5000/api/users/me");
+        setCurrentUser(response.data);
+        console.log("data:", response.data);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   // Fetch products and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [productsResponse, categoriesResponse] = await Promise.all([
-          axios.get("http://localhost:5000/api/products"),
-          axios.get("http://localhost:5000/api/categories"),
+          api.get("http://localhost:5000/api/products"),
+          api.get("http://localhost:5000/api/categories"),
         ]);
         setProducts(productsResponse.data);
         setCategories(categoriesResponse.data);
@@ -134,7 +151,7 @@ const AdminProducts = () => {
     try {
       if (isEditMode) {
         // Update existing product
-        const response = await axios.put(
+        const response = await api.put(
           `http://localhost:5000/api/products/${currentProduct._id}`,
           {
             ...currentProduct,
@@ -147,7 +164,7 @@ const AdminProducts = () => {
         );
       } else {
         // Create new product
-        const response = await axios.post(
+        const response = await api.post(
           "http://localhost:5000/api/products",
           {
             ...currentProduct,
@@ -177,7 +194,7 @@ const AdminProducts = () => {
   // Delete product
   const deleteProduct = async (productId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/products/${productId}`);
+      await api.delete(`http://localhost:5000/api/products/${productId}`);
 
       // Remove product from list
       setProducts((prev) => prev.filter((p) => p._id !== productId));
@@ -204,18 +221,33 @@ const AdminProducts = () => {
     return Array.from(allAttributes);
   };
 
-  // Filter products based on selected category
-  const filteredProducts = selectedTableCategory
-    ? products.filter(
-        (product) => product.category?._id === selectedTableCategory
-      )
-    : products;
+  // Filter products based on search term and selected category
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedTableCategory
+      ? product.category?._id === selectedTableCategory
+      : true;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="p-4">
-      {/* Top Row with Add Product and Category Filter */}
-      <div className="w-full flex justify-between items-center mb-4">
-        {/* Category Filter Dropdown */}
+      {/* Search and Filter Section */}
+      <div className="w-full flex justify-between items-center mb-4 gap-4">
+        {/* Search Input */}
+        <div className="w-2/3">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Ürün ara..."
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        {/* Category Filter */}
         <div className="w-1/3">
           <select
             value={selectedTableCategory}
@@ -232,12 +264,16 @@ const AdminProducts = () => {
         </div>
 
         {/* Add Product Button */}
-        <button
-          onClick={openAddModal}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-        >
-          Ürün Ekle
-        </button>
+        {currentUser && currentUser.permissions.includes("create_products") && (
+          <>
+            <button
+              onClick={openAddModal}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Ürün Ekle
+            </button>
+          </>
+        )}
       </div>
 
       {/* Modal */}
@@ -248,7 +284,6 @@ const AdminProducts = () => {
               {isEditMode ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
             </h2>
 
-            {/* Product Name Input */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Ürün Adı
@@ -280,7 +315,6 @@ const AdminProducts = () => {
                     amount: e.target.value,
                   }))
                 }
-                placeholder="Ürün adını girin"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
@@ -446,18 +480,28 @@ const AdminProducts = () => {
                   {product.privacyDegree}
                 </td>
                 <td className="px-6 py-4 flex space-x-2">
-                  <button
-                    onClick={() => openEditModal(product)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Düzenle
-                  </button>
-                  <button
-                    onClick={() => deleteProduct(product._id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Sil
-                  </button>
+                  {currentUser &&
+                    currentUser.permissions.includes("edit_products") && (
+                      <>
+                        <button
+                          onClick={() => openEditModal(product)}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Düzenle
+                        </button>
+                      </>
+                    )}
+                  {currentUser &&
+                    currentUser.permissions.includes("delete_products") && (
+                      <>
+                        <button
+                          onClick={() => deleteProduct(product._id)}
+                          className="text-red-600 hover:underline"
+                        >
+                          Sil
+                        </button>
+                      </>
+                    )}
                 </td>
               </tr>
             ))}

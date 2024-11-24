@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "product_viewer", "product_manager", "user_manager","admin"],
+      enum: ["user", "product_viewer", "product_manager", "category_manager","user_manager","admin"],
       default: "user",
     },
     permissions: [
@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
           "create_products",
           "edit_products",
           "delete_products",
+          "read_categories",
+          "create_categories",
+          "edit_categories",
+          "delete_categories",
           "read_users",
           "manage_users",
         ],

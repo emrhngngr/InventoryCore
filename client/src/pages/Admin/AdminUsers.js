@@ -55,6 +55,7 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -93,6 +94,15 @@ const UserManagement = () => {
       ],
     },
     {
+      group: "Kategoriler",
+      permissions: [
+        { key: "read_categories", label: "Kategorileri Görüntüleme" },
+        { key: "create_categories", label: "Kategoriler Ekleme" },
+        { key: "edit_categories", label: "Kategoriler Düzenleme" },
+        { key: "delete_categories", label: "Kategoriler Silme" },
+      ],
+    },
+    {
       group: "Kullanıcılar",
       permissions: [
         { key: "read_users", label: "Kullanıcıları Görüntüleme" },
@@ -110,11 +120,21 @@ const UserManagement = () => {
       "delete_products",
     ],
     user_manager: ["read_users", "manage_users"],
+    category_manager: [
+      "read_categories",
+      "create_categories",
+      "edit_categories",
+      "delete_categories",
+    ],
     admin: [
       "read_products",
       "create_products",
       "edit_products",
       "delete_products",
+      "read_categories",
+      "create_categories",
+      "edit_categories",
+      "delete_categories",
       "read_users",
       "manage_users",
     ],
@@ -286,6 +306,21 @@ const UserManagement = () => {
       </div>
     ));
   };
+  // Get filtered users based on search term
+  const getFilteredUsers = () => {
+    if (!searchTerm) return users;
+
+    return users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  // Handle search input changes
+  const handleSearchInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -294,14 +329,24 @@ const UserManagement = () => {
           <h2 className="text-xl font-bold text-gray-800">
             Kullanıcı Yönetimi
           </h2>
-          <Button
-            onClick={() => {
-              resetForm();
-              setIsModalOpen(true);
-            }}
-          >
-            Yeni Kullanıcı Ekle
-          </Button>
+          <div className="flex space-x-4">
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="İsim veya e-posta ile ara..."
+              value={searchTerm}
+              onChange={handleSearchInputChange}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <Button
+              onClick={() => {
+                resetForm();
+                setIsModalOpen(true);
+              }}
+            >
+              Yeni Kullanıcı Ekle
+            </Button>
+          </div>
         </div>
 
         {/* User Table */}
@@ -327,7 +372,7 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
+              {getFilteredUsers().map((user) => (
                 <tr key={user._id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">{user.name}</td>
                   <td className="px-4 py-3">{user.email}</td>
@@ -351,46 +396,46 @@ const UserManagement = () => {
                     {new Date(user.createdAt).toLocaleString("tr-TR")}
                   </td>
                   <td className="px-4 py-3 space-x-2">
-                {/* Admin olmayan kullanıcı adminin düzenle ve silme butonlarını görmemeli */}
-                {currentUser && currentUser.role !== "admin" && user.role !== "admin" &&  (
-                  <>
-                    <Button
-                      variant="outline"
-                      className="text-sm"
-                      onClick={() => handleEditClick(user)}
-                    >
-                      Düzenle
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="text-sm"
-                      onClick={() => handleDeleteUser(user._id)}
-                    >
-                      Sil
-                    </Button>
-                  </>
-                )}
+                    {currentUser &&
+                      currentUser.role !== "admin" &&
+                      user.role !== "admin" && (
+                        <>
+                          <Button
+                            variant="outline"
+                            className="text-sm"
+                            onClick={() => handleEditClick(user)}
+                          >
+                            Düzenle
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            className="text-sm"
+                            onClick={() => handleDeleteUser(user._id)}
+                          >
+                            Sil
+                          </Button>
+                        </>
+                      )}
 
-                {/* Admin olan kullanıcı tüm işlemleri görebilir */}
-                {currentUser && currentUser.role === "admin" &&(
-                  <>
-                    <Button
-                      variant="outline"
-                      className="text-sm"
-                      onClick={() => handleEditClick(user)}
-                    >
-                      Düzenle
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="text-sm"
-                      onClick={() => handleDeleteUser(user._id)}
-                    >
-                      Sil
-                    </Button>
-                  </>
-                )}
-              </td>
+                    {currentUser && currentUser.role === "admin" && (
+                      <>
+                        <Button
+                          variant="outline"
+                          className="text-sm"
+                          onClick={() => handleEditClick(user)}
+                        >
+                          Düzenle
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          className="text-sm"
+                          onClick={() => handleDeleteUser(user._id)}
+                        >
+                          Sil
+                        </Button>
+                      </>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -460,6 +505,8 @@ const UserManagement = () => {
               <option value="product_viewer">Ürün Görüntüleyici</option>
               <option value="product_manager">Ürün Yöneticisi</option>
               <option value="user_manager">Üye Yöneticisi</option>
+              <option value="category_manager">Kategori Yöneticisi</option>
+
               {currentUser?.role === "admin" && (
                 <option value="admin">Yönetici</option>
               )}

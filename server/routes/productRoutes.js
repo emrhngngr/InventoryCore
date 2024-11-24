@@ -2,9 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware')
 
 // Get all products with populated category
-router.get("/", async (req, res) => {
+router.get("/",
+  authMiddleware, 
+  authorizeRoles(['read_products']),
+   async (req, res) => {
   try {
     const products = await Product.find().populate('category');
     res.json(products);
@@ -14,7 +18,10 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new product
-router.post("/", async (req, res) => {
+router.post("/", 
+  authMiddleware, 
+  authorizeRoles(['create_products']),
+  async (req, res) => {
   const { name, category, dynamicAttributes, amount, criticalityDegree, privacyDegree } = req.body;
 
   try {
@@ -42,7 +49,10 @@ router.post("/", async (req, res) => {
 });
 
 // Update a product
-router.put("/:id", async (req, res) => {
+router.put("/:id",
+  authMiddleware, 
+  authorizeRoles(['update_products']),
+   async (req, res) => {
   try {
     const { name, category, dynamicAttributes, amount,criticalityDegree, privacyDegree} = req.body;
 
@@ -76,7 +86,10 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete a product
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",
+  authMiddleware, 
+  authorizeRoles(['delete_products']),
+   async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../../api/api'
 import React, { useEffect, useState } from "react";
 import {
   deleteCategory,
@@ -101,7 +101,7 @@ const AdminClasses = () => {
       } else {
         // Add new category
         const newCategory = { name: categoryName, attributes };
-        await axios.post("http://localhost:5000/api/categories", newCategory);
+        await api.post("http://localhost:5000/api/categories", newCategory);
         alert("Kategori başarıyla eklendi!");
       }
 

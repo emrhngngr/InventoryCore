@@ -68,6 +68,7 @@ router.post('/',
     authorizeRoles(['manage_users']), 
     async (req, res) => {
         try {
+            console.log(req.headers.authorization); // Token burada var mı?
             const { name, email, password, role, permissions } = req.body;
 
             // Check if user already exists
