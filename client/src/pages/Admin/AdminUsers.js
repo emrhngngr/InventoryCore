@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 
 const Button = ({
@@ -64,6 +64,87 @@ const UserManagement = () => {
     permissions: [],
   });
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(10); // Her sayfada 10 kullanıcı
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'ascending'
+  });
+
+  const getFilteredUsers = () => {
+    if (!searchTerm) return users;
+
+    return users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  // Sıralanmış ve filtrelenmiş kullanıcıları al
+  const getSortedUsers = () => {
+    let sortableUsers = [...getFilteredUsers()];
+    
+    if (sortConfig.key !== null) {
+      sortableUsers.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableUsers;
+  };
+
+  // Sayfalama için kullanılacak fonksiyonlar
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  
+  const currentUsers = getSortedUsers().slice(
+    indexOfFirstUser, 
+    indexOfLastUser
+  );
+
+  // Toplam sayfa sayısını hesapla
+  const totalPages = Math.ceil(getSortedUsers().length / usersPerPage);
+
+  // Sayfa değiştirme fonksiyonları
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+    // Sayfalamayı sıfırla
+    setCurrentPage(1);
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return <FaSort className="inline ml-1 opacity-50" />;
+    }
+    return sortConfig.direction === 'ascending' 
+      ? <FaSortUp className="inline ml-1" /> 
+      : <FaSortDown className="inline ml-1" />;
+  };
+
+
+
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -306,16 +387,7 @@ const UserManagement = () => {
       </div>
     ));
   };
-  // Get filtered users based on search term
-  const getFilteredUsers = () => {
-    if (!searchTerm) return users;
 
-    return users.filter(
-      (user) =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
 
   // Handle search input changes
   const handleSearchInputChange = (e) => {
@@ -354,25 +426,44 @@ const UserManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-100">
               <tr>
-                {[
-                  "Ad",
-                  "E-posta",
-                  "Rol",
-                  "Son Giriş",
-                  "Oluşturulma Tarihi",
-                  "İşlemler",
-                ].map((header) => (
-                  <th
-                    key={header}
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    {header}
-                  </th>
-                ))}
+                <th
+                  onClick={() => requestSort("name")}
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                >
+                  Ad {getSortIcon("name")}
+                </th>
+                <th
+                  onClick={() => requestSort("email")}
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                >
+                  E-posta {getSortIcon("email")}
+                </th>
+                <th
+                  onClick={() => requestSort("role")}
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                >
+                  Rol {getSortIcon("role")}
+                </th>
+                <th
+                  onClick={() => requestSort("lastLogin")}
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                >
+                  Son Giriş {getSortIcon("lastLogin")}
+                </th>
+                <th
+                  onClick={() => requestSort("createdAt")}
+                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                >
+                  Oluşturulma Tarihi {getSortIcon("createdAt")}
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  İşlemler
+                </th>
               </tr>
             </thead>
+            
             <tbody className="bg-white divide-y divide-gray-200">
-              {getFilteredUsers().map((user) => (
+              {currentUsers.map((user) => (
                 <tr key={user._id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">{user.name}</td>
                   <td className="px-4 py-3">{user.email}</td>
@@ -440,6 +531,61 @@ const UserManagement = () => {
               ))}
             </tbody>
           </table>
+           {/* Pagination Kontrolü */}
+        <div className="flex justify-between items-center mt-4 px-4">
+          {/* Sayfa Bilgisi */}
+          <div className="text-sm text-gray-700">
+            Sayfa {currentPage} / {totalPages} 
+            <span className="ml-4">
+              Toplam {getSortedUsers().length} kullanıcıdan 
+              {' '}
+              {indexOfFirstUser + 1}-
+              {Math.min(indexOfLastUser, getSortedUsers().length)} 
+              {' '}arası gösteriliyor
+            </span>
+          </div>
+
+          {/* Sayfalama Düğmeleri */}
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              onClick={prevPage} 
+              disabled={currentPage === 1}
+              className="px-4 py-2"
+            >
+              Önceki Sayfa
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={nextPage} 
+              disabled={currentPage === totalPages}
+              className="px-4 py-2"
+            >
+              Sonraki Sayfa
+            </Button>
+          </div>
+        </div>
+
+        {/* Sayfa Başına Kullanıcı Sayısı Seçimi */}
+        <div className="mt-4 px-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Sayfa Başına Kullanıcı Sayısı
+          </label>
+          <select 
+            value={usersPerPage}
+            onChange={(e) => {
+              setUsersPerPage(Number(e.target.value));
+              setCurrentPage(1); // Sayfa sayısını sıfırla
+            }}
+            className="mt-1 block w-32 border border-gray-300 rounded-md shadow-sm py-2 px-3"
+          >
+            {[5, 10, 20, 50, 100].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize} Kullanıcı
+              </option>
+            ))}
+          </select>
+        </div>
         </div>
       </div>
 
