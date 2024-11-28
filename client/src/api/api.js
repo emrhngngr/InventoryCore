@@ -15,7 +15,12 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error); // Hata durumunda işlemi reddet
+    if (error.response?.status === 401) {
+      // Token süresi dolmuşsa veya yetkisiz erişim varsa
+      localStorage.removeItem("token"); // Token'ı kaldır
+      window.location.href = "/login"; // Giriş sayfasına yönlendir
+  }
+  return Promise.reject(error);
   }
 );
 
