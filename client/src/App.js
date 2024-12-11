@@ -1,19 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AdminRoute from "./routes/AdminRoute";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CustomerRoute from "./routes/CustomerRoute";
 
 // Sayfalar
-import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminClasses from "./pages/Admin/AdminCategories";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import UserDashboard from "./pages/UserDashboard";
-import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminProducts from "./pages/Admin/AdminProducts";
-import AdminClasses from "./pages/Admin/AdminCategories";
+import AdminProfile from "./pages/Admin/AdminProfile";
 import AdminUsers from "./pages/Admin/AdminUsers";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import NotFound from "./pages/NotFound";
+import AdminProcess from "./pages/Admin/AdminProcess";
 
 function App() {
   return (
@@ -25,12 +23,56 @@ function App() {
 
         {/* Müşteri Rotaları */}
         <Route path="/user/*" element={<CustomerRoute />}>
-          <Route path="dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout> } />
-          <Route path="products" element={<AdminLayout><AdminProducts /></AdminLayout> } />
-          <Route path="classes" element={<AdminLayout><AdminClasses /></AdminLayout> } />
-          <Route path="users" element={<AdminLayout><AdminUsers /></AdminLayout> } />
+          <Route
+            path="dashboard"
+            element={
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="products"
+            element={
+              <AdminLayout>
+                <AdminProducts />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="classes"
+            element={
+              <AdminLayout>
+                <AdminClasses />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="users"
+            element={
+              <AdminLayout>
+                <AdminUsers />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <AdminLayout>
+                <AdminProfile />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="process"
+            element={
+              <AdminLayout>
+                <AdminProcess />
+              </AdminLayout>
+            }
+          />
 
-        {/* Diğer müşteri sayfaları buraya eklenebilir */}
+          {/* Diğer müşteri sayfaları buraya eklenebilir */}
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

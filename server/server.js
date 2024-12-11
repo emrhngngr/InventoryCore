@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const database = require("./config/database.js");
+const path = require('path')
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use("/api/users", require("./routes/userRoutes.js"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/categories", require("./routes/categoryRoutes.js"));
 // app.use("/api/create-admin", require("./routes/adminCreationRoute.js"));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Tüm diğer route'lara uymayan istekler için
 app.use((req, res, next) => {

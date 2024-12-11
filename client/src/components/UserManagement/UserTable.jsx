@@ -1,5 +1,4 @@
 import React from 'react';
-import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
 import Button from '../common/Button';
 
 const UserTable = ({ 
@@ -13,7 +12,7 @@ const UserTable = ({
   <table className="w-full">
     <thead className="bg-gray-100">
       <tr>
-        {['name', 'email', 'role', 'lastLogin', 'createdAt'].map(key => (
+        {['profilePicture','name', 'email', 'role', 'createdAt'].map(key => (
           <th
             key={key}
             onClick={() => requestSort(key)}
@@ -45,9 +44,20 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
   const canModify = 
     currentUser?.role === 'admin' || 
     (currentUser?.role !== 'admin' && user.role !== 'admin');
+    const serverBaseUrl = "http://localhost:5000"; // Backend'in temel URL'si
+    const defaultPhoto = "uploads/profile-pictures/1732807319854-Person.png"
+
 
   return (
     <tr className="hover:bg-gray-50">
+      <td className='px-4 py-4'>       
+          <img 
+          src={user.profilePicture 
+            ? `${serverBaseUrl}/${user.profilePicture}` 
+            : `${serverBaseUrl}/${defaultPhoto}` } // Eğer fotoğraf yoksa varsayılan bir resim
+          alt={`${user.name} profil resmi`}
+          className="w-10 h-10 rounded-full object-cover"
+        /></td>
       <td className="px-4 py-3">{user.name}</td>
       <td className="px-4 py-3">{user.email}</td>
       <td className="px-4 py-3">
@@ -60,11 +70,6 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
         >
           {user.role}
         </span>
-      </td>
-      <td className="px-4 py-3">
-        {user.lastLogin
-          ? new Date(user.lastLogin).toLocaleString("tr-TR")
-          : "Henüz giriş yapılmadı"}
       </td>
       <td className="px-4 py-3">
         {new Date(user.createdAt).toLocaleString("tr-TR")}
@@ -95,10 +100,10 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
 
 const getColumnLabel = (key) => {
   const labels = {
+    profilePicture: 'Fotoğraf',
     name: 'Ad',
     email: 'E-posta',
     role: 'Rol',
-    lastLogin: 'Son Giriş',
     createdAt: 'Oluşturulma Tarihi'
   };
   return labels[key];

@@ -55,6 +55,7 @@ router.put("/:id",
    async (req, res) => {
   try {
     const { name, category, dynamicAttributes, amount,criticalityDegree, privacyDegree} = req.body;
+    const updatedAt = Date.now()
 
     // Validate category exists
     const existingCategory = await Category.findById(category);
@@ -70,7 +71,8 @@ router.put("/:id",
         dynamicAttributes,
         amount,
         criticalityDegree,
-        privacyDegree
+        privacyDegree,
+        updatedAt
       }, 
       { new: true }
     ).populate('category');
@@ -101,6 +103,27 @@ router.delete("/:id",
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+router.put("/:id/confirm", 
+  authMiddleware, 
+  authorizeRoles(['update_products']),
+  async (req, res) => {
+    try {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id, 
+        { updatedAt: Date.now() }, 
+        { new: true }
+      ).populate('category');
+
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      res.json(updatedProduct);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
 });
 
 module.exports = router;

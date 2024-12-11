@@ -1,8 +1,8 @@
 import React from 'react';
-import Modal from '../common/Modal';
-import Button from '../common/Button';
 import { FaCheckCircle } from 'react-icons/fa';
 import { RxCross2 } from 'react-icons/rx';
+import Button from '../common/Button';
+import Modal from '../common/Modal';
 
 const UserModal = ({
   isOpen,
@@ -14,65 +14,116 @@ const UserModal = ({
   handleInputChange,
   handleRoleChange,
   togglePermission,
-  handleSubmitUser
-}) => (
-  <Modal
-    isOpen={isOpen}
-    onClose={onClose}
-    title={editingUser ? "Kullanıcı Düzenle" : "Yeni Kullanıcı Oluştur"}
-  >
-    <div className="space-y-4">
-      <InputField 
-        label="Ad Soyad"
-        name="name"
-        value={newUser.name}
-        onChange={handleInputChange}
-      />
-      <InputField 
-        label="E-posta"
-        type="email"
-        name="email"
-        value={newUser.email}
-        onChange={handleInputChange}
-      />
-      <InputField 
-        label={editingUser ? "Şifre (Boş bırakılırsa değiştirilmez)" : "Şifre"}
-        type="password"
-        name="password"
-        value={newUser.password}
-        onChange={handleInputChange}
-      />
-
-      <RoleSelector 
-        value={newUser.role}
-        onChange={handleRoleChange}
-        currentUser={currentUser}
-      />
-
-      <PermissionSection 
-        permissionConfig={PERMISSION_CONFIG}
-        selectedPermissions={newUser.permissions}
-        onTogglePermission={togglePermission}
-      />
-
-      <div className="flex justify-end space-x-2 mt-4">
-        <Button variant="outline" onClick={onClose}>
-          İptal
-        </Button>
-        <Button
-          onClick={handleSubmitUser}
-          disabled={
-            !newUser.name ||
-            !newUser.email ||
-            (!editingUser && !newUser.password)
+  handleSubmitUser,
+  handleProfilePictureChange
+}) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleProfilePictureChange({
+          target: {
+            name: 'profilePictureFile',
+            value: file,
+            preview: reader.result
           }
-        >
-          {editingUser ? "Kaydet" : "Kullanıcı Oluştur"}
-        </Button>
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editingUser ? "Kullanıcı Düzenle" : "Yeni Kullanıcı Oluştur"}
+    >
+      <div className="space-y-4">
+        {/* Profile Picture Upload */}
+        <div className="flex items-center space-x-4">
+          <div className="flex-grow">
+            <InputField 
+              label="Ad Soyad"
+              name="name"
+              value={newUser.name}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="flex-shrink-0">
+            <input 
+              type="file" 
+              id="profilePicture"
+              accept="image/jpeg,image/png,image/gif"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <label 
+              htmlFor="profilePicture" 
+              className="cursor-pointer"
+            >
+              <div className="w-24 h-24 rounded bg-gray-200 flex items-center justify-center overflow-hidden">
+                {newUser.preview || newUser.profilePicture ? (
+                  <img 
+                    src={newUser.preview || newUser.profilePicture} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-500">Fotoğraf Ekle</span>
+                )}
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <InputField 
+          label="E-posta"
+          type="email"
+          name="email"
+          value={newUser.email}
+          onChange={handleInputChange}
+        />
+        <InputField 
+          label={editingUser ? "Şifre (Boş bırakılırsa değiştirilmez)" : "Şifre"}
+          type="password"
+          name="password"
+          value={newUser.password}
+          onChange={handleInputChange}
+        />
+
+        <RoleSelector 
+          value={newUser.role}
+          onChange={handleRoleChange}
+          currentUser={currentUser}
+        />
+
+        <PermissionSection 
+          permissionConfig={PERMISSION_CONFIG}
+          selectedPermissions={newUser.permissions}
+          onTogglePermission={togglePermission}
+        />
+
+        <div className="flex justify-end space-x-2 mt-4">
+          <Button variant="outline" onClick={onClose}>
+            İptal
+          </Button>
+          <Button
+            onClick={handleSubmitUser}
+            disabled={
+              !newUser.name ||
+              !newUser.email ||
+              (!editingUser && !newUser.password)
+            }
+          >
+            {editingUser ? "Kaydet" : "Kullanıcı Oluştur"}
+          </Button>
+        </div>
       </div>
-    </div>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 const InputField = ({ label, type = "text", name, value, onChange }) => (
   <div>

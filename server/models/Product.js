@@ -8,6 +8,7 @@ const ProductSchema = new mongoose.Schema({
   criticalityDegree: { type: String, required: false },
   privacyDegree: { type: String, required: false },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

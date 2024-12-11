@@ -163,13 +163,10 @@ const AdminProducts = () => {
         );
       } else {
         // Create new product
-        const response = await api.post(
-          "http://localhost:5000/api/products",
-          {
-            ...currentProduct,
-            dynamicAttributes,
-          }
-        );
+        const response = await api.post("http://localhost:5000/api/products", {
+          ...currentProduct,
+          dynamicAttributes,
+        });
 
         setProducts((prev) => [...prev, response.data]);
       }
@@ -278,7 +275,7 @@ const AdminProducts = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
+          <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">
               {isEditMode ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
             </h2>

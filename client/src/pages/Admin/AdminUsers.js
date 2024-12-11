@@ -13,6 +13,7 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const serverBaseUrl = "http://localhost:5000"; // Backend'in temel URL'si
   
   // Add array of users per page options
   const [usersPerPageOptions] = useState([5, 10, 20, 50, 100]);
@@ -28,8 +29,19 @@ const UserManagement = () => {
     password: "",
     role: "user",
     permissions: [],
+    profilePictureFile: null,
+    preview: null,
+    profilePicture: null // Existing profile picture URL
   });
 
+  const handleProfilePictureChange = (e) => {
+    const { name, value, preview } = e.target;
+    setNewUser(prev => ({
+      ...prev,
+      [name]: value,
+      preview: preview || prev.preview
+    }));
+  };
   // Fetch current user
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -156,7 +168,18 @@ const UserManagement = () => {
 
   // Handle input changes for new user
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
+    
+    // Handle file upload separately
+    if (name === 'profilePictureFile') {
+      setNewUser((prev) => ({
+        ...prev,
+        profilePictureFile: value,
+        preview: e.preview // Add preview URL
+      }));
+      return;
+    }
+  
     setNewUser((prev) => ({
       ...prev,
       [name]: value,
@@ -192,6 +215,9 @@ const UserManagement = () => {
       password: "", 
       role: user.role,
       permissions: user.permissions || [],
+      profilePicture: user.profilePicture 
+      ? `${serverBaseUrl}/${user.profilePicture}` // Profil fotoğrafının tam URL'sini oluşturun
+      : null, // Profil fotoğrafı yoksa null      preview: null, // Düzenleme sırasında önizleme sıfırlanır
     });
     setIsModalOpen(true);
   };
@@ -212,20 +238,38 @@ const UserManagement = () => {
   const handleSubmitUser = async () => {
     try {
       const token = localStorage.getItem("token");
+      const formData = new FormData();
+      
+      // Append all user data
+      formData.append('name', newUser.name);
+      formData.append('email', newUser.email);
+      formData.append('password', newUser.password);
+      formData.append('role', newUser.role);
+      
+      // Append permissions
+      newUser.permissions.forEach((permission, index) => {
+        formData.append(`permissions[${index}]`, permission);
+      });
+  
+      // Append profile picture if selected
+      if (newUser.profilePictureFile) {
+        formData.append('profilePicture', newUser.profilePictureFile);
+      }
+  
       const headers = {
         Authorization: token,
-        "Content-Type": "application/json",
+        'Content-Type': 'multipart/form-data',
       };
-
+  
       let response;
       if (editingUser) {
         // Update existing user
         response = await api.put(
           `http://localhost:5000/api/users/${editingUser._id}`,
-          newUser,
+          formData,
           { headers }
         );
-
+  
         // Update users list
         setUsers((prev) =>
           prev.map((user) =>
@@ -236,14 +280,14 @@ const UserManagement = () => {
         // Create new user
         response = await api.post(
           "http://localhost:5000/api/users",
-          newUser,
+          formData,
           { headers }
         );
-
+  
         // Add new user to list
         setUsers((prev) => [...prev, response.data]);
       }
-
+  
       // Reset form and close modal
       resetForm();
       setIsModalOpen(false);
@@ -376,6 +420,7 @@ const UserManagement = () => {
         handleRoleChange={handleRoleChange}
         togglePermission={togglePermission}
         handleSubmitUser={handleSubmitUser}
+        handleProfilePictureChange ={handleProfilePictureChange}
       />
     </div>
   );

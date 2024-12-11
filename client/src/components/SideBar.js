@@ -95,6 +95,18 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 </li>
               </>
             )}
+            {currentUser &&
+            currentUser.permissions.includes("read_users") && (
+              <>
+                <li
+                  onClick={() => navigate("/user/process")}
+                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                >
+                  <MdPerson className="text-2xl min-w-[40px]" />
+                  {isSidebarOpen && <span className="ml-4">İşlemler</span>}
+                </li>
+              </>
+            )}
         </ul>
       </div>
     </div>
