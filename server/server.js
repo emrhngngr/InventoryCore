@@ -18,6 +18,8 @@ app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/categories", require("./routes/categoryRoutes.js"));
 // app.use("/api/create-admin", require("./routes/adminCreationRoute.js"));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/api/asset-values", require("./routes/assetValueRoutes.js"));
+
 
 
 // Tüm diğer route'lara uymayan istekler için

@@ -6,8 +6,8 @@ const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddlewar
 
 // Get all products with populated category
 router.get("/",
-  authMiddleware, 
-  authorizeRoles(['read_products']),
+  // authMiddleware, 
+  // authorizeRoles(['read_products']),
    async (req, res) => {
   try {
     const products = await Product.find().populate('category');
