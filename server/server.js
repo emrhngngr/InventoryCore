@@ -19,6 +19,7 @@ app.use("/api/categories", require("./routes/categoryRoutes.js"));
 // app.use("/api/create-admin", require("./routes/adminCreationRoute.js"));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/asset-values", require("./routes/assetValueRoutes.js"));
+app.use("/api/announcements", require("./routes/announcementRoutes"));
 
 
 
