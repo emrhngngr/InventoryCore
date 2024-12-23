@@ -2,7 +2,7 @@ import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import api from "../api/api";
+import api from "../../api/api";
 
 const ProductAgePieChart = () => {
   const [products, setProducts] = useState([]);

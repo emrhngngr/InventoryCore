@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api/api";
-import ClipLoader from "react-spinners/ClipLoader"; // React Spinners
+import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify"; // Toastify
 import Swal from "sweetalert2"; // SweetAlert2
+import api from "../../api/api";
+import ProductModal from "../../components/Products/ProductModal";
+import ProductTable from "../../components/Products/ProductTable";
+import Button from "../../components/common/Button";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [modalInfoContent, setInfoModalContent] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [dynamicAttributes, setDynamicAttributes] = useState({});
@@ -23,6 +28,9 @@ const AdminProducts = () => {
     criticalityDegree: 1,
     privacyDegree: 1,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPageOptions] = useState([5, 10, 20, 50, 100]);
 
   // New state for filtering products by category
   const [selectedTableCategory, setSelectedTableCategory] = useState("");
@@ -32,7 +40,6 @@ const AdminProducts = () => {
       try {
         const response = await api.get("http://localhost:5000/api/users/me");
         setCurrentUser(response.data);
-        console.log("data:", response.data);
       } catch (error) {
         console.error("Error fetching current user:", error);
       }
@@ -122,6 +129,30 @@ const AdminProducts = () => {
     setDynamicAttributes(attributes);
   };
 
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return <FaSort className="inline ml-1 opacity-50" />;
+    }
+    return sortConfig.direction === "ascending" ? (
+      <FaSortUp className="inline ml-1" />
+    ) : (
+      <FaSortDown className="inline ml-1" />
+    );
+  };
+
   // Handle dynamic attribute changes
   const handleAttributeChange = (attr, value) => {
     setDynamicAttributes((prev) => ({
@@ -204,7 +235,6 @@ const AdminProducts = () => {
       toast.error("Ürün kaydedilirken bir hata oluştu.");
       console.error("Error saving product:", error);
     }
-
   };
 
   // Delete product
@@ -220,13 +250,13 @@ const AdminProducts = () => {
       confirmButtonText: "Evet, sil!",
       cancelButtonText: "Hayır, iptal et",
     });
-  
+
     if (result.isConfirmed) {
       try {
         // Silme işlemini gerçekleştir
         await api.delete(`http://localhost:5000/api/products/${productId}`);
         setProducts((prev) => prev.filter((p) => p._id !== productId)); // Listeden kaldır
-  
+
         // Başarı mesajı göster
         Swal.fire({
           title: "Silindi!",
@@ -273,39 +303,82 @@ const AdminProducts = () => {
   };
 
   // Filter products based on search term and selected category
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedTableCategory
-      ? product.category?._id === selectedTableCategory
-      : true;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = products
+    .filter((product) => {
+      const matchesSearch = product.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedTableCategory
+        ? product.category?._id === selectedTableCategory
+        : true;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      if (!sortConfig.key) return 0;
+      const key = sortConfig.key;
+
+      const aValue = key.startsWith("attr_")
+        ? a.dynamicAttributes[key.replace("attr_", "")]
+        : a[key] || "";
+      const bValue = key.startsWith("attr_")
+        ? b.dynamicAttributes[key.replace("attr_", "")]
+        : b[key] || "";
+
+      if (aValue < bValue) return sortConfig.direction === "ascending" ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === "ascending" ? 1 : -1;
+      return 0;
+    });
+
+  // Open info modal with specific content
+  const openModal = (content) => {
+    setInfoModalContent(content);
+    setIsInfoModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsInfoModalOpen(false);
+  };
 
   return (
     <div className="p-4">
-       <ToastContainer />
+      <ToastContainer />
       {/* Search and Filter Section */}
-      <div className="w-full flex justify-between items-center mb-4 gap-4">
+      <div>
+        <div>
+          <h1
+            onClick={() =>
+              Swal.fire({
+                title: "Kritiklik Derecesi Nedir?",
+                text: "Kritiklik derecesi, bir ürünün ne kadar kritik olduğunu belirten bir ölçüttür.",
+              })
+            }
+          >
+            Kritiklik Derecesi Nedir?
+          </h1>
+          <h1 onClick={() => Swal.fire("SweetAlert2 is working!")}>
+            Gizlilik Derecesi Nedir?
+          </h1>
+        </div>
+      </div>
+      <div className=" flex justify-end items-center mb-4 gap-4">
         {/* Search Input */}
-        <div className="w-2/3">
+        <div className="w-max">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Ürün ara..."
             className="w-full px-3 py-2 border rounded-md"
-            />
+          />
         </div>
 
         {/* Category Filter */}
-        <div className="w-1/3">
+        <div className="w-max">
           <select
             value={selectedTableCategory}
             onChange={(e) => setSelectedTableCategory(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
-            >
+          >
             <option value="">Tüm Kategoriler</option>
             {categories.map((category) => (
               <option key={category._id} value={category._id}>
@@ -318,253 +391,66 @@ const AdminProducts = () => {
         {/* Add Product Button */}
         {currentUser && currentUser.permissions.includes("create_products") && (
           <>
-            <button
+            <Button
+              variant="default"
               onClick={openAddModal}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-              >
+            >
               Ürün Ekle
-            </button>
+            </Button>
           </>
         )}
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">
-              {isEditMode ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
-            </h2>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ürün Adı
-              </label>
-              <input
-                type="text"
-                value={currentProduct.name}
-                onChange={(e) =>
-                  setCurrentProduct((prev) => ({
-                    ...prev,
-                    name: e.target.value,
-                  }))
-                }
-                placeholder="Ürün adını girin"
-                className="w-full px-3 py-2 border rounded-md"
-                />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Adet
-              </label>
-              <input
-                type="number"
-                min="0"
-                value={currentProduct.amount}
-                onChange={(e) =>
-                  setCurrentProduct((prev) => ({
-                    ...prev,
-                    amount: e.target.value,
-                  }))
-                }
-                className="w-full px-3 py-2 border rounded-md"
-                />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kritiklik Derecesi
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="5"
-                value={currentProduct.criticalityDegree}
-                onChange={(e) =>
-                  setCurrentProduct((prev) => ({
-                    ...prev,
-                    criticalityDegree: e.target.value,
-                  }))
-                }
-                placeholder="1-5"
-                className="w-full px-3 py-2 border rounded-md"
-                />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Gizlilik Derecesi
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="5"
-                value={currentProduct.privacyDegree}
-                onChange={(e) =>
-                  setCurrentProduct((prev) => ({
-                    ...prev,
-                    privacyDegree: e.target.value,
-                  }))
-                }
-                placeholder="1-5"
-                className="w-full px-3 py-2 border rounded-md"
-                />
-            </div>
-
-            {/* Category Selection */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kategori Seç
-              </label>
-              <select
-                onChange={(e) => handleCategoryChange(e.target.value)}
-                value={currentProduct.category}
-                className="w-full px-3 py-2 border rounded-md"
-                >
-                <option value="">Kategori seçin</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Dynamic Attributes Based on Category */}
-            {selectedCategory && (
-              <div>
-                <h3 className="text-md font-semibold mb-2">
-                  {selectedCategory.name} Özellikleri
-                </h3>
-                {selectedCategory.attributes.map((attr) => (
-                  <div key={attr} className="mb-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {attr}
-                    </label>
-                    <input
-                      type="text"
-                      value={dynamicAttributes[attr] || ""}
-                      onChange={(e) =>
-                        handleAttributeChange(attr, e.target.value)
-                      }
-                      placeholder={`${attr} girin`}
-                      className="w-full px-3 py-2 border rounded-md"
-                      />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Modal Buttons */}
-            <div className="flex justify-end space-x-2 mt-4">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                İptal
-              </button>
-              <button
-                onClick={saveProduct}
-                disabled={!currentProduct.name || !currentProduct.category}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-              >
-                {isEditMode ? "Güncelle" : "Oluştur"}
-              </button>
+      {isInfoModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Bilgi</h2>
+            <p>{modalInfoContent}</p>
+            <div className="mt-4 flex justify-end">
+              <Button variant="outline" onClick={closeModal}>
+                Kapat
+              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Products Table */}
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left text-gray-500">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Ürün Adı
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Kategori
-              </th>
-              {/* Dynamically generate attribute columns */}
-              {getAttributesForCategory(selectedTableCategory).map((attr) => (
-                <th key={attr} scope="col" className="px-6 py-3">
-                  {attr}
-                </th>
-              ))}
-              <th scope="col" className="px-6 py-3">
-                Adet
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Kritik Derecesi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Gizlilik Derecesi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                İşlemler
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.map((product) => (
-              <tr
-              key={product._id}
-              className="bg-white border-b hover:bg-gray-50"
-              >
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.name}
-                </td>
-                <td className="px-6 py-4">
-                  {product.category?.name || "Kategori Yok"}
-                </td>
-                {/* Dynamically render attribute values */}
-                {getAttributesForCategory(selectedTableCategory).map((attr) => (
-                  <td key={attr} className="px-6 py-4">
-                    {product.dynamicAttributes?.[attr] || "-"}
-                  </td>
-                ))}
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.amount}
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.criticalityDegree}
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.privacyDegree}
-                </td>
-                <td className="px-6 py-4 flex space-x-2">
-                  {currentUser &&
-                    currentUser.permissions.includes("edit_products") && (
-                      <>
-                        <button
-                          onClick={() => openEditModal(product)}
-                          className="text-blue-600 hover:underline"
-                          >
-                          Düzenle
-                        </button>
-                      </>
-                    )}
-                  {currentUser &&
-                    currentUser.permissions.includes("delete_products") && (
-                      <>
-                        <button
-                          onClick={() => deleteProduct(product._id)}
-                          className="text-red-600 hover:underline"
-                          >
-                          Sil
-                        </button>
-                      </>
-                    )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      {loading && (
-       <div className="flex justify-center items-center py-4">
-         <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
-       </div>
+      {/* Modal */}
+      {isModalOpen && (
+        <ProductModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          currentProduct={currentProduct}
+          setCurrentProduct={setCurrentProduct}
+          selectedCategory={selectedCategory}
+          categories={categories}
+          handleCategoryChange={handleCategoryChange}
+          dynamicAttributes={dynamicAttributes}
+          handleAttributeChange={handleAttributeChange}
+          saveProduct={saveProduct}
+          isEditMode={isEditMode}
+        />
       )}
-      </div>
+
+      {/* Products Table */}
+      <ProductTable
+        filteredProducts={filteredProducts}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        itemsPerPageOptions={itemsPerPageOptions}
+        onPageChange={setCurrentPage}
+        onItemsPerPageChange={(value) => {
+          setItemsPerPage(value);
+          setCurrentPage(1);
+        }}
+        getAttributesForCategory={getAttributesForCategory}
+        selectedTableCategory={selectedTableCategory}
+        currentUser={currentUser}
+        openEditModal={openEditModal}
+        deleteProduct={deleteProduct}
+        loading={loading}
+        requestSort={requestSort}
+        getSortIcon={getSortIcon}
+      />
     </div>
   );
 };

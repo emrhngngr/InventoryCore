@@ -41,7 +41,6 @@ router.post('/', async (req, res) => {
       `
     };
 
-    console.log("mailOptions ==> ", mailOptions);
     // Send email
     await transporter.sendMail(mailOptions);
 

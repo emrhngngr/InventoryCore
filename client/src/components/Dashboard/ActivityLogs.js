@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import api from "../api/api";
-import Modal from "../components/common/Modal";
+import React, { useEffect, useState } from "react";
+import api from "../../api/api";
+import Modal from "../common/Modal";
+import { ClipLoader } from "react-spinners";
 
 const ActivityLogs = () => {
   const [logs, setLogs] = useState([]);
@@ -23,11 +24,14 @@ const ActivityLogs = () => {
   const fetchLogs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await api.get("http://localhost:5000/api/activity-logs", {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const response = await api.get(
+        "http://localhost:5000/api/activity-logs",
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
       setLogs(response.data);
       setLoading(false);
     } catch (error) {
@@ -69,19 +73,24 @@ const ActivityLogs = () => {
       login: "giriş yaptı",
       logout: "çıkış yaptı",
     };
-  
+
     const resourceMessages = {
       product: "ürün",
       category: "kategori",
       user: "kullanıcı",
     };
-  
-    return `${log.user?.name || "Bilinmeyen Kullanıcı"} bir ${resourceMessages[log.resourceType]} ${actionMessages[log.action]}.`;
+
+    return `${log.user?.name || "Bilinmeyen Kullanıcı"} bir ${
+      resourceMessages[log.resourceType]
+    } ${actionMessages[log.action]}.`;
   };
-  
 
   if (loading) {
-    return <div className="p-4">Yükleniyor...</div>;
+    return (
+      <div className="flex justify-center items-center py-4">
+        <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+      </div>
+    );
   }
 
   return (

@@ -1,28 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react"; // lucide-react'ten ikonlar
 
 const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextColor }) => {
   const navigate = useNavigate();
-  const location = useLocation(); // Aktif sayfayı alıyoruz
+  const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Hamburger menü durumu
 
   useEffect(() => {
     const handleScroll = () => {
       const position = window.scrollY;
       setScrollPosition(position);
     };
-    console.log("backgroundColor ==> ", backgroundColor);
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
-  // Çıkış işlemi: Token'ı silip kullanıcıyı login sayfasına yönlendir
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   return (
     <nav
@@ -42,7 +37,19 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
               InventoryCore
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+
+          {/* Hamburger Menu Icon */}
+          <div className="lg:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-2xl"
+            >
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className={`hidden lg:flex items-center space-x-4`}>
             <button
               className={`px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors ${
                 location.pathname === "/services" ? "border-b-2 border-black" : ""
@@ -68,6 +75,32 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-white py-4">
+          <div className="flex flex-col items-center space-y-4">
+            <button
+              className="px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors"
+              onClick={() => navigate("/services")}
+            >
+              Servisler
+            </button>
+            <button
+              className="px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors"
+              onClick={() => navigate("/contact")}
+            >
+              İletişim
+            </button>
+            <button
+              className="px-4 py-2 font-bold bg-[#6c63ff] rounded-md text-white transition-colors"
+              onClick={() => navigate("/login")}
+            >
+              Giriş Yap
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

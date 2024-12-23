@@ -13,7 +13,6 @@ const AdminProfile = () => {
           headers: { Authorization: token },
         });
         setCurrentUser(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching current user:", error);
       }

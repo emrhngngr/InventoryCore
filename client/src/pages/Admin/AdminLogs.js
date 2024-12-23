@@ -1,5 +1,5 @@
 import React from "react";
-import ActivityLogs from "../../components/ActivityLogs";
+import ActivityLogs from "../../components/Dashboard/ActivityLogs";
 
 const AdminLogs = () => {
   return (

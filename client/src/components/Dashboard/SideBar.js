@@ -3,7 +3,7 @@ import { FaBriefcase, FaShoppingBag } from "react-icons/fa";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi"; // İkonlar için react-icons
 import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md"; // Menü ikonları
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
+import api from "../../api/api";
 import { IoMdBuild } from "react-icons/io";
 import { IoNewspaperSharp } from "react-icons/io5";
 
@@ -15,14 +15,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       try {
         const response = await api.get("http://localhost:5000/api/users/me");
         setCurrentUser(response.data);
-        console.log("data:", response.data);
       } catch (error) {
         console.error("Error fetching current user:", error);
       }
     };
 
     fetchCurrentUser();
-    console.log("currentUser ==> ", currentUser);
   }, []);
   return (
     <div

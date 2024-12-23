@@ -9,17 +9,17 @@ import {
 } from "lucide-react";
 import React from "react";
 import Svg from "../assets/svg/undraw_growth-chart_h2w8.svg";
-import Navbar from "../components/navbar";
+import Navbar from "../components/MainPage/Navbar";
 const ServicePage = () => {
   const features = [
     {
       icon: <Box className="w-8 h-8" />,
-      title: "Stok Yönetimi",
-      description: "Detaylı stok takibi ve yönetimi yapın",
+      title: "Envanter Yönetimi",
+      description: "Detaylı envanter takibi ve yönetimi yapın",
       details: [
-        "Ürün kategorilendirme ve etiketleme",
-        "Minimum stok seviyesi bildirimleri",
-        "Toplu ürün işlemleri",
+        "Ürün özelleştirillmiş kategorilendirme",
+        "ISO 27001 ile uyumlu güvenlik",
+        "Detaylı Ürün işlemleri",
         "Barkod sistemi entegrasyonu",
       ],
     },

@@ -1,6 +1,9 @@
 import axios from "axios";
 import { Pen } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
+import Swal from "sweetalert2";
+import api from "../../api/api";
 import Button from "../../components/common/Button";
 
 const AnnouncementsPage = () => {
@@ -8,26 +11,32 @@ const AnnouncementsPage = () => {
   const [newAnnouncement, setNewAnnouncement] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
+  const [activeAnn, setActiveAnn] = useState(""); // Aktif duyuru
 
   useEffect(() => {
     fetchAnnouncements();
   }, []);
 
   const fetchAnnouncements = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/announcements"
-      );
+      const response = await api.get("http://localhost:5000/api/announcements");
       setAnnouncements(response.data);
+
+      // Aktif duyuruyu bul
+      const activeAnnouncement = response.data.find((ann) => ann.isActive);
+      setActiveAnn(activeAnnouncement ? activeAnnouncement.content : "Henüz bir duyuru aktif değil");
     } catch (error) {
       console.error("Duyurular yüklenirken hata:", error);
     }
+    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/announcements", {
+      await api.post("http://localhost:5000/api/announcements", {
         content: newAnnouncement,
       });
       setNewAnnouncement("");
@@ -40,20 +49,49 @@ const AnnouncementsPage = () => {
   const handleActivate = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/announcements/activate/${id}`);
-      fetchAnnouncements();
+      fetchAnnouncements(); // Yeniden duyuruları çek
     } catch (error) {
       console.error("Duyuru aktifleştirilirken hata:", error);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bu duyuruyu silmek istediğinizden emin misiniz?")) {
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+    if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:5000/api/announcements/${id}`);
         fetchAnnouncements();
+        Swal.fire({
+          title: "Silindi!",
+          text: "Duyuru başarıyla silindi.",
+          icon: "success",
+          confirmButtonText: "Tamam",
+        });
       } catch (error) {
+        Swal.fire({
+          title: "Hata!",
+          text: "Duyuru silinirken bir hata oluştu.",
+          icon: "error",
+          confirmButtonText: "Tamam",
+        });
         console.error("Duyuru silinirken hata:", error);
       }
+    } else {
+      Swal.fire({
+        title: "İptal edildi!",
+        text: "Duyuru işlemi iptal edildi.",
+        icon: "info",
+        confirmButtonText: "Tamam",
+      });
     }
   };
 
@@ -77,7 +115,12 @@ const AnnouncementsPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Duyurular</h1>
+      <div className="flex">
+        <h1 className="text-2xl font-bold mb-6">Duyurular</h1>
+        <h2 className="mx-10">
+          Güncel Duyuru: <span className="text-blue-600">{activeAnn}</span>
+        </h2>
+      </div>
 
       {/* Yeni Duyuru Formu */}
       <form onSubmit={handleSubmit} className="mb-8">
@@ -167,6 +210,11 @@ const AnnouncementsPage = () => {
           </div>
         ))}
       </div>
+      {loading && (
+        <div className="flex justify-center items-center py-4">
+          <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+        </div>
+      )}
     </div>
   );
 };

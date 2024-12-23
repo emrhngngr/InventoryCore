@@ -7,6 +7,8 @@ import {
   updateCategory,
 } from "../../services/categoryService";
 import ClipLoader from "react-spinners/ClipLoader"; // React Spinners
+import Button from "../../components/common/Button";
+import { Pen } from "lucide-react";
 
 const AdminClasses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -204,18 +206,20 @@ const AdminClasses = () => {
                 </td>
                 <td className="px-6 py-4">{category.attributes.join(", ")}</td>
                 <td className="px-6 py-4 flex space-x-2">
-                  <button
-                    onClick={() => handleEditCategory(category)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Düzenle
-                  </button>
-                  <button
-                    onClick={() => handleRemoveCategory(category._id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Sil
-                  </button>
+                  <Button
+                      variant="outline"
+                      className="text-sm"
+                      onClick={() => handleEditCategory(category)}
+                    >
+                      <Pen size={16} />
+                    </Button>
+                  <Button
+                      variant="destructive"
+                      className="text-sm"
+                      onClick={() => handleRemoveCategory(category._id)}
+                    >
+                      Sil
+                    </Button>
                 </td>
               </tr>
             ))}
@@ -262,7 +266,6 @@ const AdminClasses = () => {
                       placeholder={`Özellikler ${index + 1}`}
                       required
                     />
-                    {/* Delete attribute button (only if more than one attribute) */}
                     {attributes.length > 1 && (
                       <button
                         type="button"

@@ -1,3 +1,4 @@
+import { Pen } from 'lucide-react';
 import React from 'react';
 import Button from '../common/Button';
 
@@ -74,7 +75,7 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
       <td className="px-4 py-3">
         {new Date(user.createdAt).toLocaleString("tr-TR")}
       </td>
-      <td className="px-4 py-3 space-x-2">
+      <td className="px-4 flex py-3 space-x-2">
         {canModify && (
           <>
             <Button
@@ -82,8 +83,9 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
               className="text-sm"
               onClick={onEdit}
             >
-              Düzenle
-            </Button>
+                      <Pen size={16} />
+                      </Button>
+          
             <Button
               variant="destructive"
               className="text-sm"

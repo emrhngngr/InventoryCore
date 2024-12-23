@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+.dark {
+  --bg-color: #1a202c;
+  --text-color: #ffffff;
+}
+
 body {
   font-family: 'Inter', sans-serif; /* Burada Inter fontunu kullanıyoruz */
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }

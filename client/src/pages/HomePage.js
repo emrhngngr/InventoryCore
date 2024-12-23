@@ -1,14 +1,16 @@
 import { BarChart3, Box, Settings, Users } from "lucide-react";
 import React from "react";
 import Svg from "../assets/svg/undraw_dashboard_p93p.svg";
-import Navbar from "../components/navbar";
+import Navbar from "../components/MainPage/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const features = [
     {
       icon: <Box className="w-6 h-6" />,
-      title: "Stok Yönetimi",
-      description: "Kolay ve etkili stok takibi",
+      title: "Envanter Yönetimi",
+      description: "Kolay ve etkili envanter takibi",
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
@@ -39,31 +41,34 @@ const HomePage = () => {
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
-        <div className="flex items-center justify-between pt-20 pb-16 ">
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between pt-20 pb-16">
           {/* Left content */}
-          <div
-            className="w-1/2 flex flex-col justify-center"
-            style={{ height: "calc(100svh - 16rem)" }}
-          >
-            <h1 className="text-5xl  font-bold leading-tight mb-6">
+          <div className="w-full lg:w-1/2 md:w-1/2 flex flex-col justify-center mb-8 lg:mb-0 lg:pt-32">
+            <h1 className="text-3xl lg:text-5xl font-bold leading-tight mb-6">
               ISO 27001 ile özelleştirilmiş Envanter Sistemi
             </h1>
-            <p className="text-xl mb-8">
+            <p className="text-lg lg:text-xl mb-8">
               ISO 27001 sertifikalı envanter yönetim sistemi ile işletmenizin
               envanterini modernleştirin ve verimliliği artırın.
             </p>
             <div className="space-x-4">
-              <button className="bg-[#6c63ff] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#8a84fc] transition-colors">
+              <button
+                onClick={() => navigate("/contact")}
+                className="bg-[#6c63ff] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#8a84fc] transition-colors"
+              >
                 İletişime Geçin
               </button>
-              <button className="border-2 border-white  px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+              <button
+                onClick={() => navigate("/services")}
+                className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              >
                 Daha Fazlası
               </button>
             </div>
           </div>
 
           {/* Right content - SVG */}
-          <div className="w-1/2 flex justify-end">
+          <div className="w-full md:w-2/3 lg:w-1/2 flex justify-center lg:justify-end">
             <img
               src={Svg}
               alt="Dashboard Illustration"
@@ -73,7 +78,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Features Section - Kept unchanged */}
+      {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-center mb-12 text-black">
           Servislerimiz
@@ -96,5 +101,6 @@ const HomePage = () => {
     </div>
   );
 };
+
 
 export default HomePage;

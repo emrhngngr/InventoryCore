@@ -1,11 +1,16 @@
+import { Check, Pen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
+import Swal from "sweetalert2";
 import api from "../../api/api";
+import Button from "../../components/common/Button";
 
 const AdminProcess = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({
     _id: "",
@@ -23,6 +28,7 @@ const AdminProcess = () => {
   const [productAgeFilter, setProductAgeFilter] = useState("all");
 
   useEffect(() => {
+    setLoading(true);
     const fetchInitialData = async () => {
       try {
         const [userResponse, productsResponse, categoriesResponse] =
@@ -37,6 +43,7 @@ const AdminProcess = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+      setLoading(false);
     };
 
     fetchInitialData();
@@ -164,18 +171,49 @@ const AdminProcess = () => {
   };
 
   const confirmProduct = async (productId) => {
-    try {
-      const response = await api.put(
-        `http://localhost:5000/api/products/${productId}/confirm`,
-        { updatedAt: new Date() }
-      );
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu nesneyi onaylamak istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "green",
+      cancelButtonColor: "red",
+      confirmButtonText: "Evet, Onayla!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+    if (result.isConfirmed) {
+      try {
+        const response = await api.put(
+          `http://localhost:5000/api/products/${productId}/confirm`,
+          { updatedAt: new Date() }
+        );
 
-      // Update the products list
-      setProducts((prev) =>
-        prev.map((p) => (p._id === response.data._id ? response.data : p))
-      );
-    } catch (error) {
-      console.error("Error confirming product:", error);
+        // Update the products list
+        setProducts((prev) =>
+          prev.map((p) => (p._id === response.data._id ? response.data : p))
+        );
+        Swal.fire({
+          title: "Onaylandı!",
+          text: "Ürün başarıyla onaylandı.",
+          icon: "success",
+          confirmButtonText: "Tamam",
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Hata!",
+          text: "Onaylanırken bir hata oluştu.",
+          icon: "error",
+          confirmButtonText: "Tamam",
+        });
+        console.error("Error confirming product:", error);
+      }
+    } else {
+      Swal.fire({
+        title: "İptal Edildi",
+        text: "Ürünü onaylama işlemi iptal edildi.",
+        icon: "info",
+        confirmButtonText: "Tamam",
+      });
     }
   };
 
@@ -188,7 +226,7 @@ const AdminProcess = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Ürün Onaylama</h1>
+      <h1 className="text-2xl font-bold mb-4">Ürün Güncelleme</h1>
 
       {/* Product Age Filter */}
       <div className="mb-4">
@@ -266,23 +304,29 @@ const AdminProcess = () => {
                 </td>
 
                 <td className="px-6 py-4 flex space-x-2">
-                  <button
+                  <Button
+                    variant="outline"
+                    className="text-sm"
                     onClick={() => openEditModal(product)}
-                    className="text-blue-600 hover:underline"
                   >
-                    Düzenle
-                  </button>
-                  <button
+                    <Pen size={16} />
+                  </Button>
+                  <Button
+                    className="text-sm bg-green-500 text-white hover:bg-green-600"
                     onClick={() => confirmProduct(product._id)}
-                    className="text-green-600 hover:underline"
                   >
-                    Onayla
-                  </button>
+                    <Check size={16} />
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {loading && (
+          <div className="flex justify-center items-center py-4">
+            <ClipLoader color="#3498db" size={50} />
+          </div>
+        )}
       </div>
 
       {isModalOpen && (

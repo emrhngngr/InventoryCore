@@ -2,7 +2,9 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
+const {
+  createActivityLogger,
+} = require("../middlewares/activityLogMiddleware");
 const router = express.Router();
 const {
   authMiddleware,
@@ -36,48 +38,50 @@ const upload = multer({
   },
 });
 // User Login Route
-router.post("/login", 
-  createActivityLogger('login', 'user'),
+router.post(
+  "/login",
+  createActivityLogger("login", "user"),
   async (req, res) => {
-  try {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Kullanıcı bulunamadı" });
+      // Check if user exists
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: "Kullanıcı bulunamadı" });
+      }
+
+      // Check password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Geçersiz şifre" });
+      }
+
+      // Create JWT Token
+      const token = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          permissions: user.permissions,
+        },
+        process.env.JWT_SECRET
+      );
+
+      // Remove sensitive information before sending response
+      const userResponse = user.toObject();
+      delete userResponse.password;
+
+      res.json({
+        token,
+        user: userResponse,
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Giriş sırasında bir hata oluştu" });
     }
-
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Geçersiz şifre" });
-    }
-
-    // Create JWT Token
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        permissions: user.permissions,
-      },
-      process.env.JWT_SECRET
-    );
-
-    // Remove sensitive information before sending response
-    const userResponse = user.toObject();
-    delete userResponse.password;
-
-    res.json({
-      token,
-      user: userResponse,
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Giriş sırasında bir hata oluştu" });
   }
-});
+);
 //get all
 router.get(
   "/",
@@ -98,7 +102,7 @@ router.post(
   "/",
   authMiddleware,
   authorizeRoles(["manage_users"]),
-  createActivityLogger('create', 'user'),
+  createActivityLogger("create", "user"),
   upload.single("profilePicture"),
   async (req, res) => {
     try {
@@ -175,7 +179,7 @@ router.put(
   authMiddleware,
   authorizeRoles(["manage_users"]),
   upload.single("profilePicture"),
-  createActivityLogger('update', 'user'),
+  createActivityLogger("update", "user"),
 
   async (req, res) => {
     try {
@@ -195,7 +199,6 @@ router.put(
         new: true,
       }).select("-password");
 
-
       if (!user) {
         return res.status(404).json({ message: "Kullanıcı bulunamadı" });
       }
@@ -212,7 +215,7 @@ router.delete(
   "/:id",
   authMiddleware,
   authorizeRoles(["manage_users"]),
-  createActivityLogger('delete', 'user'),
+  createActivityLogger("delete", "user"),
 
   async (req, res) => {
     try {

@@ -1,7 +1,7 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import React, { useState } from "react";
 import Svg from "../assets/svg/undraw_emails_085h.svg";
-import Navbar from "../components/navbar";
+import Navbar from "../components/MainPage/Navbar";
 
 const ContactPage = () => {
   const contactInfo = [

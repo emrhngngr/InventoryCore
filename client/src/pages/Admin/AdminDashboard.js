@@ -3,9 +3,9 @@ import { AiFillProduct, AiOutlineProduct } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
 import { GoDuplicate } from "react-icons/go";
 import api from "../../api/api";
-import AssetValueTrends from "../../components/AssetValueTrends";
-import ProductAgePieChart from "../../components/ProductAgePieChart";
-import ActiveAnnouncement from "../../components/ActiveAnnouncement";
+import ActiveAnnouncement from "../../components/Dashboard/ActiveAnnouncement";
+import AssetValueTrends from "../../components/Dashboard/AssetValueTrends";
+import ProductAgePieChart from "../../components/Dashboard/ProductAgePieChart";
 
 const AdminPage = () => {
   const [dashboardStats, setDashboardStats] = useState({
@@ -47,12 +47,16 @@ const AdminPage = () => {
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <AiOutlineProduct className="text-6xl" />
             <div>Toplam Ürün Sayısı</div>
-            <div className="text-lg font-semibold">{dashboardStats.totalProducts}</div>
+            <div className="text-lg font-semibold">
+              {dashboardStats.totalProducts}
+            </div>
           </div>
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <GoDuplicate className="text-6xl" />
             <div>Kategori Sayısı</div>
-            <div className="text-lg font-semibold">{dashboardStats.totalCategories}</div>
+            <div className="text-lg font-semibold">
+              {dashboardStats.totalCategories}
+            </div>
           </div>
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <AiFillProduct className="text-6xl" />
@@ -62,7 +66,9 @@ const AdminPage = () => {
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <FaRegUser className="text-6xl" />
             <div>Üye Sayısı</div>
-            <div className="text-lg font-semibold">{dashboardStats.totalUsers}</div>
+            <div className="text-lg font-semibold">
+              {dashboardStats.totalUsers}
+            </div>
           </div>
         </div>
 
