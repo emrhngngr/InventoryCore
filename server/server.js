@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const database = require("./config/database.js");
-const path = require('path')
+const path = require("path");
+const contactRoutes = require("./routes/contactRoutes");
 
 dotenv.config();
 
@@ -17,22 +18,22 @@ app.use("/api/users", require("./routes/userRoutes.js"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/categories", require("./routes/categoryRoutes.js"));
 // app.use("/api/create-admin", require("./routes/adminCreationRoute.js"));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/asset-values", require("./routes/assetValueRoutes.js"));
 app.use("/api/announcements", require("./routes/announcementRoutes"));
-
-
+app.use("/api/activity-logs", require("./routes/activityLogRoutes"));
+app.use("/api/contact", contactRoutes);
 
 // Tüm diğer route'lara uymayan istekler için
 app.use((req, res, next) => {
-    res.status(404).json({ message: "Sayfa bulunamadı" });
-  });
-  app.use((err, req, res, next) => {
-    console.error(err.stack); // Hata detaylarını loglama
-    res.status(500).json({ message: "Bir hata oluştu, lütfen daha sonra tekrar deneyin" });
-  });
-  
-  
+  res.status(404).json({ message: "Sayfa bulunamadı" });
+});
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Hata detaylarını loglama
+  res
+    .status(500)
+    .json({ message: "Bir hata oluştu, lütfen daha sonra tekrar deneyin" });
+});
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server ${PORT} portunda çalışıyor`));

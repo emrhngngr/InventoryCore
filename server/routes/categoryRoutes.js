@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');  // Assuming you have a Category model
 const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware')
+const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
 
 // Get all categories
 router.get('/',
@@ -20,6 +21,7 @@ router.get('/',
 router.post('/',
   authMiddleware, 
   authorizeRoles(['create_categories']),
+  createActivityLogger('create', 'category'),
    async (req, res) => {
   const category = new Category({
     name: req.body.name,
@@ -38,6 +40,8 @@ router.post('/',
 router.put('/:id', 
   authMiddleware, 
   authorizeRoles(['edit_categories']),
+  createActivityLogger('update', 'category'),
+
   async (req, res) => {
   try {
     const updatedCategory = await Category.findByIdAndUpdate(
@@ -63,6 +67,7 @@ router.put('/:id',
 router.delete('/:id',
   authMiddleware, 
   authorizeRoles(['delete_categories']),
+  createActivityLogger('delete', 'category'),
    async (req, res) => {
   try {
     const deletedCategory = await Category.findByIdAndDelete(req.params.id);

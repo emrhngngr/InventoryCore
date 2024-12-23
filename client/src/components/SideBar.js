@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaBriefcase, FaShoppingBag } from "react-icons/fa";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi"; // İkonlar için react-icons
-import { MdDashboard, MdPerson } from "react-icons/md"; // Menü ikonları
+import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md"; // Menü ikonları
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { IoMdBuild } from "react-icons/io";
@@ -22,6 +22,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     };
 
     fetchCurrentUser();
+    console.log("currentUser ==> ", currentUser);
   }, []);
   return (
     <div
@@ -85,42 +86,51 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 </li>
               </>
             )}
-          {currentUser &&
-            currentUser.permissions.includes("read_users") && (
-              <>
-                <li
-                  onClick={() => navigate("/user/users")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <MdPerson className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Üyeler</span>}
-                </li>
-              </>
-            )}
-            {currentUser &&
-            currentUser.permissions.includes("read_users") && (
-              <>
-                <li
-                  onClick={() => navigate("/user/process")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <IoMdBuild className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">İşlemler</span>}
-                </li>
-              </>
-            )}
-            {currentUser &&
-            currentUser.permissions.includes("read_users") && (
-              <>
-                <li
-                  onClick={() => navigate("/user/announcements")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <IoNewspaperSharp className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Duyurular</span>}
-                </li>
-              </>
-            )}
+          {currentUser && currentUser.permissions.includes("read_users") && (
+            <>
+              <li
+                onClick={() => navigate("/user/users")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <MdPerson className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Üyeler</span>}
+              </li>
+            </>
+          )}
+          {currentUser && currentUser.role.includes("admin")  && (
+            <>
+              <li
+                onClick={() => navigate("/user/process")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <IoMdBuild className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">İşlemler</span>}
+              </li>
+            </>
+          )}
+          {currentUser && currentUser.role.includes("admin")  && (
+            <>
+              <li
+                onClick={() => navigate("/user/announcements")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <IoNewspaperSharp className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Duyurular</span>}
+              </li>
+            </>
+          )}
+          {currentUser && currentUser.role.includes("admin") && (
+          
+            <>
+              <li
+                onClick={() => navigate("/user/logs")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Aktivite</span>}
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </div>

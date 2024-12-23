@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
 const router = express.Router();
 const {
   authMiddleware,
@@ -35,7 +36,9 @@ const upload = multer({
   },
 });
 // User Login Route
-router.post("/login", async (req, res) => {
+router.post("/login", 
+  createActivityLogger('login', 'user'),
+  async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -59,8 +62,7 @@ router.post("/login", async (req, res) => {
         role: user.role,
         permissions: user.permissions,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      process.env.JWT_SECRET
     );
 
     // Remove sensitive information before sending response
@@ -96,6 +98,7 @@ router.post(
   "/",
   authMiddleware,
   authorizeRoles(["manage_users"]),
+  createActivityLogger('create', 'user'),
   upload.single("profilePicture"),
   async (req, res) => {
     try {
@@ -172,6 +175,8 @@ router.put(
   authMiddleware,
   authorizeRoles(["manage_users"]),
   upload.single("profilePicture"),
+  createActivityLogger('update', 'user'),
+
   async (req, res) => {
     try {
       const { name, email, role, permissions } = req.body;
@@ -207,6 +212,8 @@ router.delete(
   "/:id",
   authMiddleware,
   authorizeRoles(["manage_users"]),
+  createActivityLogger('delete', 'user'),
+
   async (req, res) => {
     try {
       const user = await User.findByIdAndDelete(req.params.id);

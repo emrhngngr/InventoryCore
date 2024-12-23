@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     try {
       const response = await axios.post("http://localhost:5000/api/users/login", {
@@ -18,13 +17,28 @@ const LoginPage = () => {
 
       // Token'ı localStorage'da saklıyoruz
       localStorage.setItem("token", response.data.token);
-      console.log("Login Success:", response.data);
-      window.location.href = "/user/dashboard"; // Kullanıcıyı ana sayfaya yönlendiriyoruz
+
+      // Başarı mesajı göster
+      Swal.fire({
+        title: "Başarılı!",
+        text: "Başarıyla giriş yaptınız.",
+        icon: "success",
+        confirmButtonText: "Tamam",
+      });
+
+      // Kullanıcıyı yönlendiriyoruz
+      window.location.href = "/user/dashboard";
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Giriş sırasında bir hata oluştu."
-      );
-      console.error("Login Error:", err);
+      const errorMessage =
+        err.response?.data?.message || "Giriş sırasında bir hata oluştu.";
+
+      // Hata mesajı göster
+      Swal.fire({
+        title: "Hata!",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
     }
   };
 
@@ -68,12 +82,6 @@ const LoginPage = () => {
             Giriş Yap
           </button>
         </form>
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Hesabınız yok mu?{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
-            Kayıt Ol
-          </a>
-        </p>
       </div>
     </div>
   );

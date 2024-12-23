@@ -9,10 +9,13 @@ import AdminProcess from "./pages/Admin/AdminProcess";
 import AdminProducts from "./pages/Admin/AdminProducts";
 import AdminProfile from "./pages/Admin/AdminProfile";
 import AdminUsers from "./pages/Admin/AdminUsers";
+import AnnouncementsPage from "./pages/Admin/AnnouncementsPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
-import AnnouncementsPage from "./pages/Admin/AnnouncementsPage";
+import AdminLogs from "./pages/Admin/AdminLogs";
+import ServicePage from "./pages/ServicePage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -21,6 +24,8 @@ function App() {
         {/* Ortak Rotalar */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/services" element={<ServicePage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         {/* Müşteri Rotaları */}
         <Route path="/user/*" element={<CustomerRoute />}>
@@ -77,6 +82,14 @@ function App() {
             element={
               <AdminLayout>
                 <AnnouncementsPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="logs"
+            element={
+              <AdminLayout>
+                <AdminLogs />
               </AdminLayout>
             }
           />

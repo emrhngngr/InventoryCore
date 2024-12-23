@@ -1,0 +1,4 @@
+Bütün tablolar için sayfalama
+Kritik ve Gizlilik derecesi için bilgilendirme
+-Mail gönderme çalıştır.
+Profili düzenle

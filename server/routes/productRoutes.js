@@ -3,11 +3,12 @@ const router = express.Router();
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware')
+const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
 
 // Get all products with populated category
 router.get("/",
-  // authMiddleware, 
-  // authorizeRoles(['read_products']),
+  authMiddleware, 
+  authorizeRoles(['read_products']),
    async (req, res) => {
   try {
     const products = await Product.find().populate('category');
@@ -21,6 +22,7 @@ router.get("/",
 router.post("/", 
   authMiddleware, 
   authorizeRoles(['create_products']),
+  createActivityLogger('create', 'product'),
   async (req, res) => {
   const { name, category, dynamicAttributes, amount, criticalityDegree, privacyDegree } = req.body;
 
@@ -51,7 +53,8 @@ router.post("/",
 // Update a product
 router.put("/:id",
   authMiddleware, 
-  authorizeRoles(['update_products']),
+  authorizeRoles(['edit_products']),
+  createActivityLogger('update', 'product'),
    async (req, res) => {
   try {
     const { name, category, dynamicAttributes, amount,criticalityDegree, privacyDegree} = req.body;
@@ -91,6 +94,7 @@ router.put("/:id",
 router.delete("/:id",
   authMiddleware, 
   authorizeRoles(['delete_products']),
+  createActivityLogger('delete', 'product'),
    async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);

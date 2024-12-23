@@ -1,27 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import UserTable from '../../components/UserManagement/UserTable';
-import UserModal from '../../components/UserManagement/UserModal';
-import Button from '../../components/common/Button';
-import { FaSort, FaSortDown, FaSortUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import api from '../../api/api'
+import React, { useEffect, useState } from "react";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaSort,
+  FaSortDown,
+  FaSortUp,
+} from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
+import api from "../../api/api";
+import UserModal from "../../components/UserManagement/UserModal";
+import UserTable from "../../components/UserManagement/UserTable";
+import Button from "../../components/common/Button";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const serverBaseUrl = "http://localhost:5000"; // Backend'in temel URL'si
-  
+
   // Add array of users per page options
   const [usersPerPageOptions] = useState([5, 10, 20, 50, 100]);
   const [usersPerPage, setUsersPerPage] = useState(5);
 
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: 'ascending'
+    direction: "ascending",
   });
   const [newUser, setNewUser] = useState({
     name: "",
@@ -31,15 +40,15 @@ const UserManagement = () => {
     permissions: [],
     profilePictureFile: null,
     preview: null,
-    profilePicture: null // Existing profile picture URL
+    profilePicture: null, // Existing profile picture URL
   });
 
   const handleProfilePictureChange = (e) => {
     const { name, value, preview } = e.target;
-    setNewUser(prev => ({
+    setNewUser((prev) => ({
       ...prev,
       [name]: value,
-      preview: preview || prev.preview
+      preview: preview || prev.preview,
     }));
   };
   // Fetch current user
@@ -62,6 +71,7 @@ const UserManagement = () => {
   // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("token");
         const response = await api.get("http://localhost:5000/api/users", {
@@ -95,14 +105,14 @@ const UserManagement = () => {
   // Sorting users
   const getSortedUsers = (filteredUsers) => {
     let sortableUsers = [...filteredUsers];
-    
+
     if (sortConfig.key !== null) {
       sortableUsers.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
@@ -110,46 +120,45 @@ const UserManagement = () => {
     return sortableUsers;
   };
 
+  // Pagination calculations
+  const filteredUsers = getFilteredUsers();
+  const sortedUsers = getSortedUsers(filteredUsers);
+  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
 
-   // Pagination calculations
-   const filteredUsers = getFilteredUsers();
-   const sortedUsers = getSortedUsers(filteredUsers);
-   const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
- 
-   // Get current users for pagination
-   const getCurrentUsers = () => {
-     const indexOfLastUser = currentPage * usersPerPage;
-     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-     return sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
-   };
- 
-   // Pagination handlers
-   const nextPage = () => {
-     if (currentPage < totalPages) {
-       setCurrentPage(currentPage + 1);
-     }
-   };
- 
-   const prevPage = () => {
-     if (currentPage > 1) {
-       setCurrentPage(currentPage - 1);
-     }
-   };
- 
-   // Handle users per page change
-   const handleUsersPerPageChange = (e) => {
-     const newUsersPerPage = parseInt(e.target.value);
-     setUsersPerPage(newUsersPerPage);
-     
-     // Reset to first page when changing users per page
-     setCurrentPage(1);
-   };
+  // Get current users for pagination
+  const getCurrentUsers = () => {
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    return sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
+  };
+
+  // Pagination handlers
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Handle users per page change
+  const handleUsersPerPageChange = (e) => {
+    const newUsersPerPage = parseInt(e.target.value);
+    setUsersPerPage(newUsersPerPage);
+
+    // Reset to first page when changing users per page
+    setCurrentPage(1);
+  };
 
   // Sort request handler
   const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
     // Reset to first page when sorting
@@ -161,25 +170,27 @@ const UserManagement = () => {
     if (sortConfig.key !== key) {
       return <FaSort className="inline ml-1 opacity-50" />;
     }
-    return sortConfig.direction === 'ascending' 
-      ? <FaSortUp className="inline ml-1" /> 
-      : <FaSortDown className="inline ml-1" />;
+    return sortConfig.direction === "ascending" ? (
+      <FaSortUp className="inline ml-1" />
+    ) : (
+      <FaSortDown className="inline ml-1" />
+    );
   };
 
   // Handle input changes for new user
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    
+    const { name, value } = e.target; //burada files vardı
+
     // Handle file upload separately
-    if (name === 'profilePictureFile') {
+    if (name === "profilePictureFile") {
       setNewUser((prev) => ({
         ...prev,
         profilePictureFile: value,
-        preview: e.preview // Add preview URL
+        preview: e.preview, // Add preview URL
       }));
       return;
     }
-  
+
     setNewUser((prev) => ({
       ...prev,
       [name]: value,
@@ -212,12 +223,12 @@ const UserManagement = () => {
     setNewUser({
       name: user.name,
       email: user.email,
-      password: "", 
+      password: "",
       role: user.role,
       permissions: user.permissions || [],
-      profilePicture: user.profilePicture 
-      ? `${serverBaseUrl}/${user.profilePicture}` // Profil fotoğrafının tam URL'sini oluşturun
-      : null, // Profil fotoğrafı yoksa null      preview: null, // Düzenleme sırasında önizleme sıfırlanır
+      profilePicture: user.profilePicture
+        ? `${serverBaseUrl}/${user.profilePicture}` // Profil fotoğrafının tam URL'sini oluşturun
+        : null, // Profil fotoğrafı yoksa null      preview: null, // Düzenleme sırasında önizleme sıfırlanır
     });
     setIsModalOpen(true);
   };
@@ -236,31 +247,37 @@ const UserManagement = () => {
 
   // Submit user (create/update)
   const handleSubmitUser = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newUser.email)) {
+      toast.error("Lütfen geçerli bir e-posta adresi girin!");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("token");
       const formData = new FormData();
-      
+
       // Append all user data
-      formData.append('name', newUser.name);
-      formData.append('email', newUser.email);
-      formData.append('password', newUser.password);
-      formData.append('role', newUser.role);
-      
+      formData.append("name", newUser.name);
+      formData.append("email", newUser.email);
+      formData.append("password", newUser.password);
+      formData.append("role", newUser.role);
+
       // Append permissions
       newUser.permissions.forEach((permission, index) => {
         formData.append(`permissions[${index}]`, permission);
       });
-  
+
       // Append profile picture if selected
       if (newUser.profilePictureFile) {
-        formData.append('profilePicture', newUser.profilePictureFile);
+        formData.append("profilePicture", newUser.profilePictureFile);
       }
-  
+
       const headers = {
         Authorization: token,
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       };
-  
+
       let response;
       if (editingUser) {
         // Update existing user
@@ -269,37 +286,57 @@ const UserManagement = () => {
           formData,
           { headers }
         );
-  
+
         // Update users list
         setUsers((prev) =>
           prev.map((user) =>
             user._id === editingUser._id ? response.data : user
           )
         );
+        Swal.fire({
+          icon: "success",
+          title: "Kullanıcı Güncellendi!",
+          confirmButtonText: "Tamam",
+          timer: 3000,
+        });
       } else {
         // Create new user
-        response = await api.post(
-          "http://localhost:5000/api/users",
-          formData,
-          { headers }
-        );
-  
+        response = await api.post("http://localhost:5000/api/users", formData, {
+          headers,
+        });
+
         // Add new user to list
         setUsers((prev) => [...prev, response.data]);
+        Swal.fire({
+          icon: "success",
+          title: "Yeni Kullanıcı Eklendi!",
+          confirmButtonText: "Tamam",
+          timer: 3000,
+        });
       }
-  
+
       // Reset form and close modal
       resetForm();
       setIsModalOpen(false);
     } catch (error) {
+      toast.error("Kullanıcı kaydedilirken bir hata oluştu");
       console.error("Error saving user:", error);
-      alert("Kullanıcı kaydedilirken bir hata oluştu");
     }
   };
 
   // Handle user deletion
   const handleDeleteUser = async (userId) => {
-    if (window.confirm("Bu kullanıcıyı silmek istediğinizden emin misiniz?")) {
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+    if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
         await api.delete(`http://localhost:5000/api/users/${userId}`, {
@@ -311,15 +348,28 @@ const UserManagement = () => {
 
         // Remove user from state
         setUsers((prev) => prev.filter((user) => user._id !== userId));
+        Swal.fire({
+          icon: "success",
+          title: "Kullanıcı Silindi!",
+          confirmButtonText: "Tamam",
+          timer: 3000,
+        });
       } catch (error) {
         console.error("Error deleting user:", error);
-        alert("Kullanıcı silinirken bir hata oluştu");
+        Swal.fire({
+          icon: "error",
+          title: "Hata Oluştu",
+          text: "Kullanıcı silinirken bir hata oluştu.",
+          confirmButtonText: "Tamam",
+          timer: 3000,
+        });
       }
     }
   };
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer />
       <div className="bg-white shadow-md rounded-lg">
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="text-xl font-bold text-gray-800">
@@ -341,12 +391,13 @@ const UserManagement = () => {
             </Button>
           </div>
         </div>
-
         {loading ? (
-          <div className="text-center py-4">Yükleniyor...</div>
+          <div className="flex justify-center items-center py-4">
+            <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+          </div>
         ) : (
           <>
-            <UserTable 
+            <UserTable
               currentUsers={getCurrentUsers()}
               currentUser={currentUser}
               requestSort={requestSort}
@@ -354,18 +405,21 @@ const UserManagement = () => {
               handleEditClick={handleEditClick}
               handleDeleteUser={handleDeleteUser}
             />
-            
+
             {/* Pagination Controls */}
             <div className="flex justify-between items-center p-4 border-t">
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-600">
-                  Sayfa {currentPage} / {totalPages} 
+                  Sayfa {currentPage} / {totalPages}
                   {` (Toplam ${filteredUsers.length} kullanıcı)`}
                 </div>
-                
+
                 {/* Users per page selector */}
                 <div className="flex items-center space-x-2">
-                  <label htmlFor="users-per-page" className="text-sm text-gray-600">
+                  <label
+                    htmlFor="users-per-page"
+                    className="text-sm text-gray-600"
+                  >
                     Sayfa başına:
                   </label>
                   <select
@@ -382,19 +436,19 @@ const UserManagement = () => {
                   </select>
                 </div>
               </div>
-              
+
               <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  onClick={prevPage} 
+                <Button
+                  variant="outline"
+                  onClick={prevPage}
                   disabled={currentPage === 1}
                   className="flex items-center"
                 >
                   <FaChevronLeft className="mr-2" /> Önceki
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={nextPage} 
+                <Button
+                  variant="outline"
+                  onClick={nextPage}
                   disabled={currentPage === totalPages}
                   className="flex items-center"
                 >
@@ -406,7 +460,7 @@ const UserManagement = () => {
         )}
       </div>
 
-      <UserModal 
+      <UserModal
         isOpen={isModalOpen}
         onClose={() => {
           resetForm();
@@ -420,7 +474,7 @@ const UserManagement = () => {
         handleRoleChange={handleRoleChange}
         togglePermission={togglePermission}
         handleSubmitUser={handleSubmitUser}
-        handleProfilePictureChange ={handleProfilePictureChange}
+        handleProfilePictureChange={handleProfilePictureChange}
       />
     </div>
   );
@@ -430,30 +484,30 @@ export default UserManagement;
 
 const PERMISSION_CONFIG = [
   {
-      group: "Ürünler",
-      permissions: [
-        { key: "read_products", label: "Ürünleri Görüntüleme" },
-        { key: "create_products", label: "Ürün Ekleme" },
-        { key: "edit_products", label: "Ürün Düzenleme" },
-        { key: "delete_products", label: "Ürün Silme" },
-      ],
-    },
-    {
-      group: "Kategoriler",
-      permissions: [
-        { key: "read_categories", label: "Kategorileri Görüntüleme" },
-        { key: "create_categories", label: "Kategoriler Ekleme" },
-        { key: "edit_categories", label: "Kategoriler Düzenleme" },
-        { key: "delete_categories", label: "Kategoriler Silme" },
-      ],
-    },
-    {
-      group: "Kullanıcılar",
-      permissions: [
-        { key: "read_users", label: "Kullanıcıları Görüntüleme" },
-        { key: "manage_users", label: "Kullanıcı Yönetimi" },
-      ],
-    }
+    group: "Ürünler",
+    permissions: [
+      { key: "read_products", label: "Ürünleri Görüntüleme" },
+      { key: "create_products", label: "Ürün Ekleme" },
+      { key: "edit_products", label: "Ürün Düzenleme" },
+      { key: "delete_products", label: "Ürün Silme" },
+    ],
+  },
+  {
+    group: "Kategoriler",
+    permissions: [
+      { key: "read_categories", label: "Kategorileri Görüntüleme" },
+      { key: "create_categories", label: "Kategoriler Ekleme" },
+      { key: "edit_categories", label: "Kategoriler Düzenleme" },
+      { key: "delete_categories", label: "Kategoriler Silme" },
+    ],
+  },
+  {
+    group: "Kullanıcılar",
+    permissions: [
+      { key: "read_users", label: "Kullanıcıları Görüntüleme" },
+      { key: "manage_users", label: "Kullanıcı Yönetimi" },
+    ],
+  },
 ];
 
 const ROLE_PERMISSIONS = {

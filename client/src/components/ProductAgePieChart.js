@@ -1,19 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
-} from 'recharts';
-import { 
-  AlertCircle, 
-  RefreshCw, 
-  CheckCircle 
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api/api';
+import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import api from "../api/api";
 
 const ProductAgePieChart = () => {
   const [products, setProducts] = useState([]);
@@ -44,30 +33,32 @@ const ProductAgePieChart = () => {
       return new Date(updatedAt) < oneWeekAgo;
     };
 
-    const oldProductsCount = products.filter(product => isProductOld(product.updatedAt)).length;
+    const oldProductsCount = products.filter((product) =>
+      isProductOld(product.updatedAt)
+    ).length;
     const newProductsCount = products.length - oldProductsCount;
 
     setChartData([
-      { 
-        name: 'Güncel Ürünler', 
-        value: newProductsCount, 
-        color: '#34D399', 
-        status: 'new',
-        icon: CheckCircle
-      }, 
-      { 
-        name: 'Eski Ürünler', 
-        value: oldProductsCount, 
-        color: '#F87171', 
-        status: 'old',
-        icon: AlertCircle
-      }    
+      {
+        name: "Güncel Ürünler",
+        value: newProductsCount,
+        color: "#34D399",
+        status: "new",
+        icon: CheckCircle,
+      },
+      {
+        name: "Eski Ürünler",
+        value: oldProductsCount,
+        color: "#F87171",
+        status: "old",
+        icon: AlertCircle,
+      },
     ]);
   }, [products]);
 
   const handlePieClick = (data) => {
-    navigate('/user/process', { 
-      state: { initialFilter: data.payload.status } 
+    navigate("/user/process", {
+      state: { initialFilter: data.payload.status },
     });
   };
 
@@ -75,17 +66,22 @@ const ProductAgePieChart = () => {
     if (active && payload && payload.length) {
       const data = payload[0];
       const Icon = data.payload.icon;
-      
+
       return (
         <div className="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
           <div className="flex items-center space-x-3">
-            <Icon 
-              className={`w-6 h-6 ${data.payload.status === 'new' ? 'text-green-500' : 'text-red-500'}`} 
+            <Icon
+              className={`w-6 h-6 ${
+                data.payload.status === "new"
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
             />
             <div>
               <p className="font-bold text-gray-700">{data.name}</p>
               <p className="text-sm text-gray-500">
-                {data.value} Ürün ({((data.value / products.length) * 100).toFixed(1)}%)
+                {data.value} Ürün (
+                {((data.value / products.length) * 100).toFixed(1)}%)
               </p>
             </div>
           </div>
@@ -100,15 +96,19 @@ const ProductAgePieChart = () => {
       {chartData.map((entry) => {
         const Icon = entry.icon;
         return (
-          <div 
-            key={entry.name} 
+          <div
+            key={entry.name}
             className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-all"
-            onClick={() => navigate('/user/process', { 
-              state: { initialFilter: entry.status } 
-            })}
+            onClick={() =>
+              navigate("/user/process", {
+                state: { initialFilter: entry.status },
+              })
+            }
           >
-            <Icon 
-              className={`w-6 h-6 ${entry.status === 'new' ? 'text-green-500' : 'text-red-500'}`} 
+            <Icon
+              className={`w-6 h-6 ${
+                entry.status === "new" ? "text-green-500" : "text-red-500"
+              }`}
             />
             <span className="text-sm font-medium text-gray-700">
               {entry.name}
@@ -133,7 +133,7 @@ const ProductAgePieChart = () => {
         <RefreshCw className="w-5 h-5 text-blue-500" />
         <span>Ürün Güncelleme Durumu</span>
       </h2>
-      
+
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
@@ -151,8 +151,8 @@ const ProductAgePieChart = () => {
             paddingAngle={5}
           >
             {chartData.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
+              <Cell
+                key={`cell-${index}`}
                 fill={entry.color}
                 className="hover:opacity-80 transition-opacity"
               />
@@ -161,7 +161,7 @@ const ProductAgePieChart = () => {
           <Tooltip content={<CustomTooltip />} />
         </PieChart>
       </ResponsiveContainer>
-      
+
       <CustomLegend />
     </div>
   );

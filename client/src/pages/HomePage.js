@@ -1,26 +1,100 @@
-import React from 'react'
-import Navbar from '../components/navbar.js'
+import { BarChart3, Box, Settings, Users } from "lucide-react";
+import React from "react";
+import Svg from "../assets/svg/undraw_dashboard_p93p.svg";
+import Navbar from "../components/navbar";
 
 const HomePage = () => {
-  return (
-    <div>
-      <Navbar/>
-      <section className="relative pb-36 pt-44" id="home">
-                <div className="absolute rotate-45 border border-dashed size-[500px] border-t-slate-300 dark:border-t-zink-500 border-l-slate-300 dark:border-l-zink-500 border-r-slate-700 dark:border-r-zink-400 border-b-slate-700 dark:border-b-zink-400 -bottom-[250px] rounded-full ltr:right-40 rtl:left-40 z-10 hidden lg:block"></div>
-                <div className="absolute rotate-45 border border-dashed size-[700px] border-t-slate-300 dark:border-t-zink-500 border-l-slate-300 dark:border-l-zink-500 border-r-slate-700 dark:border-r-zink-400 border-b-slate-700 dark:border-b-zink-400 -bottom-[350px] rounded-full ltr:right-16 rtl:left-16 z-10 hidden 2xl:block"></div>
-                <div className="container 2xl:max-w-[87.5rem] px-4 mx-auto">
-                    <div className="grid grid-cols-12 2xl:grid-cols-2">
-                        <div className="col-span-12 lg:col-span-7 2xl:col-span-1">
-                            <h1 className="mb-8 !leading-relaxed md:text-5xl">Effective Management of Large Projects at <span className="relative inline-block px-2 mx-2 before:block before:absolute before:-inset-1 before:-skew-y-6 before:bg-sky-50 dark:before:bg-sky-500/20 before:rounded-md before:backdrop-blur-xl"><span className="relative text-sky-500">Tailwick</span></span></h1>
-                            <p className="mb-6 text-lg text-slate-500 dark:text-zink-200">Effective professional services project management means having a firm grasp on the scope, budget, resources, personnel, and timeline dedicated to a project. An effective project manager is able to manage unplanned issues while keeping the ball rolling on company goals and tasks in progress.</p>
-                            <div className="flex items-center gap-2">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-      HomePage</div>
-  )
-}
+  const features = [
+    {
+      icon: <Box className="w-6 h-6" />,
+      title: "Stok Yönetimi",
+      description: "Kolay ve etkili stok takibi",
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: "Analitik",
+      description: "Detaylı raporlar ve grafikler",
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: "Çoklu Kullanıcı",
+      description: "Ekip yönetimi ve yetkilendirme",
+    },
+    {
+      icon: <Settings className="w-6 h-6" />,
+      title: "Özelleştirme",
+      description: "İhtiyaçlarınıza göre ayarlamalar",
+    },
+  ];
 
-export default HomePage
+  return (
+    <div className="bg-white">
+      {/* Navbar */}
+      <Navbar
+        backgroundColor="transparent"
+        hoverBackgroundColor="white"
+        hoverTextColor="#313131"
+        textColor="black"
+      />
+
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-black">
+        <div className="flex items-center justify-between pt-20 pb-16 ">
+          {/* Left content */}
+          <div
+            className="w-1/2 flex flex-col justify-center"
+            style={{ height: "calc(100svh - 16rem)" }}
+          >
+            <h1 className="text-5xl  font-bold leading-tight mb-6">
+              ISO 27001 ile özelleştirilmiş Envanter Sistemi
+            </h1>
+            <p className="text-xl mb-8">
+              ISO 27001 sertifikalı envanter yönetim sistemi ile işletmenizin
+              envanterini modernleştirin ve verimliliği artırın.
+            </p>
+            <div className="space-x-4">
+              <button className="bg-[#6c63ff] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#8a84fc] transition-colors">
+                İletişime Geçin
+              </button>
+              <button className="border-2 border-white  px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                Daha Fazlası
+              </button>
+            </div>
+          </div>
+
+          {/* Right content - SVG */}
+          <div className="w-1/2 flex justify-end">
+            <img
+              src={Svg}
+              alt="Dashboard Illustration"
+              className="w-4/5 h-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section - Kept unchanged */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12 text-black">
+          Servislerimiz
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className="p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-gray-600">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HomePage;

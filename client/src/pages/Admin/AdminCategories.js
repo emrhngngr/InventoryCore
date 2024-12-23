@@ -1,10 +1,12 @@
-import api from '../../api/api'
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import api from "../../api/api";
 import {
   deleteCategory,
   fetchCategories,
   updateCategory,
 } from "../../services/categoryService";
+import ClipLoader from "react-spinners/ClipLoader"; // React Spinners
 
 const AdminClasses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +14,7 @@ const AdminClasses = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
   const [attributes, setAttributes] = useState([""]);
 
   const openModal = () => setIsModalOpen(true);
@@ -24,12 +27,14 @@ const AdminClasses = () => {
   };
 
   const getCategories = async () => {
+    setLoading(true);
     try {
       const data = await fetchCategories();
       setCategories(data);
     } catch (error) {
       console.error(error.message);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -63,15 +68,42 @@ const AdminClasses = () => {
   };
 
   const handleRemoveCategory = async (categoryId) => {
-    if (window.confirm("Bu kategoriyi silmek istediğinizden emin misiniz?")) {
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+    if (result.isConfirmed) {
       try {
         await deleteCategory(categoryId);
         getCategories();
-        alert("Kategori başarıyla silindi!");
+        Swal.fire({
+          title: "Silindi!",
+          text: "Kategori başarıyla silindi.",
+          icon: "success",
+          confirmButtonText: "Tamam", 
+        });
       } catch (error) {
+        Swal.fire({
+          title: "Hata!",
+          text: "Kategori silinirken bir hata oluştu.",
+          icon: "error",
+          confirmButtonText: "Tamam",
+        });
         console.error("Kategori silinirken bir hata oluştu:", error);
-        alert("Kategori silinirken bir hata oluştu!");
       }
+    } else {
+      Swal.fire({
+        title: "İptal Edildi",
+        text: "Kategori silme işlemi iptal edildi.",
+        icon: "info",
+        confirmButtonText: "Tamam",
+      });
     }
   };
 
@@ -85,7 +117,12 @@ const AdminClasses = () => {
     );
 
     if (isCategoryExist) {
-      alert("Bu kategori zaten mevcut!");
+      Swal.fire({
+        title: "İptal Edildi",
+        text: "Bu kategori zaten mevcut!",
+        icon: "info",
+        confirmButtonText: "Tamam",
+      });
       return;
     }
 
@@ -97,19 +134,35 @@ const AdminClasses = () => {
           attributes,
         };
         await updateCategory(currentCategory._id, updatedCategory);
-        alert("Kategori başarıyla güncellendi!");
+        Swal.fire({
+          title: "Başarılı!",
+          text: "Kategori başarıyla güncellendi.",
+          icon: "success",
+          confirmButtonText: "Tamam", 
+        });
       } else {
         // Add new category
         const newCategory = { name: categoryName, attributes };
         await api.post("http://localhost:5000/api/categories", newCategory);
-        alert("Kategori başarıyla eklendi!");
+        Swal.fire({
+          title: "Başarılı!",
+          text: "Kategori başarıyla eklendi.",
+          icon: "success",
+          confirmButtonText: "Tamam", 
+        });
       }
 
       getCategories();
       closeModal();
     } catch (err) {
       console.error("İşlem sırasında bir hata oluştu:", err);
-      alert(err.response?.data?.message || "İşlem sırasında bir hata oluştu!");
+      alert(err.response?.data?.message || "");
+      Swal.fire({
+        title: "Hata!",
+        text: "İşlem sırasında bir hata oluştu!",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
     }
   };
   return (
@@ -168,6 +221,11 @@ const AdminClasses = () => {
             ))}
           </tbody>
         </table>
+        {loading && (
+       <div className="flex justify-center items-center py-4">
+         <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+       </div>
+      )}
       </div>
 
       {isModalOpen && (

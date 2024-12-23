@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../../api/api";
-import { useLocation } from 'react-router-dom';
-
 
 const AdminProcess = () => {
   const [products, setProducts] = useState([]);
@@ -21,7 +20,7 @@ const AdminProcess = () => {
   const [dynamicAttributes, setDynamicAttributes] = useState({});
   const [totalValue, setTotalValue] = useState(0);
   const location = useLocation();
-  const [productAgeFilter, setProductAgeFilter] = useState('all');
+  const [productAgeFilter, setProductAgeFilter] = useState("all");
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -59,9 +58,12 @@ const AdminProcess = () => {
     if (location.state && location.state.initialFilter) {
       setProductAgeFilter(location.state.initialFilter);
     }
-  }, [currentProduct.privacyDegree, currentProduct.criticalityDegree, location.state]);
+  }, [
+    currentProduct.privacyDegree,
+    currentProduct.criticalityDegree,
+    location.state,
+  ]);
 
-  
   const openEditModal = (product) => {
     const category = categories.find((cat) => cat._id === product.category._id);
 
@@ -186,51 +188,51 @@ const AdminProcess = () => {
 
   return (
     <div className="p-4">
-    <h1 className="text-2xl font-bold mb-4">Ürün Onaylama</h1>
+      <h1 className="text-2xl font-bold mb-4">Ürün Onaylama</h1>
 
-    {/* Product Age Filter */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Ürün Güncelleme Filtresi
-      </label>
-      <select
-        value={productAgeFilter}
-        onChange={(e) => setProductAgeFilter(e.target.value)}
-        className="w-full px-3 py-2 border rounded-md"
-      >
-        <option value="all">Tüm Ürünler</option>
-        <option value="new">Güncel Ürünler</option>
-        <option value="old">Güncellenmesi Gereken Ürünler</option>
-      </select>
-    </div>
+      {/* Product Age Filter */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Ürün Güncelleme Filtresi
+        </label>
+        <select
+          value={productAgeFilter}
+          onChange={(e) => setProductAgeFilter(e.target.value)}
+          className="w-full px-3 py-2 border rounded-md"
+        >
+          <option value="all">Tüm Ürünler</option>
+          <option value="new">Güncel Ürünler</option>
+          <option value="old">Güncellenmesi Gereken Ürünler</option>
+        </select>
+      </div>
 
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              Ürün Adı
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Oluşturulma Tarihi
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Güncellenme Tarihi
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Kritiklik Derecesi
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Gizlilik Derecesi
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Varlık Değeri
-            </th>
-            <th scope="col" className="px-6 py-3">
-              İşlemler
-            </th>
-          </tr>
-        </thead>
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-sm text-left text-gray-500">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                Ürün Adı
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Oluşturulma Tarihi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Güncellenme Tarihi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Kritiklik Derecesi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Gizlilik Derecesi
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Varlık Değeri
+              </th>
+              <th scope="col" className="px-6 py-3">
+                İşlemler
+              </th>
+            </tr>
+          </thead>
           <tbody>
             {filteredProducts.map((product) => (
               <tr

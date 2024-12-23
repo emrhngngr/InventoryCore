@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/api";
+import ClipLoader from "react-spinners/ClipLoader"; // React Spinners
+import { ToastContainer, toast } from "react-toastify"; // Toastify
+import Swal from "sweetalert2"; // SweetAlert2
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -8,6 +11,7 @@ const AdminProducts = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [dynamicAttributes, setDynamicAttributes] = useState({});
+  const [loading, setLoading] = useState(false); // Loading state
   const [searchTerm, setSearchTerm] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [currentProduct, setCurrentProduct] = useState({
@@ -40,6 +44,7 @@ const AdminProducts = () => {
   // Fetch products and categories
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const [productsResponse, categoriesResponse] = await Promise.all([
           api.get("http://localhost:5000/api/products"),
@@ -48,7 +53,10 @@ const AdminProducts = () => {
         setProducts(productsResponse.data);
         setCategories(categoriesResponse.data);
       } catch (error) {
+        toast.error("Veriler alınırken bir hata oluştu."); // Toastify Error
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -137,13 +145,13 @@ const AdminProducts = () => {
       currentProduct.privacyDegree > 5 ||
       currentProduct.criticalityDegree > 5
     ) {
-      alert(
-        "Kritiklik derecesi ve gizlilik derecesi en az 1 ve en fazla 5 olmalıdır."
+      toast.warn(
+        "Kritiklik derecesi ve gizlilik derecesi 1 ile 5 arasında olmalıdır."
       );
       return;
     }
     if (currentProduct.amount < 0) {
-      alert("Adet negatif bir değer olamaz.");
+      toast.warn("Adet negatif bir değer olamaz.");
       return;
     }
 
@@ -161,6 +169,11 @@ const AdminProducts = () => {
         setProducts((prev) =>
           prev.map((p) => (p._id === response.data._id ? response.data : p))
         );
+        Swal.fire({
+          icon: "success",
+          title: "Tebrikler!",
+          text: "Ürün Güncellemesi Başarılı!",
+        });
       } else {
         // Create new product
         const response = await api.post("http://localhost:5000/api/products", {
@@ -169,6 +182,11 @@ const AdminProducts = () => {
         });
 
         setProducts((prev) => [...prev, response.data]);
+        Swal.fire({
+          icon: "success",
+          title: "Tebrikler!",
+          text: "Ürün Ekleme Başarılı!",
+        });
       }
 
       setIsModalOpen(false);
@@ -183,19 +201,56 @@ const AdminProducts = () => {
       setSelectedCategory(null);
       setDynamicAttributes({});
     } catch (error) {
+      toast.error("Ürün kaydedilirken bir hata oluştu.");
       console.error("Error saving product:", error);
     }
+
   };
 
   // Delete product
   const deleteProduct = async (productId) => {
-    try {
-      await api.delete(`http://localhost:5000/api/products/${productId}`);
-
-      // Remove product from list
-      setProducts((prev) => prev.filter((p) => p._id !== productId));
-    } catch (error) {
-      console.error("Error deleting product:", error);
+    // Kullanıcıdan silme onayı al
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        // Silme işlemini gerçekleştir
+        await api.delete(`http://localhost:5000/api/products/${productId}`);
+        setProducts((prev) => prev.filter((p) => p._id !== productId)); // Listeden kaldır
+  
+        // Başarı mesajı göster
+        Swal.fire({
+          title: "Silindi!",
+          text: "Ürün başarıyla silindi.",
+          icon: "success",
+          confirmButtonText: "Tamam",
+        });
+      } catch (error) {
+        // Hata durumunda mesaj göster
+        Swal.fire({
+          title: "Hata!",
+          text: "Ürün silinirken bir hata oluştu.",
+          icon: "error",
+          confirmButtonText: "Tamam",
+        });
+      }
+    } else {
+      // İptal durumunda bilgilendirme
+      Swal.fire({
+        title: "İptal Edildi",
+        text: "Ürün silme işlemi iptal edildi.",
+        icon: "info",
+        confirmButtonText: "Tamam",
+      });
     }
   };
 
@@ -230,6 +285,7 @@ const AdminProducts = () => {
 
   return (
     <div className="p-4">
+       <ToastContainer />
       {/* Search and Filter Section */}
       <div className="w-full flex justify-between items-center mb-4 gap-4">
         {/* Search Input */}
@@ -240,7 +296,7 @@ const AdminProducts = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Ürün ara..."
             className="w-full px-3 py-2 border rounded-md"
-          />
+            />
         </div>
 
         {/* Category Filter */}
@@ -249,7 +305,7 @@ const AdminProducts = () => {
             value={selectedTableCategory}
             onChange={(e) => setSelectedTableCategory(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
-          >
+            >
             <option value="">Tüm Kategoriler</option>
             {categories.map((category) => (
               <option key={category._id} value={category._id}>
@@ -265,7 +321,7 @@ const AdminProducts = () => {
             <button
               onClick={openAddModal}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
+              >
               Ürün Ekle
             </button>
           </>
@@ -295,7 +351,7 @@ const AdminProducts = () => {
                 }
                 placeholder="Ürün adını girin"
                 className="w-full px-3 py-2 border rounded-md"
-              />
+                />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -312,7 +368,7 @@ const AdminProducts = () => {
                   }))
                 }
                 className="w-full px-3 py-2 border rounded-md"
-              />
+                />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -331,7 +387,7 @@ const AdminProducts = () => {
                 }
                 placeholder="1-5"
                 className="w-full px-3 py-2 border rounded-md"
-              />
+                />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -350,7 +406,7 @@ const AdminProducts = () => {
                 }
                 placeholder="1-5"
                 className="w-full px-3 py-2 border rounded-md"
-              />
+                />
             </div>
 
             {/* Category Selection */}
@@ -362,7 +418,7 @@ const AdminProducts = () => {
                 onChange={(e) => handleCategoryChange(e.target.value)}
                 value={currentProduct.category}
                 className="w-full px-3 py-2 border rounded-md"
-              >
+                >
                 <option value="">Kategori seçin</option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>
@@ -391,7 +447,7 @@ const AdminProducts = () => {
                       }
                       placeholder={`${attr} girin`}
                       className="w-full px-3 py-2 border rounded-md"
-                    />
+                      />
                   </div>
                 ))}
               </div>
@@ -402,7 +458,7 @@ const AdminProducts = () => {
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
+                >
                 İptal
               </button>
               <button
@@ -451,8 +507,8 @@ const AdminProducts = () => {
           <tbody>
             {filteredProducts.map((product) => (
               <tr
-                key={product._id}
-                className="bg-white border-b hover:bg-gray-50"
+              key={product._id}
+              className="bg-white border-b hover:bg-gray-50"
               >
                 <td className="px-6 py-4 font-medium text-gray-900">
                   {product.name}
@@ -482,7 +538,7 @@ const AdminProducts = () => {
                         <button
                           onClick={() => openEditModal(product)}
                           className="text-blue-600 hover:underline"
-                        >
+                          >
                           Düzenle
                         </button>
                       </>
@@ -493,7 +549,7 @@ const AdminProducts = () => {
                         <button
                           onClick={() => deleteProduct(product._id)}
                           className="text-red-600 hover:underline"
-                        >
+                          >
                           Sil
                         </button>
                       </>
@@ -503,6 +559,11 @@ const AdminProducts = () => {
             ))}
           </tbody>
         </table>
+      {loading && (
+       <div className="flex justify-center items-center py-4">
+         <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+       </div>
+      )}
       </div>
     </div>
   );

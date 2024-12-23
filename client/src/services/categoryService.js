@@ -1,6 +1,5 @@
-import axios from 'axios';
-import api from '../api/api'
-const BASE_URL = 'http://localhost:5000/api/categories';
+import api from "../api/api";
+const BASE_URL = "http://localhost:5000/api/categories";
 
 export const fetchCategories = async () => {
   const response = await api.get(BASE_URL);

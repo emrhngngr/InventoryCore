@@ -30,6 +30,8 @@ const authMiddleware = async (req, res, next) => {
 const authorizeRoles = (requiredPermissions = []) => {
     return async (req, res, next) => {
         try {
+            
+            console.log("req.user ==> ", req.user); 
             if (!req.user) {
                 return res.status(401).json({ message: "Yetkisiz erişim" });
             }

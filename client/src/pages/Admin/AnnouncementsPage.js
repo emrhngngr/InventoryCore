@@ -148,20 +148,19 @@ const AnnouncementsPage = () => {
                   >
                     <Pen size={16} />
                   </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleActivate(announcement._id)}
-                      disabled={announcement.isActive}
-                    >
-                      Aktif Yap
-                    </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleActivate(announcement._id)}
+                    disabled={announcement.isActive}
+                  >
+                    Aktif Yap
+                  </Button>
                   <Button
                     onClick={() => handleDelete(announcement._id)}
                     variant="destructive"
                   >
                     Sil
                   </Button>
-                  
                 </>
               )}
             </div>
