@@ -40,7 +40,6 @@ const upload = multer({
 // User Login Route
 router.post(
   "/login",
-  createActivityLogger("login", "user"),
   async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -63,7 +62,7 @@ router.post(
           id: user._id,
           email: user.email,
           role: user.role,
-          permissions: user.permissions,
+          // permissions: user.permissions,
         },
         process.env.JWT_SECRET
       );
@@ -86,7 +85,7 @@ router.post(
 router.get(
   "/",
   authMiddleware,
-  authorizeRoles(["read_users", "manage_users"]),
+  // authorizeRoles(["read_users", "manage_users"]),
   async (req, res) => {
     try {
       // Exclude password when sending user data
@@ -101,12 +100,12 @@ router.get(
 router.post(
   "/",
   authMiddleware,
-  authorizeRoles(["manage_users"]),
+  // authorizeRoles(["manage_users"]),
   createActivityLogger("create", "user"),
   upload.single("profilePicture"),
   async (req, res) => {
     try {
-      const { name, email, password, role, permissions } = req.body;
+      const { name, email, password, role} = req.body;
 
       // Check if user already exists
       if (req.user.role !== "admin" && role === "admin") {
@@ -130,19 +129,21 @@ router.post(
         password: hashedPassword,
         role,
         profilePicture: req.file ? req.file.path : null,
-        permissions:
-          role === "admin"
-            ? [
-                "read_products",
-                "create_products",
-                "edit_products",
-                "delete_products",
-                "read_users",
-                "manage_users",
-              ]
-            : permissions,
+        // permissions:
+        //   role === "admin"
+        //     ? [
+        //         "read_products",
+        //         "create_products",
+        //         "edit_products",
+        //         "delete_products",
+        //         "read_users",
+        //         "manage_users",
+        //       ]
+        //     : permissions,
       });
 
+
+      console.log("newUser ==> ", newUser);
       await newUser.save();
 
       // Remove password before sending response
@@ -177,14 +178,14 @@ router.get("/me", authMiddleware, async (req, res) => {
 router.put(
   "/:id",
   authMiddleware,
-  authorizeRoles(["manage_users"]),
+  // authorizeRoles(["manage_users"]),
   upload.single("profilePicture"),
   createActivityLogger("update", "user"),
 
   async (req, res) => {
     try {
-      const { name, email, role, permissions } = req.body;
-      const updateData = { name, email, role, permissions };
+      const { name, email, role} = req.body;
+      const updateData = { name, email, role};
 
       if (req.file) {
         updateData.profilePicture = req.file.path;
@@ -214,7 +215,7 @@ router.put(
 router.delete(
   "/:id",
   authMiddleware,
-  authorizeRoles(["manage_users"]),
+  // authorizeRoles(["manage_users"]),
   createActivityLogger("delete", "user"),
 
   async (req, res) => {

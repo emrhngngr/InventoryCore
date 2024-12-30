@@ -61,19 +61,19 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             {isSidebarOpen && <span className="ml-4">Ana Sayfa</span>}
           </li>
           {currentUser &&
-            currentUser.permissions.includes("create_products") && (
+            currentUser.role.includes("admin") && (
               <>
                 <li
                   onClick={() => navigate("/user/products")}
                   className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
                 >
                   <FaShoppingBag className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Ürünler</span>}
+                  {isSidebarOpen && <span className="ml-4">Varlıklar</span>}
                 </li>
               </>
             )}
           {currentUser &&
-            currentUser.permissions.includes("read_categories") && (
+            currentUser.role.includes("admin") && (
               <>
                 <li
                   onClick={() => navigate("/user/classes")}
@@ -84,7 +84,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 </li>
               </>
             )}
-          {currentUser && currentUser.permissions.includes("read_users") && (
+          {currentUser && (currentUser.role.includes("human resources") || currentUser.role.includes("admin")) && (
             <>
               <li
                 onClick={() => navigate("/user/users")}
@@ -126,6 +126,18 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               >
                 <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">Aktivite</span>}
+              </li>
+            </>
+          )}
+          {currentUser && currentUser.role.includes("admin") && (
+          
+            <>
+              <li
+                onClick={() => navigate("/user/statistics")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">statistics</span>}
               </li>
             </>
           )}

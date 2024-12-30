@@ -8,7 +8,7 @@ const { createActivityLogger } = require('../middlewares/activityLogMiddleware')
 // Get all products with populated category
 router.get("/",
   authMiddleware, 
-  authorizeRoles(['read_products']),
+  // authorizeRoles(['read_products']),
    async (req, res) => {
   try {
     const products = await Product.find().populate('category');
@@ -21,7 +21,7 @@ router.get("/",
 // Create a new product
 router.post("/", 
   authMiddleware, 
-  authorizeRoles(['create_products']),
+  // authorizeRoles(['create_products']),
   createActivityLogger('create', 'product'),
   async (req, res) => {
   const { name, category, dynamicAttributes, amount, criticalityDegree, privacyDegree } = req.body;
@@ -53,7 +53,7 @@ router.post("/",
 // Update a product
 router.put("/:id",
   authMiddleware, 
-  authorizeRoles(['edit_products']),
+  // authorizeRoles(['edit_products']),
   createActivityLogger('update', 'product'),
    async (req, res) => {
   try {
@@ -93,7 +93,7 @@ router.put("/:id",
 // Delete a product
 router.delete("/:id",
   authMiddleware, 
-  authorizeRoles(['delete_products']),
+  // authorizeRoles(['delete_products']),
   createActivityLogger('delete', 'product'),
    async (req, res) => {
   try {
@@ -111,7 +111,7 @@ router.delete("/:id",
 
 router.put("/:id/confirm", 
   authMiddleware, 
-  authorizeRoles(['update_products']),
+  // authorizeRoles(['update_products']),
   async (req, res) => {
     try {
       const updatedProduct = await Product.findByIdAndUpdate(

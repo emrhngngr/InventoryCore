@@ -44,15 +44,15 @@ const authorizeRoles = (requiredPermissions = []) => {
       }
 
       // Kullanıcı gerekli izinlere sahip mi kontrol et
-      const hasRequiredPermissions = requiredPermissions.every((permission) =>
-        req.user.permissions.includes(permission)
-      );
+      // const hasRequiredPermissions = requiredPermissions.every((permission) =>
+      //   req.user.permissions.includes(permission)
+      // );
 
-      if (hasRequiredPermissions) {
-        next();
-      } else {
-        res.status(403).json({ message: "Bu işlemi yapmaya yetkiniz yok" });
-      }
+      // if (hasRequiredPermissions) {
+      //   next();
+      // } else {
+      //   res.status(403).json({ message: "Bu işlemi yapmaya yetkiniz yok" });
+      // }
     } catch (error) {
       res.status(500).json({ message: "Yetkilendirme hatası" });
     }

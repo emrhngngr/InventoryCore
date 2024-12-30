@@ -20,8 +20,9 @@ app.use("/api/categories", require("./routes/categoryRoutes.js"));
 // app.use("/api/create-admin", require("./routes/adminCreationRoute.js"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/asset-values", require("./routes/assetValueRoutes.js"));
-app.use("/api/announcements", require("./routes/announcementRoutes"));
-app.use("/api/activity-logs", require("./routes/activityLogRoutes"));
+app.use("/api/announcements", require("./routes/announcementRoutes.js"));
+app.use("/api/activity-logs", require("./routes/activityLogRoutes.js"));
+app.use("/api/tasks", require("./routes/taskRoutes.js"));
 app.use("/api/contact", contactRoutes);
 
 // Tüm diğer route'lara uymayan istekler için

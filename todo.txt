@@ -2,3 +2,13 @@ Bütün tablolar için sayfalama (Loglar için )
 Kritik ve Gizlilik derecesi için bilgilendirme
 -Mail gönderme çalıştır.
 Profili düzenle
+
+
+5 tane ana kullanıcı grubu olacak 
+Yönetici her gruba görev atayabilir. Bir durum olacak
+Sistem Grubu 
+A grubu
+Yazılım Grubu
+Teknik Servisi
+Örneğin bir güvenlik açığı olacak bu olay yazılım grubuna düşecek. Belli bir zaman verecek o zaman sürecinde o işlem tamamlanmazsa anasayfadaki chart risk olayı artacak
+ 

@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import AdminLogs from "./pages/Admin/AdminLogs";
 import ServicePage from "./pages/ServicePage";
 import ContactPage from "./pages/ContactPage";
+import AdminStatistics from "./pages/Admin/AdminStatistics";
 
 function App() {
   return (
@@ -90,6 +91,14 @@ function App() {
             element={
               <AdminLayout>
                 <AdminLogs />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="statistics"
+            element={
+              <AdminLayout>
+                <AdminStatistics />
               </AdminLayout>
             }
           />

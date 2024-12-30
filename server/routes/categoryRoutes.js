@@ -7,7 +7,7 @@ const { createActivityLogger } = require('../middlewares/activityLogMiddleware')
 // Get all categories
 router.get('/',
   authMiddleware, 
-  authorizeRoles(['read_categories']),
+  // authorizeRoles(['read_categories']),
    async (req, res) => {
   try {
     const categories = await Category.find();
@@ -20,7 +20,7 @@ router.get('/',
 // Create a new category
 router.post('/',
   authMiddleware, 
-  authorizeRoles(['create_categories']),
+  // authorizeRoles(['create_categories']),
   createActivityLogger('create', 'category'),
    async (req, res) => {
   const category = new Category({
@@ -39,7 +39,7 @@ router.post('/',
 // Update a category
 router.put('/:id', 
   authMiddleware, 
-  authorizeRoles(['edit_categories']),
+  // authorizeRoles(['edit_categories']),
   createActivityLogger('update', 'category'),
 
   async (req, res) => {
@@ -66,7 +66,7 @@ router.put('/:id',
 // Delete a category
 router.delete('/:id',
   authMiddleware, 
-  authorizeRoles(['delete_categories']),
+  // authorizeRoles(['delete_categories']),
   createActivityLogger('delete', 'category'),
    async (req, res) => {
   try {

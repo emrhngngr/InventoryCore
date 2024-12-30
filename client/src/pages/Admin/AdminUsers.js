@@ -36,7 +36,7 @@ const UserManagement = () => {
     name: "",
     email: "",
     password: "",
-    role: "user",
+    role: "system_group",
     permissions: [],
     profilePictureFile: null,
     preview: null,
@@ -203,19 +203,19 @@ const UserManagement = () => {
     setNewUser((prev) => ({
       ...prev,
       role: selectedRole,
-      permissions: ROLE_PERMISSIONS[selectedRole] || [],
+      // permissions: ROLE_PERMISSIONS[selectedRole] || [],
     }));
   };
 
   // Toggle permission
-  const togglePermission = (permissionKey) => {
-    setNewUser((prev) => ({
-      ...prev,
-      permissions: prev.permissions.includes(permissionKey)
-        ? prev.permissions.filter((p) => p !== permissionKey)
-        : [...prev.permissions, permissionKey],
-    }));
-  };
+  // const togglePermission = (permissionKey) => {
+  //   setNewUser((prev) => ({
+  //     ...prev,
+  //     permissions: prev.permissions.includes(permissionKey)
+  //       ? prev.permissions.filter((p) => p !== permissionKey)
+  //       : [...prev.permissions, permissionKey],
+  //   }));
+  // };
 
   // Handle edit user click
   const handleEditClick = (user) => {
@@ -225,7 +225,7 @@ const UserManagement = () => {
       email: user.email,
       password: "",
       role: user.role,
-      permissions: user.permissions || [],
+      // permissions: user.permissions || [],
       profilePicture: user.profilePicture
         ? `${serverBaseUrl}/${user.profilePicture}` // Profil fotoğrafının tam URL'sini oluşturun
         : null, // Profil fotoğrafı yoksa null      preview: null, // Düzenleme sırasında önizleme sıfırlanır
@@ -240,7 +240,7 @@ const UserManagement = () => {
       email: "",
       password: "",
       role: "user",
-      permissions: [],
+      // permissions: [],
     });
     setEditingUser(null);
   };
@@ -264,9 +264,9 @@ const UserManagement = () => {
       formData.append("role", newUser.role);
 
       // Append permissions
-      newUser.permissions.forEach((permission, index) => {
-        formData.append(`permissions[${index}]`, permission);
-      });
+      // newUser.permissions.forEach((permission, index) => {
+      //   formData.append(`permissions[${index}]`, permission);
+      // });
 
       // Append profile picture if selected
       if (newUser.profilePictureFile) {
@@ -469,10 +469,10 @@ const UserManagement = () => {
         editingUser={editingUser}
         newUser={newUser}
         currentUser={currentUser}
-        PERMISSION_CONFIG={PERMISSION_CONFIG}
+        // PERMISSION_CONFIG={PERMISSION_CONFIG}
         handleInputChange={handleInputChange}
         handleRoleChange={handleRoleChange}
-        togglePermission={togglePermission}
+        // togglePermission={togglePermission}
         handleSubmitUser={handleSubmitUser}
         handleProfilePictureChange={handleProfilePictureChange}
       />
@@ -482,60 +482,60 @@ const UserManagement = () => {
 
 export default UserManagement;
 
-const PERMISSION_CONFIG = [
-  {
-    group: "Ürünler",
-    permissions: [
-      { key: "read_products", label: "Ürünleri Görüntüleme" },
-      { key: "create_products", label: "Ürün Ekleme" },
-      { key: "edit_products", label: "Ürün Düzenleme" },
-      { key: "delete_products", label: "Ürün Silme" },
-    ],
-  },
-  {
-    group: "Kategoriler",
-    permissions: [
-      { key: "read_categories", label: "Kategorileri Görüntüleme" },
-      { key: "create_categories", label: "Kategoriler Ekleme" },
-      { key: "edit_categories", label: "Kategoriler Düzenleme" },
-      { key: "delete_categories", label: "Kategoriler Silme" },
-    ],
-  },
-  {
-    group: "Kullanıcılar",
-    permissions: [
-      { key: "read_users", label: "Kullanıcıları Görüntüleme" },
-      { key: "manage_users", label: "Kullanıcı Yönetimi" },
-    ],
-  },
-];
+// const PERMISSION_CONFIG = [
+//   {
+//     group: "Ürünler",
+//     permissions: [
+//       { key: "read_products", label: "Ürünleri Görüntüleme" },
+//       { key: "create_products", label: "Ürün Ekleme" },
+//       { key: "edit_products", label: "Ürün Düzenleme" },
+//       { key: "delete_products", label: "Ürün Silme" },
+//     ],
+//   },
+//   {
+//     group: "Kategoriler",
+//     permissions: [
+//       { key: "read_categories", label: "Kategorileri Görüntüleme" },
+//       { key: "create_categories", label: "Kategoriler Ekleme" },
+//       { key: "edit_categories", label: "Kategoriler Düzenleme" },
+//       { key: "delete_categories", label: "Kategoriler Silme" },
+//     ],
+//   },
+//   {
+//     group: "Kullanıcılar",
+//     permissions: [
+//       { key: "read_users", label: "Kullanıcıları Görüntüleme" },
+//       { key: "manage_users", label: "Kullanıcı Yönetimi" },
+//     ],
+//   },
+// ];
 
-const ROLE_PERMISSIONS = {
-  product_viewer: ["read_products"],
-  product_manager: [
-    "read_products",
-    "create_products",
-    "edit_products",
-    "delete_products",
-  ],
-  user_manager: ["read_users", "manage_users"],
-  category_manager: [
-    "read_categories",
-    "create_categories",
-    "edit_categories",
-    "delete_categories",
-  ],
-  admin: [
-    "read_products",
-    "create_products",
-    "edit_products",
-    "delete_products",
-    "read_categories",
-    "create_categories",
-    "edit_categories",
-    "delete_categories",
-    "read_users",
-    "manage_users",
-  ],
-  user: [], // Default kullanıcı rolü
-};
+// const ROLE_PERMISSIONS = {
+//   product_viewer: ["read_products"],
+//   product_manager: [
+//     "read_products",
+//     "create_products",
+//     "edit_products",
+//     "delete_products",
+//   ],
+//   user_manager: ["read_users", "manage_users"],
+//   category_manager: [
+//     "read_categories",
+//     "create_categories",
+//     "edit_categories",
+//     "delete_categories",
+//   ],
+//   admin: [
+//     "read_products",
+//     "create_products",
+//     "edit_products",
+//     "delete_products",
+//     "read_categories",
+//     "create_categories",
+//     "edit_categories",
+//     "delete_categories",
+//     "read_users",
+//     "manage_users",
+//   ],
+  // user: [], // Default kullanıcı rolü
+// };
