@@ -75,7 +75,7 @@ const ActivityLogs = () => {
     };
 
     const resourceMessages = {
-      product: "ürün",
+      product: "varlık",
       category: "kategori",
       user: "kullanıcı",
     };
@@ -132,7 +132,7 @@ const ActivityLogs = () => {
           className="border p-2 rounded"
         >
           <option value="">Tüm Kaynaklar</option>
-          <option value="product">Ürün</option>
+          <option value="product">Varlık</option>
           <option value="category">Kategori</option>
           <option value="user">Kullanıcı</option>
         </select>

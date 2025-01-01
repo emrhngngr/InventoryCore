@@ -17,9 +17,9 @@ const ServicePage = () => {
       title: "Envanter Yönetimi",
       description: "Detaylı envanter takibi ve yönetimi yapın",
       details: [
-        "Ürün özelleştirillmiş kategorilendirme",
+        "Varlık özelleştirillmiş kategorilendirme",
         "ISO 27001 ile uyumlu güvenlik",
-        "Detaylı Ürün işlemleri",
+        "Detaylı Varlık işlemleri",
         "Barkod sistemi entegrasyonu",
       ],
     },

@@ -9,8 +9,8 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
         return tasks.filter(task => task.status === 'pending');
       case 'reviewing':
         return tasks.filter(task => task.status === 'reviewing');
-      case 'completed':
-        return tasks.filter(task => task.status === 'completed');
+      case 'approved':
+        return tasks.filter(task => task.status === 'approved');
       default:
         return tasks;
     }
@@ -35,7 +35,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
           <option value="all">Tüm Görevler</option>
           <option value="active">Aktif Görevler</option>
           <option value="reviewing">İnceleme Bekleyenler</option>
-          <option value="completed">Tamamlananlar</option>
+          <option value="approved">Tamamlananlar</option>
         </select>
       </div>
 
@@ -67,47 +67,51 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredTasks.map((task) => (
-              <tr key={task._id} className="hover:bg-gray-50">
-                <td className="px-4 py-3">{task.title}</td>
-                <td className="px-4 py-3">{task.description}</td>
-                <td className="px-4 py-3">
-                  {new Date(task.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-3">
-                  {task.status === 'pending' && (
-                    <span className="text-blue-500">Aktif</span>
-                  )}
-                  {task.status === 'reviewing' && (
-                    <span className="text-yellow-500">İnceleme Bekliyor</span>
-                  )}
-                  {task.status === 'completed' && (
-                    <span className="text-green-500">Tamamlandı</span>
-                  )}
-                </td>
-                <td className="px-4 py-3">{task.feedback}</td>
-                <td className="px-4 py-3">{task.assignedTo}</td>
-                <td className="px-4 py-3 space-x-2">
-                  {task.status === 'pending' && (
-                    <button
-                      onClick={() => onComplete(task._id)}
-                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                    >
-                      Tamamla
-                    </button>
-                  )}
-                  {isAdmin && (
-                    <button
-                      onClick={() => onDelete(task._id)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Sil
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+  {filteredTasks.map((task) => (
+    <tr
+      key={task._id}
+      className={`hover:bg-gray-50 ${task.feedback ? 'bg-red-100' : ''}`}
+    >
+      <td className="px-4 py-3">{task.title}</td>
+      <td className="px-4 py-3">{task.description}</td>
+      <td className="px-4 py-3">
+        {new Date(task.createdAt).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3">
+        {task.status === 'pending' && (
+          <span className="text-blue-500">Aktif</span>
+        )}
+        {task.status === 'reviewing' && (
+          <span className="text-yellow-500">İnceleme Bekliyor</span>
+        )}
+        {task.status === 'approved' && (
+          <span className="text-green-500">Tamamlandı</span>
+        )}
+      </td>
+      <td className="px-4 py-3">{task.feedback}</td>
+      <td className="px-4 py-3">{task.assignedTo}</td>
+      <td className="px-4 py-3 space-x-2">
+        {task.status === 'pending' && (
+          <button
+            onClick={() => onComplete(task._id)}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Tamamla
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            onClick={() => onDelete(task._id)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Sil
+          </button>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
     </div>

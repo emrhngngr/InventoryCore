@@ -18,6 +18,19 @@ const taskSchema = new mongoose.Schema(
       enum: ["system_group", "a_group", "software_group", "technical_service"],
       required: true,
     },
+    assignedAsset: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      default: null,
+    },
+    deadline: {
+      type: Date,
+      required: true,
+    },
+    riskValue: {
+      type: Number,
+      default: 0
+    },
     status: {
       type: String,
       enum: ["pending", "completed", "reviewing", "approved"],

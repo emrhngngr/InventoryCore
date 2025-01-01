@@ -194,7 +194,7 @@ const AdminProcess = () => {
         );
         Swal.fire({
           title: "Onaylandı!",
-          text: "Ürün başarıyla onaylandı.",
+          text: "Varlık başarıyla onaylandı.",
           icon: "success",
           confirmButtonText: "Tamam",
         });
@@ -210,7 +210,7 @@ const AdminProcess = () => {
     } else {
       Swal.fire({
         title: "İptal Edildi",
-        text: "Ürünü onaylama işlemi iptal edildi.",
+        text: "Varlığı onaylama işlemi iptal edildi.",
         icon: "info",
         confirmButtonText: "Tamam",
       });
@@ -226,21 +226,21 @@ const AdminProcess = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Ürün Güncelleme</h1>
+      <h1 className="text-2xl font-bold mb-4">Varlık Güncelleme</h1>
 
       {/* Product Age Filter */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Ürün Güncelleme Filtresi
+          Varlık Güncelleme Filtresi
         </label>
         <select
           value={productAgeFilter}
           onChange={(e) => setProductAgeFilter(e.target.value)}
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value="all">Tüm Ürünler</option>
-          <option value="new">Güncel Ürünler</option>
-          <option value="old">Güncellenmesi Gereken Ürünler</option>
+          <option value="all">Tüm Varlıklar</option>
+          <option value="new">Güncel Varlıklar</option>
+          <option value="old">Güncellenmesi Gereken Varlıklar</option>
         </select>
       </div>
 
@@ -249,7 +249,7 @@ const AdminProcess = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Ürün Adı
+                Varlık Adı
               </th>
               <th scope="col" className="px-6 py-3">
                 Oluşturulma Tarihi
@@ -332,11 +332,11 @@ const AdminProcess = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Ürünü Düzenle</h2>
+            <h2 className="text-xl font-bold mb-4">Varlık Düzenle</h2>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ürün Adı
+              Varlık Adı
               </label>
               <input
                 type="text"
@@ -347,7 +347,7 @@ const AdminProcess = () => {
                     name: e.target.value,
                   }))
                 }
-                placeholder="Ürün adını girin"
+                placeholder="Varlık adını girin"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>

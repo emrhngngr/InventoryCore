@@ -27,7 +27,7 @@ const ProductTable = ({
   const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
   const getBaseColumns = () => [
-    { key: 'name', label: 'Ürün Adı' },
+    { key: 'name', label: 'Varlık Adı' },
     { key: 'category', label: 'Kategori' },
     { key: 'amount', label: 'Adet' },
     { key: 'criticalityDegree', label: 'Kritik Derecesi' },
@@ -111,7 +111,7 @@ const ProductTable = ({
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600">
               Sayfa {currentPage} / {totalPages}
-              {` (Toplam ${totalItems} ürün)`}
+              {` (Toplam ${totalItems} varlık)`}
             </div>
             
             <div className="flex items-center space-x-2">

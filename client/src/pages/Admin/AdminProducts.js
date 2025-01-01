@@ -203,7 +203,7 @@ const AdminProducts = () => {
         Swal.fire({
           icon: "success",
           title: "Tebrikler!",
-          text: "Ürün Güncellemesi Başarılı!",
+          text: "Varlık Güncellemesi Başarılı!",
         });
       } else {
         // Create new product
@@ -216,7 +216,7 @@ const AdminProducts = () => {
         Swal.fire({
           icon: "success",
           title: "Tebrikler!",
-          text: "Ürün Ekleme Başarılı!",
+          text: "Varlık Ekleme Başarılı!",
         });
       }
 
@@ -232,7 +232,7 @@ const AdminProducts = () => {
       setSelectedCategory(null);
       setDynamicAttributes({});
     } catch (error) {
-      toast.error("Ürün kaydedilirken bir hata oluştu.");
+      toast.error("Varlık kaydedilirken bir hata oluştu.");
       console.error("Error saving product:", error);
     }
   };
@@ -242,7 +242,7 @@ const AdminProducts = () => {
     // Kullanıcıdan silme onayı al
     const result = await Swal.fire({
       title: "Emin misiniz?",
-      text: "Bu ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      text: "Bu varlığı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -260,7 +260,7 @@ const AdminProducts = () => {
         // Başarı mesajı göster
         Swal.fire({
           title: "Silindi!",
-          text: "Ürün başarıyla silindi.",
+          text: "Varlık başarıyla silindi.",
           icon: "success",
           confirmButtonText: "Tamam",
         });
@@ -268,7 +268,7 @@ const AdminProducts = () => {
         // Hata durumunda mesaj göster
         Swal.fire({
           title: "Hata!",
-          text: "Ürün silinirken bir hata oluştu.",
+          text: "Varlık silinirken bir hata oluştu.",
           icon: "error",
           confirmButtonText: "Tamam",
         });
@@ -277,7 +277,7 @@ const AdminProducts = () => {
       // İptal durumunda bilgilendirme
       Swal.fire({
         title: "İptal Edildi",
-        text: "Ürün silme işlemi iptal edildi.",
+        text: "Varlık silme işlemi iptal edildi.",
         icon: "info",
         confirmButtonText: "Tamam",
       });
@@ -349,7 +349,7 @@ const AdminProducts = () => {
             onClick={() =>
               Swal.fire({
                 title: "Kritiklik Derecesi Nedir?",
-                text: "Kritiklik derecesi, bir ürünün ne kadar kritik olduğunu belirten bir ölçüttür.",
+                text: "Kritiklik derecesi, bir Varlığın ne kadar kritik olduğunu belirten bir ölçüttür.",
               })
             }
           >
@@ -367,7 +367,7 @@ const AdminProducts = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Ürün ara..."
+            placeholder="Varlık ara..."
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
@@ -395,7 +395,7 @@ const AdminProducts = () => {
               variant="default"
               onClick={openAddModal}
             >
-              Ürün Ekle
+              Varlık Ekle
             </Button>
           </>
         )}

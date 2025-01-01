@@ -40,14 +40,14 @@ const ProductAgePieChart = () => {
 
     setChartData([
       {
-        name: "Güncel Ürünler",
+        name: "Güncel Varlıklar",
         value: newProductsCount,
         color: "#34D399",
         status: "new",
         icon: CheckCircle,
       },
       {
-        name: "Eski Ürünler",
+        name: "Eski Varlıklar",
         value: oldProductsCount,
         color: "#F87171",
         status: "old",
@@ -80,7 +80,7 @@ const ProductAgePieChart = () => {
             <div>
               <p className="font-bold text-gray-700">{data.name}</p>
               <p className="text-sm text-gray-500">
-                {data.value} Ürün (
+                {data.value} Varlık (
                 {((data.value / products.length) * 100).toFixed(1)}%)
               </p>
             </div>
@@ -131,7 +131,7 @@ const ProductAgePieChart = () => {
     <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 transform transition-all hover:scale-105 duration-300">
       <h2 className="text-xl font-bold text-center mb-4 text-gray-800 flex justify-center items-center space-x-2">
         <RefreshCw className="w-5 h-5 text-blue-500" />
-        <span>Ürün Güncelleme Durumu</span>
+        <span>Varlık Güncelleme Durumu</span>
       </h2>
 
       <ResponsiveContainer width="100%" height={250}>

@@ -46,7 +46,7 @@ const AdminStatistics = () => {
         <div className="col-span-12 lg:col-span-8 grid grid-cols-4 gap-4">
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <AiOutlineProduct className="text-6xl" />
-            <div>Toplam Ürün Sayısı</div>
+            <div>Toplam Varlık Sayısı</div>
             <div className="text-lg font-semibold">
               {dashboardStats.totalProducts}
             </div>
@@ -60,7 +60,7 @@ const AdminStatistics = () => {
           </div>
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
             <AiFillProduct className="text-6xl" />
-            <div>Aktif Ürünler</div>
+            <div>Aktif Varlıklar</div>
             <div className="text-lg font-semibold">4</div>
           </div>
           <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">

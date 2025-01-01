@@ -19,12 +19,12 @@ const ProductModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">
-          {isEditMode ? "Ürünü Düzenle" : "Yeni Ürün Ekle"}
+          {isEditMode ? "Varlığı Düzenle" : "Yeni Varlık Ekle"}
         </h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Ürün Adı
+            Varlık Adı
           </label>
           <input
             type="text"
@@ -35,7 +35,7 @@ const ProductModal = ({
                 name: e.target.value,
               }))
             }
-            placeholder="Ürün adını girin"
+            placeholder="Varlık adını girin"
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>

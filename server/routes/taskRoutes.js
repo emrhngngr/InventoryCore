@@ -1,5 +1,6 @@
 const express = require("express");
 const Task = require("../models/Task");
+const Product = require("../models/Product");
 const {
   authMiddleware,
   authorizeRoles,
@@ -38,14 +39,26 @@ router.post("/", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
     }
 
+    // Get the assigned product
+    console.log("req.body.assignedAsset ==> ", req.body);
+    const assignedProduct = await Product.findById(req.body.assignedAsset);
+    let riskValue = 0;
+    if (assignedProduct) {
+      riskValue =
+        parseInt(assignedProduct.privacyDegree) *
+        parseInt(assignedProduct.criticalityDegree);
+    }
+
     const newTask = new Task({
       ...req.body,
       createdBy: req.user.id,
+      riskValue,
     });
 
     await newTask.save();
     res.status(201).json(newTask);
   } catch (error) {
+    console.error("Task creation error:", error);
     res.status(500).json({ message: "Görev oluşturulurken hata oluştu" });
   }
 });
@@ -116,7 +129,9 @@ router.put("/sendback/:id", authMiddleware, async (req, res) => {
     }
 
     if (task.status !== "reviewing") {
-      return res.status(400).json({ message: "Görev geri gönderilmek için uygun değil" });
+      return res
+        .status(400)
+        .json({ message: "Görev geri gönderilmek için uygun değil" });
     }
 
     task.status = "pending";
@@ -128,7 +143,6 @@ router.put("/sendback/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Görev geri gönderilirken hata oluştu" });
   }
 });
-
 
 // Görevi sil (Admin için)
 router.delete("/:id", authMiddleware, async (req, res) => {
