@@ -50,7 +50,10 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
                 Açıklama
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tarih
+                Oluşturulma Tarihi
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Son Tarih
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Durum
@@ -70,12 +73,15 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
   {filteredTasks.map((task) => (
     <tr
       key={task._id}
-      className={`hover:bg-gray-50 ${task.feedback ? 'bg-red-100' : ''}`}
+      className={`hover:bg-gray-50 ${task.feedback && task.status !== 'approved' ? 'bg-red-100' : ''}`}
     >
       <td className="px-4 py-3">{task.title}</td>
       <td className="px-4 py-3">{task.description}</td>
       <td className="px-4 py-3">
         {new Date(task.createdAt).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3">
+        {new Date(task.deadline).toLocaleDateString()}
       </td>
       <td className="px-4 py-3">
         {task.status === 'pending' && (

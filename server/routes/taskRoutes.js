@@ -134,6 +134,7 @@ router.put("/sendback/:id", authMiddleware, async (req, res) => {
         .json({ message: "Görev geri gönderilmek için uygun değil" });
     }
 
+    console.log("req.body ==> ", req.body);
     task.status = "pending";
     task.feedback = req.body.feedback || "Görev yeniden düzenlenmelidir.";
 

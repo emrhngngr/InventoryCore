@@ -61,7 +61,7 @@ const AdminDashboard = () => {
   const handleCompleteTask = async (note) => {
     try {
       await api.put(`/tasks/complete/${selectedTaskId}`, {
-        feedback: note,
+        completionNote: note,
       });
       const response = await api.get(`/tasks/group/${currentUser.role}`);
       setTasks(response.data);
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
   const handleSendBackTask = async (note) => {
     try {
       await api.put(`/tasks/sendback/${selectedTaskId}`, {
-        completionNote: note,
+        feedback: note,
       });
       const response = await api.get(`/tasks/group/${currentUser.role}`);
       setTasks(response.data);
