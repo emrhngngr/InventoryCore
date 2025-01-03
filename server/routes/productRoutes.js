@@ -24,7 +24,7 @@ router.post("/",
   // authorizeRoles(['create_products']),
   createActivityLogger('create', 'product'),
   async (req, res) => {
-  const { name, category, dynamicAttributes, amount, criticalityDegree, privacyDegree } = req.body;
+  const { name, category, dynamicAttributes, assignedTo, amount, criticalityDegree, privacyDegree } = req.body;
 
   try {
     const existingCategory = await Category.findById(category);
@@ -36,11 +36,13 @@ router.post("/",
       name,
       category,
       dynamicAttributes,
+      assignedTo,
       amount,
       criticalityDegree,
       privacyDegree
     });
-
+    console.log("newProduct ==> ", newProduct);
+    
     const savedProduct = await newProduct.save();
     await savedProduct.populate('category');
     
@@ -57,7 +59,7 @@ router.put("/:id",
   createActivityLogger('update', 'product'),
    async (req, res) => {
   try {
-    const { name, category, dynamicAttributes, amount,criticalityDegree, privacyDegree} = req.body;
+    const { name, category, dynamicAttributes, assignedTo, amount, criticalityDegree, privacyDegree, isAuto} = req.body;
     const updatedAt = Date.now()
 
     // Validate category exists
@@ -72,10 +74,12 @@ router.put("/:id",
         name, 
         category,
         dynamicAttributes,
+        assignedTo,
         amount,
         criticalityDegree,
         privacyDegree,
-        updatedAt
+        updatedAt,
+        isAuto
       }, 
       { new: true }
     ).populate('category');

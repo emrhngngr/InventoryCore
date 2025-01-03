@@ -1,10 +1,9 @@
-// models/AssetValue.js
 const mongoose = require('mongoose');
 
 const AssetValueSchema = new mongoose.Schema({
-  category: { 
+  product: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Category', 
+    ref: 'Product', 
     required: true 
   },
   weekNumber: {
@@ -18,7 +17,7 @@ const AssetValueSchema = new mongoose.Schema({
   calculationDate: {
     type: Date,
     default: Date.now
-  }
+  },
 });
 
 module.exports = mongoose.model('AssetValue', AssetValueSchema);

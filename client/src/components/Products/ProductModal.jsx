@@ -7,6 +7,7 @@ const ProductModal = ({
   setCurrentProduct, 
   selectedCategory,
   categories,
+  roles,
   handleCategoryChange,
   dynamicAttributes,
   handleAttributeChange,
@@ -111,6 +112,29 @@ const ProductModal = ({
             {categories.map((category) => (
               <option key={category._id} value={category._id}>
                 {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Sorumlu Seç
+          </label>
+          <select
+            onChange={(e) =>
+              setCurrentProduct((prev) => ({
+                ...prev,
+                assignedTo: e.target.value,
+              }))
+            }
+            value={currentProduct.assignedTo}
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="">Sorumlu seçin</option>
+            {roles.map((role, index) => (
+              <option key={role._id || index} value={role._id}>
+                {role}
               </option>
             ))}
           </select>

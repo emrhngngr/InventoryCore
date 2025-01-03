@@ -1,98 +1,50 @@
-// routes/assetValueRoutes.js
 const express = require('express');
 const router = express.Router();
+const Task = require('../models/Task');
 const AssetValue = require('../models/AssetValue');
-const Product = require('../models/Product');
-const Category = require('../models/Category');
-const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware');
-const moment = require('moment');
 
-// Haftalık varlık değerlerini hesaplama fonksiyonu
-async function calculateWeeklyAssetValues() {
+// POST Route: Toplam risk değerlerini hesapla ve kaydet
+router.post('/calculate-risk', async (req, res) => {
   try {
-    // Şu anki haftanın numarasını hesapla
-    const currentWeekNumber = moment().week();
+    // Tüm taskleri çek
+    const tasks = await Task.find();
 
-    // Tüm kategorileri al
-    const categories = await Category.find();
+    // Product ID'ye göre riskValue toplamlarını hesapla
+    const riskSums = tasks.reduce((acc, task) => {
+      if (task.assignedAsset && task.status !== "approved") {
+        acc[task.assignedAsset] = (acc[task.assignedAsset] || 0) + task.riskValue;
+      }
+      return acc;
+    }, {});
 
-    for (let category of categories) {
-      // Bu kategorideki tüm ürünleri çek
-      const products = await Product.find({ category: category._id });
-
-      // Toplam varlık değerini hesapla
-      const totalAssetValue = products.reduce((total, product) => {
-        // Kritiklik ve gizlilik derecesini çarp
-        const criticalityValue = parseInt(product.criticalityDegree || 1);
-        const privacyValue = parseInt(product.privacyDegree || 1);
-        const assetValue = criticalityValue * privacyValue;
-        return total + assetValue;
-      }, 0);
-
-      // Hesaplanan değeri kaydet
-      await AssetValue.findOneAndUpdate(
-        { 
-          category: category._id, 
-          weekNumber: currentWeekNumber 
-        },
-        { 
-          totalAssetValue: totalAssetValue,
-          calculationDate: new Date()
-        },
-        { upsert: true, new: true }
-      );
-    }
-  } catch (error) {
-    console.error('Haftalık varlık değeri hesaplamasında hata:', error);
-  }
-}
-
-// Haftalık varlık değerlerini hesaplama route'u
-router.post('/calculate', 
-//   authMiddleware,
-//   authorizeRoles(['read_products']),
-  async (req, res) => {
-    try {
-      await calculateWeeklyAssetValues();
-      res.json({ message: 'Haftalık varlık değerleri hesaplandı' });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-);
-
-// Tüm haftalık varlık değerlerini getirme
-router.get('/', 
-//   authMiddleware,
-//   authorizeRoles(['read_products']),
-  async (req, res) => {
-    try {
-      const assetValues = await AssetValue.find()
-        .populate('category')
-        .sort({ weekNumber: 1 });
-      res.json(assetValues);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-);
-
-// Belirli bir kategorinin haftalık varlık değerlerini getirme
-router.get('/category/:categoryId', 
-//   authMiddleware,
-//   authorizeRoles(['read_products']),
-  async (req, res) => {
-    try {
-      const assetValues = await AssetValue.find({ 
-        category: req.params.categoryId 
+    // AssetValue koleksiyonunu güncelle
+    const updates = await Promise.all(
+      Object.entries(riskSums).map(async ([productId, totalRisk]) => {
+        return AssetValue.findOneAndUpdate(
+          { product: productId, weekNumber: req.body.weekNumber || 1 },
+          { totalAssetValue: totalRisk },
+          { upsert: true, new: true }
+        );
       })
-        .populate('category')
-        .sort({ weekNumber: 1 });
-      res.json(assetValues);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+    );
+
+    res.status(200).json({ message: 'Risk values calculated and updated.', updates });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
   }
-);
+});
+
+// GET Route: Her ürün için toplam risk değerlerini getir
+router.get('/risk-values', async (req, res) => {
+  try {
+    // AssetValue koleksiyonundan tüm değerleri çek
+    const riskValues = await AssetValue.find().populate('product', 'name'); // Product adını almak için populate
+    res.status(200).json(riskValues);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 module.exports = router;

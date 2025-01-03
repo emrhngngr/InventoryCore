@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import api from "../../api/api";
 import { AdminTaskReview } from "../../components/Tasks/AdminTaskReview";
 import { CompletionModal } from "../../components/Tasks/CompletionModal";
 import { SendBackModal } from "../../components/Tasks/SendBackModal";
-import { TaskTable } from "../../components/Tasks/TaskTable";
 import { AddTaskModal } from "../../components/Tasks/TaskModal";
-import api from "../../api/api";
+import { TaskTable } from "../../components/Tasks/TaskTable";
 
 const AdminDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -13,6 +13,63 @@ const AdminDashboard = () => {
   const [isSendBackModalOpen, setIsSendBackModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+  
+    const fetchProductsAndAssignTasks = async () => {
+      try {
+        const [productsResponse, tasksResponse] = await Promise.all([
+          api.get("/products"),
+          api.get('/tasks')
+        ]);
+  
+        if (!isMounted) return;
+  
+        const oldProducts = productsResponse.data.filter(
+          product => product.isAuto && isProductOld(product.updatedAt)
+        );
+        
+        for (const product of oldProducts) {
+          const assetControlTasks = tasksResponse.data.filter(
+            task => task.assignedAsset === product._id && 
+                   task.title === "Eski Varlıkların Kontrolü"
+          );
+  
+          const hasActiveControlTask = assetControlTasks.some(
+            task => task.status === "pending" || task.status === "reviewing"
+          );
+  
+          if (!hasActiveControlTask) {
+            await handleAddTask({
+              title: "Eski Varlıkların Kontrolü",
+              description: `Eski varlık ${product.name} kontrol edilmelidir.`,
+              assignedTo: product.assignedTo || "system_group",
+              assignedAsset: product._id,
+              deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+              riskValue: 21,
+              status: "pending",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Hata:", error);
+      }
+    };
+  
+    fetchProductsAndAssignTasks();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const isProductOld = (updatedAt) => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 0);
+    return new Date(updatedAt) < oneWeekAgo;
+  };
 
   useEffect(() => {
     const fetchCurrentUser = async () => {

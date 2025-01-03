@@ -14,6 +14,8 @@ const AdminStatistics = () => {
     totalUsers: 0,
   });
 
+  const [assetValues, setAssetValues] = useState([]);
+
   const fetchDashboardData = async () => {
     try {
       const productsResponse = await api.get(
@@ -34,8 +36,27 @@ const AdminStatistics = () => {
     }
   };
 
+  const fetchAssetValues = async () => {
+    try {
+      // İlk olarak risk hesaplamasını çalıştır
+      await api.post("http://localhost:5000/api/asset-values/calculate-risk", {
+        weekNumber: 1, // Burada haftayı dinamik hale getirebilirsin
+      });
+
+      // Ardından güncellenmiş risk değerlerini çek
+      const response = await api.get(
+        "http://localhost:5000/api/asset-values/risk-values"
+      );
+      setAssetValues(response.data);
+      console.log("response.data ==> ", response.data);
+    } catch (error) {
+      console.error("Risk değerlerini çekerken hata oluştu:", error);
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
+    fetchAssetValues();
   }, []);
 
   return (
@@ -76,6 +97,37 @@ const AdminStatistics = () => {
         <div className="col-span-12 lg:col-span-4">
           <ActiveAnnouncement />
         </div>
+      </div>
+
+      {/* Risk Değerleri Tablosu */}
+      <div className="bg-white shadow-lg rounded-xl p-6">
+        <h2 className="text-xl font-semibold mb-4">Risk Değerleri</h2>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">Ürün Adı</th>
+              <th className="border p-2">Toplam Risk Değeri</th>
+            </tr>
+          </thead>
+          <tbody>
+            {assetValues.length > 0 ? (
+              assetValues.map((value) => (
+                <tr key={value._id}>
+                  <td className="border p-2">
+                    {value.product?.name || "Bilinmiyor"}
+                  </td>
+                  <td className="border p-2">{value.totalAssetValue}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="2" className="text-center p-4">
+                  Risk değeri bulunamadı.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* İkinci Kısım: Grafikler */}

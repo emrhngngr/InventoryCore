@@ -10,6 +10,7 @@ import Button from "../../components/common/Button";
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [modalInfoContent, setInfoModalContent] = useState("");
@@ -24,6 +25,7 @@ const AdminProducts = () => {
     name: "",
     category: "",
     dynamicAttributes: {},
+    assignedTo: "",
     amount: 0,
     criticalityDegree: 1,
     privacyDegree: 1,
@@ -53,12 +55,16 @@ const AdminProducts = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [productsResponse, categoriesResponse] = await Promise.all([
+        const [productsResponse, categoriesResponse, rolesResponse] = await Promise.all([
           api.get("http://localhost:5000/api/products"),
           api.get("http://localhost:5000/api/categories"),
+          api.get("http://localhost:5000/api/users/roles"),
         ]);
         setProducts(productsResponse.data);
         setCategories(categoriesResponse.data);
+        console.log("categoriesResponse.data ==> ", categoriesResponse.data);
+        setRoles(rolesResponse.data);
+        console.log("rolesResponse.data ==> ", rolesResponse.data);
       } catch (error) {
         toast.error("Veriler alınırken bir hata oluştu."); // Toastify Error
         console.error("Error fetching data:", error);
@@ -69,6 +75,8 @@ const AdminProducts = () => {
     fetchData();
   }, []);
 
+  
+
   // Open modal for adding new product
   const openAddModal = () => {
     setIsEditMode(false);
@@ -76,6 +84,7 @@ const AdminProducts = () => {
       name: "",
       category: "",
       dynamicAttributes: {},
+      assignedTo: "",
       amount: 0,
       criticalityDegree: 1,
       privacyDegree: 1,
@@ -94,11 +103,13 @@ const AdminProducts = () => {
       name: product.name,
       category: product.category._id,
       dynamicAttributes: product.dynamicAttributes || {},
+      assignedTo: product.assignedTo,
       amount: product.amount,
       criticalityDegree: product.criticalityDegree,
       privacyDegree: product.privacyDegree,
     });
 
+    console.log("currentProduct ==> ", currentProduct);
     setSelectedCategory(category);
 
     // Prepare dynamic attributes
@@ -225,6 +236,7 @@ const AdminProducts = () => {
         name: "",
         category: "",
         dynamicAttributes: {},
+        assignedTo: "",
         amount: 0,
         criticalityDegree: 1,
         privacyDegree: 1,
@@ -423,6 +435,7 @@ const AdminProducts = () => {
           setCurrentProduct={setCurrentProduct}
           selectedCategory={selectedCategory}
           categories={categories}
+          roles={roles}
           handleCategoryChange={handleCategoryChange}
           dynamicAttributes={dynamicAttributes}
           handleAttributeChange={handleAttributeChange}

@@ -4,11 +4,18 @@ Kritik ve Gizlilik derecesi için bilgilendirme
 Profili düzenle
 
 
-5 tane ana kullanıcı grubu olacak 
-Yönetici her gruba görev atayabilir. Bir durum olacak
-Sistem Grubu 
-A grubu
-Yazılım Grubu
-Teknik Servisi
-Örneğin bir güvenlik açığı olacak bu olay yazılım grubuna düşecek. Belli bir zaman verecek o zaman sürecinde o işlem tamamlanmazsa anasayfadaki chart risk olayı artacak
++5 tane ana kullanıcı grubu olacak 
++Yönetici her gruba görev atayabilir. Bir durum olacak
++Sistem Grubu 
++A grubu
++Yazılım Grubu
++Teknik Servisi
++Örneğin bir güvenlik açığı olacak bu olay yazılım grubuna düşecek. Belli bir zaman verecek o zaman sürecinde o işlem tamamlanmazsa anasayfadaki chart risk olayı artacak
  
+ +İşlemler yerinde her varlık için otomatik görev gönderilsin mi olayı için switch olacak.
+ +İşlemler ve Görevler'e göre istatislik olacak derecelendirme için.
+ +İşlemler her hafta güncel kalması için; Görevler admin bir görev atarsa onun için.
+
+
+ +Tarih olayını düzelt.
+ Eger deadline gecerse risk orani artacak.

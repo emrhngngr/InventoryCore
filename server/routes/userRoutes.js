@@ -38,49 +38,54 @@ const upload = multer({
   },
 });
 // User Login Route
-router.post(
-  "/login",
-  async (req, res) => {
-    try {
-      const { email, password } = req.body;
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-      // Check if user exists
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ message: "Kullanıcı bulunamadı" });
-      }
-
-      // Check password
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: "Geçersiz şifre" });
-      }
-
-      // Create JWT Token
-      const token = jwt.sign(
-        {
-          id: user._id,
-          email: user.email,
-          role: user.role,
-          // permissions: user.permissions,
-        },
-        process.env.JWT_SECRET
-      );
-
-      // Remove sensitive information before sending response
-      const userResponse = user.toObject();
-      delete userResponse.password;
-
-      res.json({
-        token,
-        user: userResponse,
-      });
-    } catch (error) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Giriş sırasında bir hata oluştu" });
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Kullanıcı bulunamadı" });
     }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Geçersiz şifre" });
+    }
+
+    // Create JWT Token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        // permissions: user.permissions,
+      },
+      process.env.JWT_SECRET
+    );
+
+    // Remove sensitive information before sending response
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.json({
+      token,
+      user: userResponse,
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Giriş sırasında bir hata oluştu" });
   }
-);
+});
+router.get("/roles", async (req, res) => {
+  try {
+    const roles = User.getRoles(); // Enum'deki roller array olarak döner
+    res.json(roles); // Direk array olarak gönderiliyor
+  } catch (err) {
+    res.status(500).json({ message: "Rolleri alırken bir hata oluştu." });
+  }
+});
 //get all
 router.get(
   "/",
@@ -105,7 +110,7 @@ router.post(
   upload.single("profilePicture"),
   async (req, res) => {
     try {
-      const { name, email, password, role} = req.body;
+      const { name, email, password, role } = req.body;
 
       // Check if user already exists
       if (req.user.role !== "admin" && role === "admin") {
@@ -141,7 +146,6 @@ router.post(
         //       ]
         //     : permissions,
       });
-
 
       console.log("newUser ==> ", newUser);
       await newUser.save();
@@ -184,8 +188,8 @@ router.put(
 
   async (req, res) => {
     try {
-      const { name, email, role} = req.body;
-      const updateData = { name, email, role};
+      const { name, email, role } = req.body;
+      const updateData = { name, email, role };
 
       if (req.file) {
         updateData.profilePicture = req.file.path;

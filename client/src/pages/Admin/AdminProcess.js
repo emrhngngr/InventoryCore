@@ -1,4 +1,4 @@
-import { Check, Pen } from "lucide-react";
+import { Check, Pen, Bell } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
@@ -12,11 +12,13 @@ const AdminProcess = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(false); // Loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [autoTaskSettings, setAutoTaskSettings] = useState({});
   const [currentProduct, setCurrentProduct] = useState({
     _id: "",
     name: "",
     category: "",
     dynamicAttributes: {},
+    assignedTo: "",
     amount: 0,
     criticalityDegree: 1,
     privacyDegree: 1,
@@ -48,11 +50,53 @@ const AdminProcess = () => {
 
     fetchInitialData();
   }, []);
+  
 
   const isProductOld = (updatedAt) => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
     return new Date(updatedAt) < oneWeekAgo;
+  };
+
+  useEffect(() => {
+    // Başlangıçta ürünlerin isAuto durumunu yükleme
+    const initialAutoSettings = {};
+    products.forEach((product) => {
+      initialAutoSettings[product._id] = product.isAuto;
+    });
+    setAutoTaskSettings(initialAutoSettings);
+  }, [products]);
+
+  const toggleAuto = async (productId) => {
+    const updatedProducts = products.map((product) => {
+      if (product._id === productId) {
+        const updatedAutoStatus = !autoTaskSettings[productId];
+        return { ...product, isAuto: updatedAutoStatus };
+      }
+      return product;
+    });
+    
+    // Arayüzü hemen güncelle
+    setAutoTaskSettings((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+
+    // Sunucuda değişikliği güncelle
+    try {
+      await api.put(`http://localhost:5000/api/products/${productId}`, {
+        ...products.find((p) => p._id === productId),
+        isAuto: !autoTaskSettings[productId],
+      });
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error("Error updating auto task setting:", error);
+      // Hata durumunda eski duruma döndür
+      setAutoTaskSettings((prev) => ({
+        ...prev,
+        [productId]: prev[productId],
+      }));
+    }
   };
 
   useEffect(() => {
@@ -79,6 +123,7 @@ const AdminProcess = () => {
       name: product.name,
       category: product.category._id,
       dynamicAttributes: product.dynamicAttributes || {},
+      assignedTo: product.assignedTo,
       amount: product.amount,
       criticalityDegree: product.criticalityDegree,
       privacyDegree: product.privacyDegree,
@@ -248,78 +293,82 @@ const AdminProcess = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                Varlık Adı
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Oluşturulma Tarihi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Güncellenme Tarihi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Kritiklik Derecesi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Gizlilik Derecesi
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Varlık Değeri
-              </th>
-              <th scope="col" className="px-6 py-3">
-                İşlemler
-              </th>
+              <th scope="col" className="px-6 py-3">Varlık Adı</th>
+              <th scope="col" className="px-6 py-3">Atanmış Grup</th>
+              <th scope="col" className="px-6 py-3">Oluşturulma Tarihi</th>
+              <th scope="col" className="px-6 py-3">Güncellenme Tarihi</th>
+              <th scope="col" className="px-6 py-3">Kritiklik Derecesi</th>
+              <th scope="col" className="px-6 py-3">Gizlilik Derecesi</th>
+              <th scope="col" className="px-6 py-3">Varlık Değeri</th>
+              <th scope="col" className="px-6 py-3">Otomatik Görev</th>
+              <th scope="col" className="px-6 py-3">İşlemler</th>
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((product) => (
-              <tr
-                key={product._id}
-                className={`border-b ${
-                  isProductOld(product.updatedAt)
-                    ? "bg-red-100 hover:bg-red-200"
-                    : "bg-white hover:bg-gray-50"
-                }`}
-              >
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.name}
+            {filteredProducts.map((product) => {
+              const isOld = isProductOld(product.updatedAt);
+              return (
+                <tr
+                  key={product._id}
+                  className={`border-b ${
+                    isOld
+                      ? "bg-red-100 hover:bg-red-200"
+                      : "bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {product.name}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {product.assignedTo}
+                  </td>
+                  <td className="px-6 py-4">
+                    {new Date(product.createdAt).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    {new Date(product.updatedAt).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {product.criticalityDegree}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {product.privacyDegree}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {calculateTotalValue(
+                      product.privacyDegree,
+                      product.criticalityDegree
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={autoTaskSettings[product._id] || false}
+                      onChange={() => toggleAuto(product._id)}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
                 </td>
-                <td className="px-6 py-4">
-                  {new Date(product.createdAt).toLocaleString()}
-                </td>
-                <td className="px-6 py-4">
-                  {new Date(product.updatedAt).toLocaleString()}
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.criticalityDegree}
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {product.privacyDegree}
-                </td>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {calculateTotalValue(
-                    product.privacyDegree,
-                    product.criticalityDegree
-                  )}
-                </td>
-
-                <td className="px-6 py-4 flex space-x-2">
-                  <Button
-                    variant="outline"
-                    className="text-sm"
-                    onClick={() => openEditModal(product)}
-                  >
-                    <Pen size={16} />
-                  </Button>
-                  <Button
-                    className="text-sm bg-green-500 text-white hover:bg-green-600"
-                    onClick={() => confirmProduct(product._id)}
-                  >
-                    <Check size={16} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
+                  <td className="px-6 py-4 flex space-x-2">
+                    <Button
+                      variant="outline"
+                      className="text-sm"
+                      onClick={() => openEditModal(product)}
+                    >
+                      <Pen size={16} />
+                    </Button>
+                    <Button
+                      className="text-sm bg-green-500 text-white hover:bg-green-600"
+                      onClick={() => confirmProduct(product._id)}
+                    >
+                      <Check size={16} />
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
         {loading && (
@@ -348,6 +397,23 @@ const AdminProcess = () => {
                   }))
                 }
                 placeholder="Varlık adını girin"
+                className="w-full px-3 py-2 border rounded-md"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+              Atanmış Grup
+              </label>
+              <input
+                type="text"
+                value={currentProduct.assignedTo}
+                onChange={(e) =>
+                  setCurrentProduct((prev) => ({
+                    ...prev,
+                    assignedTo: e.target.value,
+                  }))
+                }
+                placeholder="Atanmış grup adını girin"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>

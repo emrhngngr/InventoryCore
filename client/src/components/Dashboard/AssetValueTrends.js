@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { TrendingDown, TrendingUp } from "lucide-react";
-import moment from "moment";
 import {
   CartesianGrid,
   Line,
@@ -10,55 +8,40 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import moment from "moment";
 import api from "../../api/api";
 
 const AssetValueTrends = () => {
-  const [weeklyAssetValues, setWeeklyAssetValues] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("total");
+  const [assetValues, setAssetValues] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [animationActive, setAnimationActive] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const categoriesResponse = await api.get("/categories");
-        setCategories([
-          { _id: "total", name: "Toplam" },
-          ...categoriesResponse.data,
-        ]);
+        const response = await api.get("/asset-values/risk-values");
+        const processedData = response.data
+          .reduce((acc, curr) => {
+            const date = moment(curr.calculationDate).format("DD MMM YYYY");
+            const weekNumber = moment(curr.calculationDate).week();
 
-        let assetValuesResponse;
-        if (selectedCategory === "total") {
-          const allValues = await api.get("/asset-values");
-          const groupedByWeek = allValues.data.reduce((acc, curr) => {
-            const { weekNumber, totalAssetValue } = curr;
-            const existingWeek = acc.find(w => w.weekNumber === weekNumber);
-            
-            if (existingWeek) {
-              existingWeek.totalAssetValue += totalAssetValue;
+            const existingEntry = acc.find((item) => item.date === date);
+            if (existingEntry) {
+              existingEntry.totalAssetValue += curr.totalAssetValue;
             } else {
               acc.push({
+                date,
                 weekNumber,
-                totalAssetValue,
-                date: moment().week(weekNumber).format("DD MMM YYYY")
+                totalAssetValue: curr.totalAssetValue,
               });
             }
             return acc;
-          }, []);
-          
-          assetValuesResponse = groupedByWeek.sort((a, b) => a.weekNumber - b.weekNumber);
-        } else {
-          const categoryValues = await api.get(`/asset-values/category/${selectedCategory}`);
-          assetValuesResponse = categoryValues.data.map(item => ({
-            date: moment().week(item.weekNumber).format("DD MMM YYYY"),
-            totalAssetValue: item.totalAssetValue,
-            weekNumber: item.weekNumber
-          }));
-        }
+          }, [])
+          .sort((a, b) => a.weekNumber - b.weekNumber);
 
-        setWeeklyAssetValues(assetValuesResponse);
+        setAssetValues(processedData);
         setLoading(false);
       } catch (err) {
         console.error("Veri yüklenirken hata:", err);
@@ -68,95 +51,96 @@ const AssetValueTrends = () => {
     };
 
     fetchData();
-  }, [selectedCategory]);
+  }, []);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload?.[0]) {
       return (
-        <div className="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-          <p className="font-bold text-gray-700">Tarih: {label}</p>
-          <div className="flex items-center space-x-2">
-            <p className="text-sm text-gray-600">
-              Risk Değeri: {payload[0].value.toLocaleString()}
-            </p>
-          </div>
+        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-blue-100 transition-all duration-300">
+          <p className="font-semibold text-gray-800">Tarih: {label}</p>
+          <p className="text-blue-600 mt-1">
+            Değer: {payload[0].value.toLocaleString()}
+          </p>
         </div>
       );
     }
     return null;
   };
 
-  const calculateTotalChange = () => {
-    if (weeklyAssetValues.length < 2) return 0;
-    const firstValue = weeklyAssetValues[0].totalAssetValue;
-    const lastValue = weeklyAssetValues[weeklyAssetValues.length - 1].totalAssetValue;
-    return ((lastValue - firstValue) / firstValue * 100).toFixed(2);
-  };
-
   if (loading) {
-    return <div className="flex justify-center items-center py-4">Yükleniyor...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center py-10 text-red-600">Veri yüklenirken bir hata oluştu.</div>;
+    return (
+      <div className="bg-red-50 p-4 rounded-lg text-red-600 animate-fade-in">
+        Veri yüklenirken bir hata oluştu
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-4xl mx-auto">
+    <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Risk Değeri Trendi</h2>
-        <div className="flex items-center space-x-4">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {categories.map(category => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-
-          <div className={`flex items-center ${calculateTotalChange() >= 0 ? "text-green-600" : "text-red-600"}`}>
-            <span className="text-sm font-medium mr-2">
-              Değişim: %{calculateTotalChange()}
-            </span>
-            {calculateTotalChange() >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
-          </div>
-        </div>
+        <button
+          onClick={() => setAnimationActive(!animationActive)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
+        >
+          {animationActive ? 'Animasyonu Durdur' : 'Animasyonu Başlat'}
+        </button>
       </div>
 
-      {weeklyAssetValues.length > 0 ? (
-        <ResponsiveContainer width="100%" height={350}>
-          <LineChart
-            data={weeklyAssetValues}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis
-              dataKey="date"
-              stroke="#8884d8"
-              label={{ value: "Tarihler", position: "insideBottomRight", offset: -10 }}
-            />
-            <YAxis
-              stroke="#8884d8"
-              label={{ value: "Risk Değeri", angle: -90, position: "insideLeft", offset: -10 }}
-              tickFormatter={(value) => value.toLocaleString()}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="totalAssetValue"
-              stroke="#8884d8"
-              activeDot={{ r: 8, style: { fill: "#8884d8", opacity: 0.7 } }}
-              strokeWidth={3}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      {assetValues.length > 0 ? (
+        <div className="transition-transform duration-300 hover:scale-[1.02]">
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={assetValues}
+              margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
+            >
+              <defs>
+                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <XAxis
+                dataKey="date"
+                stroke="#6b7280"
+                tick={{ fill: '#4b5563' }}
+              />
+              <YAxis
+                stroke="#6b7280"
+                tick={{ fill: '#4b5563' }}
+                tickFormatter={(value) => value.toLocaleString()}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="totalAssetValue"
+                stroke="#3b82f6"
+                strokeWidth={3}
+                dot={{ fill: '#3b82f6', strokeWidth: 2 }}
+                activeDot={{
+                  r: 8,
+                  fill: '#3b82f6',
+                  className: 'animate-pulse'
+                }}
+                isAnimationActive={animationActive}
+                animationDuration={2000}
+                animationEasing="ease-in-out"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       ) : (
         <div className="text-center py-10 text-gray-500">
-          Henüz risk değeri verisi bulunmamaktadır.
+          Henüz veri bulunmamaktadır
         </div>
       )}
     </div>

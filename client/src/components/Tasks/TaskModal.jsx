@@ -14,7 +14,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
   });
   const [assets, setAssets] = useState([]);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,6 +27,17 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+  // Eğer bir asset seçilmişse, assignedTo değerini otomatik olarak ata
+  if (task.assignedAsset) {
+    const selectedAsset = assets.find(asset => asset._id === task.assignedAsset);
+    if (selectedAsset) {
+      setTask(prevTask => ({ ...prevTask, assignedTo: selectedAsset.assignedTo }));
+    }
+  }
+}, [task.assignedAsset, assets]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,19 +97,6 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Atanacak Grup</label>
-            <select
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={task.assignedTo}
-              onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
-            >
-              <option value="system_group">Sistem Grubu</option>
-              <option value="a_group">A Grubu</option>
-              <option value="software_group">Yazılım Grubu</option>
-              <option value="technical_service">Teknik Servis</option>
-            </select>
-          </div>
-          <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Atanacak Varlık</label>
             <select
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -113,6 +111,19 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
                   {asset.name}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Atanacak Grup</label>
+            <select
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={task.assignedTo}
+              onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
+            >
+              <option value="system_group">Sistem Grubu</option>
+              <option value="a_group">A Grubu</option>
+              <option value="software_group">Yazılım Grubu</option>
+              <option value="technical_service">Teknik Servis</option>
             </select>
           </div>
           <div className="flex justify-end gap-2">
