@@ -15,7 +15,7 @@ const AdminStatistics = () => {
   });
 
   const [assetValues, setAssetValues] = useState([]);
-
+  
   const fetchDashboardData = async () => {
     try {
       const productsResponse = await api.get(
@@ -25,7 +25,7 @@ const AdminStatistics = () => {
         "http://localhost:5000/api/categories"
       );
       const usersResponse = await api.get("http://localhost:5000/api/users");
-
+      
       setDashboardStats({
         totalProducts: productsResponse.data.length,
         totalCategories: categoriesResponse.data.length,
@@ -35,30 +35,38 @@ const AdminStatistics = () => {
       console.error("Dashboard verilerini çekerken hata oluştu:", error);
     }
   };
-
+  
+  const getCurrentWeek = () => {
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    const daysDifference = Math.floor(
+      (today - startOfYear) / (1000 * 60 * 60 * 24)
+    );
+    return Math.ceil((daysDifference + startOfYear.getDay() + 1) / 7);
+  };
+  
   const fetchAssetValues = async () => {
     try {
-      // İlk olarak risk hesaplamasını çalıştır
+      const currentWeek = getCurrentWeek();
       await api.post("http://localhost:5000/api/asset-values/calculate-risk", {
-        weekNumber: 1, // Burada haftayı dinamik hale getirebilirsin
+        weekNumber: currentWeek,
       });
-
-      // Ardından güncellenmiş risk değerlerini çek
+      
       const response = await api.get(
         "http://localhost:5000/api/asset-values/risk-values"
       );
       setAssetValues(response.data);
-      console.log("response.data ==> ", response.data);
     } catch (error) {
       console.error("Risk değerlerini çekerken hata oluştu:", error);
     }
   };
-
+  
   useEffect(() => {
-    fetchDashboardData();
     fetchAssetValues();
+    fetchDashboardData();
+    console.log("assetValues ==> ", assetValues);
   }, []);
-
+  
   return (
     <div className="space-y-6">
       {/* İlk Kısım: Kartlar */}
@@ -100,7 +108,7 @@ const AdminStatistics = () => {
       </div>
 
       {/* Risk Değerleri Tablosu */}
-      <div className="bg-white shadow-lg rounded-xl p-6">
+      {/* <div className="bg-white shadow-lg rounded-xl p-6">
         <h2 className="text-xl font-semibold mb-4">Risk Değerleri</h2>
         <table className="w-full border-collapse">
           <thead>
@@ -128,12 +136,12 @@ const AdminStatistics = () => {
             )}
           </tbody>
         </table>
-      </div>
+      </div> */}
 
       {/* İkinci Kısım: Grafikler */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1">
-          <AssetValueTrends />
+          <AssetValueTrends assetValues={assetValues} />
         </div>
         <div className="flex-1">
           <ProductAgePieChart />

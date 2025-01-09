@@ -18,6 +18,10 @@ const AssetValueSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  weekRange: {
+    type: String, // Örn: "01 Jan - 07 Jan"
+    required: true
+  }
 });
 
 module.exports = mongoose.model('AssetValue', AssetValueSchema);

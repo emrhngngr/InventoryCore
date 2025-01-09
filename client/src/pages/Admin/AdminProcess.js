@@ -54,7 +54,7 @@ const AdminProcess = () => {
 
   const isProductOld = (updatedAt) => {
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     return new Date(updatedAt) < oneWeekAgo;
   };
 

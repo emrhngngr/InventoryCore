@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaBriefcase, FaShoppingBag } from "react-icons/fa";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi"; // İkonlar için react-icons
+import { IoMdBuild } from "react-icons/io";
+import { IoCloud, IoNewspaperSharp } from "react-icons/io5";
+import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
 import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md"; // Menü ikonları
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
-import { IoMdBuild } from "react-icons/io";
-import { IoNewspaperSharp } from "react-icons/io5";
-
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
@@ -31,24 +30,25 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="absolute top-4 right-0 p-2 bg-gray-600 text-white rounded-l-xl"
+        className="absolute top-4 right-0 p-2 hover:bg-slate-100 text-white rounded-l-xl"
       >
         {isSidebarOpen ? (
-          <HiChevronLeft className="text-2xl" />
+          <LuArrowLeftFromLine className="text-xl text-gray-600" />
         ) : (
-          <HiChevronRight className="text-2xl" />
+          <LuArrowRightFromLine className="text-xl text-gray-600" />
         )}
       </button>
 
       {/* Sidebar Content */}
       <div className="mt-12">
         {/* Başlık */}
-        <div
-          className={`m-6 font-bold text-2xl text-center text-gray-600 transition-all duration-300 ${
-            isSidebarOpen ? "h-auto" : "h-12"
-          } flex items-center justify-center`}
-        >
-          {isSidebarOpen && "InventoryCore"}
+        <div className="px-6 py-6">
+          <div className="flex items-center space-x-3">
+            {isSidebarOpen ? <IoCloud className="w-8 h-8 text-blue-500" /> : ""}
+            <span className="text-xl font-semibold text-gray-800">
+              {isSidebarOpen && "InventoryCore"}
+            </span>
+          </div>
         </div>
 
         {/* Menü */}
@@ -60,42 +60,42 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <MdDashboard className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Ana Sayfa</span>}
           </li>
-          {currentUser &&
-            currentUser.role.includes("admin") && (
-              <>
-                <li
-                  onClick={() => navigate("/user/products")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <FaShoppingBag className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Varlıklar</span>}
-                </li>
-              </>
-            )}
-          {currentUser &&
-            currentUser.role.includes("admin") && (
-              <>
-                <li
-                  onClick={() => navigate("/user/classes")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <FaBriefcase className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Kategoriler</span>}
-                </li>
-              </>
-            )}
-          {currentUser && (currentUser.role.includes("human resources") || currentUser.role.includes("admin")) && (
+          {currentUser && currentUser.role.includes("admin") && (
             <>
               <li
-                onClick={() => navigate("/user/users")}
+                onClick={() => navigate("/user/products")}
                 className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
               >
-                <MdPerson className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Üyeler</span>}
+                <FaShoppingBag className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Varlıklar</span>}
               </li>
             </>
           )}
-          {currentUser && currentUser.role.includes("admin")  && (
+          {currentUser && currentUser.role.includes("admin") && (
+            <>
+              <li
+                onClick={() => navigate("/user/classes")}
+                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+              >
+                <FaBriefcase className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Kategoriler</span>}
+              </li>
+            </>
+          )}
+          {currentUser &&
+            (currentUser.role.includes("human resources") ||
+              currentUser.role.includes("admin")) && (
+              <>
+                <li
+                  onClick={() => navigate("/user/users")}
+                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                >
+                  <MdPerson className="text-2xl min-w-[40px]" />
+                  {isSidebarOpen && <span className="ml-4">Üyeler</span>}
+                </li>
+              </>
+            )}
+          {currentUser && currentUser.role.includes("admin") && (
             <>
               <li
                 onClick={() => navigate("/user/process")}
@@ -106,7 +106,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               </li>
             </>
           )}
-          {currentUser && currentUser.role.includes("admin")  && (
+          {currentUser && currentUser.role.includes("admin") && (
             <>
               <li
                 onClick={() => navigate("/user/announcements")}
@@ -118,7 +118,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </>
           )}
           {currentUser && currentUser.role.includes("admin") && (
-          
             <>
               <li
                 onClick={() => navigate("/user/logs")}
@@ -130,7 +129,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             </>
           )}
           {currentUser && currentUser.role.includes("admin") && (
-          
             <>
               <li
                 onClick={() => navigate("/user/statistics")}

@@ -1,8 +1,8 @@
-import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { ResponsivePie } from "@nivo/pie";
 import api from "../../api/api";
+import { AlertCircle, CheckCircle, RefreshCw } from "lucide-react";
 
 const ProductAgePieChart = () => {
   const [products, setProducts] = useState([]);
@@ -29,7 +29,7 @@ const ProductAgePieChart = () => {
   useEffect(() => {
     const isProductOld = (updatedAt) => {
       const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 1);
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       return new Date(updatedAt) < oneWeekAgo;
     };
 
@@ -40,14 +40,16 @@ const ProductAgePieChart = () => {
 
     setChartData([
       {
-        name: "Güncel Varlıklar",
+        id: "Güncel Varlıklar",
+        label: "Güncel Varlıklar",
         value: newProductsCount,
         color: "#34D399",
         status: "new",
         icon: CheckCircle,
       },
       {
-        name: "Eski Varlıklar",
+        id: "Eski Varlıklar",
+        label: "Eski Varlıklar",
         value: oldProductsCount,
         color: "#F87171",
         status: "old",
@@ -58,66 +60,9 @@ const ProductAgePieChart = () => {
 
   const handlePieClick = (data) => {
     navigate("/user/process", {
-      state: { initialFilter: data.payload.status },
+      state: { initialFilter: data.data.status },
     });
   };
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const data = payload[0];
-      const Icon = data.payload.icon;
-
-      return (
-        <div className="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-          <div className="flex items-center space-x-3">
-            <Icon
-              className={`w-6 h-6 ${
-                data.payload.status === "new"
-                  ? "text-green-500"
-                  : "text-red-500"
-              }`}
-            />
-            <div>
-              <p className="font-bold text-gray-700">{data.name}</p>
-              <p className="text-sm text-gray-500">
-                {data.value} Varlık (
-                {((data.value / products.length) * 100).toFixed(1)}%)
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const CustomLegend = () => (
-    <div className="flex justify-center space-x-4 mt-4">
-      {chartData.map((entry) => {
-        const Icon = entry.icon;
-        return (
-          <div
-            key={entry.name}
-            className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded-lg transition-all"
-            onClick={() =>
-              navigate("/user/process", {
-                state: { initialFilter: entry.status },
-              })
-            }
-          >
-            <Icon
-              className={`w-6 h-6 ${
-                entry.status === "new" ? "text-green-500" : "text-red-500"
-              }`}
-            />
-            <span className="text-sm font-medium text-gray-700">
-              {entry.name}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
 
   if (isLoading) {
     return (
@@ -128,41 +73,46 @@ const ProductAgePieChart = () => {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg p-6 transform transition-all hover:scale-105 duration-300">
+    <div className="w-full max-w mx-auto bg-white rounded-xl shadow-lg p-6 transform transition-all hover:scale-105 duration-300">
       <h2 className="text-xl font-bold text-center mb-4 text-gray-800 flex justify-center items-center space-x-2">
         <RefreshCw className="w-5 h-5 text-blue-500" />
         <span>Varlık Güncelleme Durumu</span>
       </h2>
 
-      <ResponsiveContainer width="100%" height={250}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={90}
-            innerRadius={60}
-            fill="#8884d8"
-            dataKey="value"
-            onClick={handlePieClick}
-            animationBegin={0}
-            animationDuration={1500}
-            paddingAngle={5}
-          >
-            {chartData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={entry.color}
-                className="hover:opacity-80 transition-opacity"
-              />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-        </PieChart>
-      </ResponsiveContainer>
-
-      <CustomLegend />
+      <div style={{ height: 400 }}>
+        <ResponsivePie
+          data={chartData}
+          margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+          innerRadius={0.6}
+          padAngle={1}
+          cornerRadius={5}
+          activeOuterRadiusOffset={8}
+          colors={{ datum: "data.color" }}
+          borderWidth={2}
+          borderColor={{ from: "color", modifiers: [["darker", 0.2]] }}
+          radialLabelsSkipAngle={10}
+          radialLabelsTextColor="#333333"
+          radialLabelsLinkColor={{ from: "color" }}
+          sliceLabelsSkipAngle={10}
+          sliceLabelsTextColor="#ffffff"
+          animate={true}
+          motionConfig="wobbly"
+          onClick={handlePieClick}
+          tooltip={({ datum }) => (
+            <div
+              style={{
+                padding: "5px 10px",
+                background: "white",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+              }}
+            >
+              <strong>{datum.label}</strong>: {datum.value} Varlık (
+              {((datum.value / products.length) * 100).toFixed(1)}%)
+            </div>
+          )}
+        />
+      </div>
     </div>
   );
 };

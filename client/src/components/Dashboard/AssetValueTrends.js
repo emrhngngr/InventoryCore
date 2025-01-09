@@ -1,146 +1,141 @@
-import React, { useEffect, useState } from "react";
+import React from 'react';
 import {
-  CartesianGrid,
-  Line,
   LineChart,
-  ResponsiveContainer,
-  Tooltip,
+  Line,
   XAxis,
   YAxis,
-} from "recharts";
-import moment from "moment";
-import api from "../../api/api";
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
-const AssetValueTrends = () => {
-  const [assetValues, setAssetValues] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [animationActive, setAnimationActive] = useState(true);
+const AssetValueTrends = ({ assetValues }) => {
+  const generateColor = (index) => {
+    const hue = (index * 137.5) % 360;
+    return `hsl(${hue}, 70%, 50%)`;
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/asset-values/risk-values");
-        const processedData = response.data
-          .reduce((acc, curr) => {
-            const date = moment(curr.calculationDate).format("DD MMM YYYY");
-            const weekNumber = moment(curr.calculationDate).week();
+  const processData = (rawData) => {
+    // Week range bilgisi ve ürünleri topla
+    const weeks = new Set();
+    const weekRanges = {};
+    const products = new Set();
+  
+    rawData.forEach(item => {
+      weeks.add(item.weekNumber);
+      weekRanges[item.weekNumber] = item.weekRange; // Week range eşleştirmesi
+      products.add(item.product?.name || "Unknown");
+    });
+  
+    // Tüm haftaları sıralı hale getir
+    const sortedWeeks = Array.from(weeks).sort((a, b) => a - b);
+    const productsList = Array.from(products);
+  
+    // Değerleri eşle
+    const valueMap = new Map();
+    rawData.forEach(item => {
+      const key = `${item.weekNumber}-${item.product?.name || "Unknown"}`;
+      valueMap.set(key, item.totalAssetValue);
+    });
+  
+    // İşlenmiş veri oluştur
+    const processedData = sortedWeeks.map(weekNum => {
+      const entry = { week: weekRanges[weekNum] }; // Haftayı range formatında yaz
+      productsList.forEach(productName => {
+        const key = `${weekNum}-${productName}`;
+        entry[productName] = valueMap.get(key) || 0; // Eksik değerler için 0
+      });
+      return entry;
+    });
+  
+    return processedData;
+  };
+  
 
-            const existingEntry = acc.find((item) => item.date === date);
-            if (existingEntry) {
-              existingEntry.totalAssetValue += curr.totalAssetValue;
-            } else {
-              acc.push({
-                date,
-                weekNumber,
-                totalAssetValue: curr.totalAssetValue,
-              });
-            }
-            return acc;
-          }, [])
-          .sort((a, b) => a.weekNumber - b.weekNumber);
-
-        setAssetValues(processedData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Veri yüklenirken hata:", err);
-        setError(err);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const data = processData(assetValues);
 
   const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload?.[0]) {
+    if (active && payload && payload.length) {
       return (
-        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-blue-100 transition-all duration-300">
-          <p className="font-semibold text-gray-800">Tarih: {label}</p>
-          <p className="text-blue-600 mt-1">
-            Değer: {payload[0].value.toLocaleString()}
-          </p>
+        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-blue-100">
+          <p className="font-semibold text-gray-800">{label}</p>
+          {payload.map((entry, index) => (
+            <p
+              key={index}
+              style={{ color: entry.color }}
+              className="mt-1"
+            >
+              {entry.name}: {entry.value}
+            </p>
+          ))}
         </div>
       );
     }
     return null;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 p-4 rounded-lg text-red-600 animate-fade-in">
-        Veri yüklenirken bir hata oluştu
-      </div>
-    );
-  }
+  // Get unique product names dynamically from the data
+  const products = data.length > 0 
+    ? Object.keys(data[0]).filter(key => key !== 'week')
+    : [];
 
   return (
     <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Risk Değeri Trendi</h2>
-        <button
-          onClick={() => setAnimationActive(!animationActive)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-300"
-        >
-          {animationActive ? 'Animasyonu Durdur' : 'Animasyonu Başlat'}
-        </button>
+        <h2 className="text-2xl font-bold text-gray-800">Asset Risk Values Trend</h2>
+        <div className="text-sm text-gray-600">
+          {products.length} Assets Tracked
+        </div>
       </div>
 
-      {assetValues.length > 0 ? (
+      {data.length > 0 ? (
         <div className="transition-transform duration-300 hover:scale-[1.02]">
           <ResponsiveContainer width="100%" height={400}>
             <LineChart
-              data={assetValues}
+              data={data}
               margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
             >
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                </linearGradient>
-              </defs>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-              <XAxis
-                dataKey="date"
+              <XAxis 
+                dataKey="week"
                 stroke="#6b7280"
                 tick={{ fill: '#4b5563' }}
               />
               <YAxis
                 stroke="#6b7280"
                 tick={{ fill: '#4b5563' }}
-                tickFormatter={(value) => value.toLocaleString()}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="totalAssetValue"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={{ fill: '#3b82f6', strokeWidth: 2 }}
-                activeDot={{
-                  r: 8,
-                  fill: '#3b82f6',
-                  className: 'animate-pulse'
-                }}
-                isAnimationActive={animationActive}
-                animationDuration={2000}
-                animationEasing="ease-in-out"
-              />
+              <Legend />
+              
+              {products.map((product, index) => (
+                <Line
+                  key={product}
+                  type="monotone"
+                  dataKey={product}
+                  name={product}
+                  stroke={generateColor(index)}
+                  strokeWidth={3}
+                  dot={{ 
+                    fill: generateColor(index),
+                    strokeWidth: 2 
+                  }}
+                  activeDot={{
+                    r: 8,
+                    fill: generateColor(index),
+                    className: 'animate-pulse'
+                  }}
+                  animationDuration={2000}
+                  animationEasing="ease-in-out"
+                />
+              ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
       ) : (
         <div className="text-center py-10 text-gray-500">
-          Henüz veri bulunmamaktadır
+          No data available
         </div>
       )}
     </div>

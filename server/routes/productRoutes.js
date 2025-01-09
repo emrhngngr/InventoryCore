@@ -96,10 +96,9 @@ router.put("/:id",
 
 // Delete a product
 router.delete("/:id",
-  authMiddleware, 
-  // authorizeRoles(['delete_products']),
+  authMiddleware,
   createActivityLogger('delete', 'product'),
-   async (req, res) => {
+  async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
@@ -107,11 +106,15 @@ router.delete("/:id",
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.json({ message: "Product deleted successfully", deletedProduct });
+    // AssetValue koleksiyonundan ilgili kayıtları sil
+    await AssetValue.deleteMany({ product: req.params.id });
+
+    res.json({ message: "Product and related AssetValues deleted successfully", deletedProduct });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 router.put("/:id/confirm", 
   authMiddleware, 

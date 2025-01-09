@@ -67,7 +67,7 @@ const AdminDashboard = () => {
 
   const isProductOld = (updatedAt) => {
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 0);
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     return new Date(updatedAt) < oneWeekAgo;
   };
 
