@@ -19,3 +19,6 @@ Profili düzenle
 
  +Tarih olayını düzelt.
  Eger deadline gecerse risk orani artacak.
+
+
+ totalAssetvalue güncellenmiyor.

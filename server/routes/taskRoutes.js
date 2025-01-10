@@ -10,12 +10,13 @@ const router = express.Router();
 // Tüm görevleri getir (Admin için)
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find().populate("createdBy", "name");
+    const tasks = await Task.find().populate("createdBy", "name").populate("assignedAsset", "name");
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Görevler getirilirken hata oluştu" });
   }
 });
+
 
 // Gruba atanan görevleri getir
 router.get("/group/:groupType", authMiddleware, async (req, res) => {
@@ -87,6 +88,38 @@ router.put("/complete/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Görev güncellenirken hata oluştu" });
   }
 });
+// Görevi tamamla (Admin için)
+router.put("/complete-admin/:id", authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+    }
+    const task = await Task.findById(req.params.id);
+
+
+    if (!task) {
+      return res.status(404).json({ message: "Görev bulunamadı" });
+    }
+
+    // Find the associated product
+    const assignedProduct = await Product.findById(task.assignedAsset);
+
+    if (!assignedProduct) {
+      return res.status(404).json({ message: "Ürün bulunamadı" });
+    }
+
+    // Update the product's updatedAt field
+    assignedProduct.updatedAt = new Date();
+    await assignedProduct.save();
+
+    
+    task.status = "approved";
+    await task.save();
+    res.json(task);
+  } catch (error) {
+    res.status(500).json({ message: "Görev güncellenirken hata oluştu" });
+  }
+});
 
 // Görevi onayla (Admin için)
 router.put("/approve/:id", authMiddleware, async (req, res) => {
@@ -96,6 +129,7 @@ router.put("/approve/:id", authMiddleware, async (req, res) => {
     }
 
     const task = await Task.findById(req.params.id);
+
 
     if (!task) {
       return res.status(404).json({ message: "Görev bulunamadı" });
@@ -107,6 +141,18 @@ router.put("/approve/:id", authMiddleware, async (req, res) => {
         .json({ message: "Görev onay için uygun durumda değil" });
     }
 
+    // Find the associated product
+    const assignedProduct = await Product.findById(task.assignedAsset);
+
+    if (!assignedProduct) {
+      return res.status(404).json({ message: "Ürün bulunamadı" });
+    }
+
+    // Update the product's updatedAt field
+    assignedProduct.updatedAt = new Date();
+    await assignedProduct.save();
+
+    
     task.status = "approved";
     await task.save();
     res.json(task);
@@ -144,6 +190,7 @@ router.put("/sendback/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Görev geri gönderilirken hata oluştu" });
   }
 });
+
 
 // Görevi sil (Admin için)
 router.delete("/:id", authMiddleware, async (req, res) => {

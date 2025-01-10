@@ -15,7 +15,7 @@ export const AdminTaskReview = ({ tasks, onApprove, onSendBack }) => {
             <span className="text-sm text-gray-500">
               {task.assignedTo} - {new Date(task.createdAt).toLocaleDateString()}
             </span>
-            <div>
+            <div className='space-x-4'>
               <button
                 onClick={() => onSendBack(task._id)}
                 className="px-4 py-2 bg-red-500 text-white rounded"

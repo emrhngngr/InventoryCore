@@ -54,6 +54,8 @@ const AssetValueTrends = ({ assetValues }) => {
   
 
   const data = processData(assetValues);
+  console.log("data ==> ", data);
+  console.log("assetValues ==> ", assetValues);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {

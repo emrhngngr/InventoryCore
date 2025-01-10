@@ -1,12 +1,15 @@
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 import api from "../../api/api";
 import Modal from "../common/Modal";
-import { ClipLoader } from "react-spinners";
 
 const ActivityLogs = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const totalPages = Math.ceil(logs.length / itemsPerPage);
   const [filters, setFilters] = useState({
     startDate: "",
     endDate: "",
@@ -20,6 +23,11 @@ const ActivityLogs = () => {
   useEffect(() => {
     fetchLogs();
   }, []);
+
+  const paginatedLogs = logs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const fetchLogs = async () => {
     try {
@@ -156,7 +164,7 @@ const ActivityLogs = () => {
             </tr>
           </thead>
           <tbody>
-            {logs.map((log) => (
+            {paginatedLogs.map((log) => (
               <tr key={log._id}>
                 <td className="p-2 border">
                   {format(new Date(log.createdAt), "dd/MM/yyyy HH:mm")}
@@ -178,7 +186,115 @@ const ActivityLogs = () => {
             ))}
           </tbody>
         </table>
+        <div className="flex items-center justify-start mt-4">
+          <div className="text-sm text-gray-600">
+            Sayfa {currentPage} / {Math.ceil(logs.length / itemsPerPage)}{" "}
+            (Toplam {logs.length} varlık)
+          </div>
+
+          <div className="flex items-center space-x-4 ml-7">
+            <label htmlFor="items-per-page" className="text-sm text-gray-600">
+              Sayfa başına:
+            </label>
+            <select
+              id="items-per-page"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1); // Sayfa sayısı değişince ilk sayfaya dön
+              }}
+              className="px-2 py-1 border border-gray-300 rounded-md text-sm"
+            >
+              {[5, 10, 20].map((option) => (
+                <option key={option} value={option}>
+                  {option} Kayıt
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
+      {Math.ceil(logs.length / itemsPerPage) > 1 && (
+        <div className="flex justify-center space-x-2 mt-4">
+  {/* İlk Sayfa Butonu */}
+  <button
+    onClick={() => setCurrentPage(1)}
+    disabled={currentPage === 1}
+    className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+  >
+    İlk
+  </button>
+
+  {/* Önceki Sayfa Butonu */}
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+    className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+  >
+    Önceki
+  </button>
+
+  {/* Sayfa Numaraları */}
+  {Array.from({ length: totalPages }, (_, i) => i + 1)
+    .filter((page) => {
+      // Sadece ilgili sayfaları göster
+      const showAllPages = 5; // Etrafında gösterilecek toplam sayfa sayısı
+      if (page === 1 || page === totalPages) return true; // İlk ve son sayfalar her zaman gösterilir
+      if (
+        Math.abs(page - currentPage) < Math.ceil(showAllPages / 2)
+      )
+        return true; // Mevcut sayfanın etrafındaki sayfalar gösterilir
+      return false;
+    })
+    .map((page, index, array) => {
+      // "..." eklemek için
+      const prevPage = array[index - 1];
+      return (
+        <>
+          {prevPage && page - prevPage > 1 && (
+            <span key={`ellipsis-${index}`} className="px-2">
+              ...
+            </span>
+          )}
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 border rounded-md ${
+              currentPage === page
+                ? "bg-blue-500 text-white"
+                : "hover:bg-gray-50"
+            }`}
+          >
+            {page}
+          </button>
+        </>
+      );
+    })}
+
+  {/* Sonraki Sayfa Butonu */}
+  <button
+    onClick={() =>
+      setCurrentPage((prev) =>
+        Math.min(prev + 1, totalPages)
+      )
+    }
+    disabled={currentPage === totalPages}
+    className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+  >
+    Sonraki
+  </button>
+
+  {/* Son Sayfa Butonu */}
+  <button
+    onClick={() => setCurrentPage(totalPages)}
+    disabled={currentPage === totalPages}
+    className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+  >
+    Son
+  </button>
+</div>
+
+      )}
 
       {/* Modal */}
       <Modal

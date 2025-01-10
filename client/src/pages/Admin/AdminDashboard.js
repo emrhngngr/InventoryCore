@@ -17,30 +17,31 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     let isMounted = true;
-  
+
     const fetchProductsAndAssignTasks = async () => {
       try {
         const [productsResponse, tasksResponse] = await Promise.all([
           api.get("/products"),
-          api.get('/tasks')
+          api.get("/tasks"),
         ]);
-  
+
         if (!isMounted) return;
-  
+
         const oldProducts = productsResponse.data.filter(
-          product => product.isAuto && isProductOld(product.updatedAt)
+          (product) => product.isAuto && isProductOld(product.updatedAt)
         );
-        
+
         for (const product of oldProducts) {
           const assetControlTasks = tasksResponse.data.filter(
-            task => task.assignedAsset === product._id && 
-                   task.title === "Eski Varlıkların Kontrolü"
+            (task) =>
+              task.assignedAsset._id === product._id &&
+              task.title === "Eski Varlıkların Kontrolü"
           );
-  
+
           const hasActiveControlTask = assetControlTasks.some(
-            task => task.status === "pending" || task.status === "reviewing"
+            (task) => task.status === "pending" || task.status === "reviewing"
           );
-  
+
           if (!hasActiveControlTask) {
             await handleAddTask({
               title: "Eski Varlıkların Kontrolü",
@@ -57,9 +58,9 @@ const AdminDashboard = () => {
         console.error("Hata:", error);
       }
     };
-  
+
     fetchProductsAndAssignTasks();
-    
+
     return () => {
       isMounted = false;
     };
@@ -117,11 +118,19 @@ const AdminDashboard = () => {
 
   const handleCompleteTask = async (note) => {
     try {
-      await api.put(`/tasks/complete/${selectedTaskId}`, {
-        completionNote: note,
-      });
-      const response = await api.get(`/tasks/group/${currentUser.role}`);
-      setTasks(response.data);
+      if (currentUser.role === "admin") {
+        await api.put(`/tasks/complete-admin/${selectedTaskId}`, {
+          completionNote: note,
+        });
+        const response = await api.get(`/tasks`);
+        setTasks(response.data);
+      } else {
+        await api.put(`/tasks/complete/${selectedTaskId}`, {
+          completionNote: note,
+        });
+        const response = await api.get(`/tasks/group/${currentUser.role}`);
+        setTasks(response.data);
+      }
       setIsCompletionModalOpen(false);
       setSelectedTaskId(null);
     } catch (error) {
@@ -143,7 +152,7 @@ const AdminDashboard = () => {
       await api.put(`/tasks/sendback/${selectedTaskId}`, {
         feedback: note,
       });
-      const response = await api.get(`/tasks/group/${currentUser.role}`);
+      const response = await api.get(`/tasks/`);
       setTasks(response.data);
       setIsCompletionModalOpen(false);
       setSelectedTaskId(null);

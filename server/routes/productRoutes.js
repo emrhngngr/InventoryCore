@@ -4,6 +4,8 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware')
 const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
+const AssetValue = require("../models/AssetValue");
+const Task = require("../models/Task");
 
 // Get all products with populated category
 router.get("/",
@@ -61,6 +63,7 @@ router.put("/:id",
   try {
     const { name, category, dynamicAttributes, assignedTo, amount, criticalityDegree, privacyDegree, isAuto} = req.body;
     const updatedAt = Date.now()
+    let totalAssetValue = 0;
 
     // Validate category exists
     const existingCategory = await Category.findById(category);
@@ -88,6 +91,19 @@ router.put("/:id",
       return res.status(404).json({ message: "Product not found" });
     }
 
+    const existingAssetValues = await AssetValue.find({ product: req.params.id });
+
+    totalAssetValue = parseInt(updatedProduct.privacyDegree) * parseInt(updatedProduct.criticalityDegree);
+
+    if (existingAssetValues.length > 0) {
+      await AssetValue.updateMany(
+        { product: req.params.id },
+        { totalAssetValue }
+      );
+    }
+    
+
+
     res.json(updatedProduct);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -108,6 +124,7 @@ router.delete("/:id",
 
     // AssetValue koleksiyonundan ilgili kayıtları sil
     await AssetValue.deleteMany({ product: req.params.id });
+    await Task.deleteMany({ assignedAsset: req.params.id });
 
     res.json({ message: "Product and related AssetValues deleted successfully", deletedProduct });
   } catch (error) {
