@@ -8,6 +8,21 @@ router.post("/calculate-risk", async (req, res) => {
   try {
     const weekNumber = req.body.weekNumber || 1;
 
+    // Haftanın başlangıç ve bitiş tarihlerini hesaplama
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Pazartesi
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6); // Pazar
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    // weekRange'i istenen formatta oluştur
+    const formatDate = (date) =>
+      date.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    const weekRange = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
+
     // Tüm product'ları getir
     const products = await Product.find();
 
@@ -30,7 +45,12 @@ router.post("/calculate-risk", async (req, res) => {
           const privacyDegree = parseFloat(product.privacyDegree || 0);
           const taskRiskValue = criticalityDegree * privacyDegree;
 
-          acc[product._id] += taskRiskValue;
+          // Eğer deadline geçmişse risk puanını çarp
+          if (new Date(task.deadline) <= Date.now()) {
+            acc[product._id] += taskRiskValue * 2;
+          } else {
+            acc[product._id] += taskRiskValue;
+          }
         }
       });
 
@@ -42,7 +62,7 @@ router.post("/calculate-risk", async (req, res) => {
       Object.entries(riskSums).map(async ([productId, totalRisk]) => {
         return AssetValue.findOneAndUpdate(
           { product: productId, weekNumber },
-          { totalAssetValue: totalRisk, weekRange: req.body.weekRange },
+          { totalAssetValue: totalRisk, weekRange },
           { upsert: true, new: true }
         );
       })

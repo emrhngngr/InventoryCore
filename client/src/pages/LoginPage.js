@@ -1,6 +1,12 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import Svg from "../assets/svg/12643932_5031661.svg";
+import Logo from "../assets/svg/12643932_5031661.svg";
+import { ArrowLeft, ArrowRight, Eye, EyeClosed, Lock, Mail } from "lucide-react";
+import { IoCloud, IoNewspaperSharp } from "react-icons/io5";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -10,10 +16,13 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:5000/api/users/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
 
       // Token'ı localStorage'da saklıyoruz
       localStorage.setItem("token", response.data.token);
@@ -43,47 +52,99 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-6 bg-white rounded shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-700 mb-4">
-          Giriş Yap
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              className="block w-full px-4 py-2 mt-1 border rounded focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Şifre
-            </label>
-            <input
-              type="password"
-              className="block w-full px-4 py-2 mt-1 border rounded focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Şifre"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring"
-          >
-            Giriş Yap
-          </button>
-        </form>
-      </div>
-    </div>
+<div className="flex justify-between min-h-screen h-full w-full gap-x-12">
+            <div className="flex flex-col justify-between w-full px-4 py-12 md:pl-12 lg:pl-24 xl:pl-32">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-x-2">
+                        <IoCloud className="size-20 text-blue-600" />
+                    </div>
+
+                    <Link
+                        to="/"
+                        className="flex items-center gap-x-2 text-black dark:text-white hover:underline">
+                        <ArrowLeft className="size-4" />
+                        <span className="text-sm">
+                            Back to home
+                        </span>
+                    </Link>
+                </div>
+
+                <div className="flex flex-col gap-y-4 max-w-sm w-full mx-auto lg:mx-0">
+                    <h1 className="text-4xl font-bold">
+                        Giriş Yap
+                    </h1>
+
+                    <form className="flex flex-col gap-y-4 mt-4 w-full text-gray-500 dark:text-gray-400" onSubmit={handleSubmit}>
+                        <div className="flex flex-col gap-y-1">
+                            <span className="text-xl">Email</span>
+                            <div className="group flex items-center gap-x-2 border border-black/35 rounded-lg px-4 py-2 focus-within:border-blue-600 focus-within:text-blue-600">
+                                <label htmlFor="email">
+                                    <Mail className="size-4" />
+                                </label>
+
+                                <input
+                                    type="email"
+                                    className="w-full bg-transparent text-black dark:text-white font-normal placeholder:font-light group-focus-within:text-blue-600"
+                                    id="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-y-1">
+                            <span className="text-xl">Şifre</span>
+                            <div className="group flex items-center gap-x-2 border border-black/35 rounded-lg px-4 py-2 focus-within:border-blue-600 focus-within:text-blue-600">
+                                <label htmlFor="password">
+                                    <Lock className="size-4" />
+                                </label>
+
+                                <input
+                                    type="password"
+                                    className="w-full bg-transparent text-black font-normal placeholder:font-light border border-transparent"
+                                    id="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    />
+
+                                <button
+                                    type="submit"
+                                    className="text-sm"
+                                    tabIndex={-1}
+                                >
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="relative flex items-center justify-center text-lg font-medium px-4 py-2 rounded-lg mt-4 text-white bg-blue-600 hover:bg-blue-700"
+                        >
+                            <span>Giriş Yap</span>
+                            <ArrowRight className="absolute right-4 size-5" />
+                        </button>
+                    </form>
+                </div>
+                <div></div>
+            </div>
+            <div className="relative hidden lg:flex flex-col justify-end max-w-screen-lg w-full">
+                <img
+                    src={Svg}
+                    alt="background"
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                />
+                <div className="absolute top-1/2 left-0 w-full h-1/2 bg-gradient-to-b from-transparent to-black/90"></div>
+
+                <div className="flex flex-col m-8 p-4 max-w-lg text-center mx-auto text-white backdrop-blur rounded-lg z-10 gap-y-4">
+                    <p className="text-xl opacity-70">
+                      InventorCore, varlıklarınızı yönetmek için harika bir platformdur. Kullanıcı dostu arayüzü ve güçlü özellikleri ile varlıklarınızı kolayca yönetebilirsiniz.
+                    </p>
+
+                    <p>
+                        Emirhan Güngör, CEO InventoryCore
+                    </p>
+                </div>
+            </div>
+        </div>
   );
 };
 

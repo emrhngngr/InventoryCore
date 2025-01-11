@@ -44,7 +44,7 @@ const AssetValueTrends = ({ assetValues }) => {
       const entry = { week: weekRanges[weekNum] }; // Haftayı range formatında yaz
       productsList.forEach(productName => {
         const key = `${weekNum}-${productName}`;
-        entry[productName] = valueMap.get(key) || 0; // Eksik değerler için 0
+        entry[productName] = valueMap.get(key) || null; // Eksik değerler için 0
       });
       return entry;
     });

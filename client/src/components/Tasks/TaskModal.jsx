@@ -3,6 +3,7 @@ import { tr } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/api';
+import CustomDatePicker from '../common/CustomDatePicker';
 
 export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
   const [task, setTask] = useState({
@@ -10,11 +11,10 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
     description: '',
     assignedTo: 'system_group',
     assignedAsset: '',
-    deadline: new Date(),
+    deadline: new Date(new Date().setHours(0, 0, 0, 0) + 86400000), // Tomorrow's date
   });
   const [assets, setAssets] = useState([]);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,20 +29,25 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
   }, []);
 
   useEffect(() => {
-  // Eğer bir asset seçilmişse, assignedTo değerini otomatik olarak ata
-  if (task.assignedAsset) {
-    const selectedAsset = assets.find(asset => asset._id === task.assignedAsset);
-    if (selectedAsset) {
-      setTask(prevTask => ({ ...prevTask, assignedTo: selectedAsset.assignedTo }));
+    if (task.assignedAsset) {
+      const selectedAsset = assets.find(asset => asset._id === task.assignedAsset);
+      if (selectedAsset) {
+        setTask(prevTask => ({ ...prevTask, assignedTo: selectedAsset.assignedTo }));
+      }
     }
-  }
-}, [task.assignedAsset, assets]);
-
+  }, [task.assignedAsset, assets]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(task);
     onClose();
+  };
+
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
   };
 
   if (!isOpen) return null;
@@ -73,28 +78,11 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Son Tarih</label>
-            <div className="relative">
-              <button
-                type="button"
-                className="w-full p-2 border rounded text-left"
-                onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-              >
-                {task.deadline ? format(task.deadline, "d MMMM yyyy", { locale: tr }) : "Tarih seçin"}
-              </button>
-              {isCalendarOpen && (
-                <div className="absolute top-full left-0 mt-2 p-2 bg-white border rounded shadow-lg z-10">
-                  <input
-                    type="date"
-                    className="w-full p-2 border rounded"
-                    value={task.deadline.toISOString().split("T")[0]}
-                    onChange={(e) => {
-                      setTask({ ...task, deadline: new Date(e.target.value) });
-                      setIsCalendarOpen(false);
-                    }}
-                  />
-                </div>
-              )}
-            </div>
+            <CustomDatePicker
+              selectedDate={task.deadline}
+              onChange={(date) => setTask({ ...task, deadline: date })}
+              minDate={getMinDate()}
+            />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Atanacak Varlık</label>
@@ -146,3 +134,5 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
     </div>
   );
 };
+
+export default AddTaskModal;

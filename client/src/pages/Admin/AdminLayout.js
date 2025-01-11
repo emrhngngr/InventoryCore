@@ -1,29 +1,69 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Dashboard/SideBar.js";
 import TopBar from "../../components/Dashboard/TopBar.js";
 
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
+      {/* Overlay for mobile when sidebar is open */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20"
+          onClick={toggleSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-      />
-
-      {/* Main Content Wrapper */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          isSidebarOpen ? "ml-64" : "ml-16"
-        }`}
+        className={`fixed lg:static ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        } transition-transform duration-300 ease-in-out z-30 h-full`}
       >
-        {/* TopBar */}
-        <TopBar />
+        <Sidebar
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          isMobile={isMobile}
+        />
+      </div>
 
-        {/* Content Area */}
-        <div className="flex-1 p-8 pt-20 bg-gray-100">{children}</div>
+      <div className="flex-1 flex flex-col min-w-0">
+        <TopBar toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+
+        <main
+          className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 
+            ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"}
+            pt-16`}
+        >
+          <div className="w-full px-4 md:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

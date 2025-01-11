@@ -6,6 +6,7 @@ import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
 import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md"; // Menü ikonları
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
+import { FaChartSimple } from "react-icons/fa6";
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
@@ -134,7 +135,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 onClick={() => navigate("/user/statistics")}
                 className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
               >
-                <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
+                <FaChartSimple className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">İstatiklikler</span>}
               </li>
             </>
