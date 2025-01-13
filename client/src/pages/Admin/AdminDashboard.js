@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2"; // SweetAlert2
 import api from "../../api/api";
 import { AdminTaskReview } from "../../components/Tasks/AdminTaskReview";
 import { CompletionModal } from "../../components/Tasks/CompletionModal";
 import { SendBackModal } from "../../components/Tasks/SendBackModal";
 import { AddTaskModal } from "../../components/Tasks/TaskModal";
 import { TaskTable } from "../../components/Tasks/TaskTable";
+import { ClipLoader } from "react-spinners";
 
 const AdminDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -14,6 +16,8 @@ const AdminDashboard = () => {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false); // Loading state
+  
 
   useEffect(() => {
     let isMounted = true;
@@ -87,6 +91,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      setLoading(true); // Loading başlangıcı
       try {
         let response;
         if (currentUser?.role === "admin") {
@@ -97,13 +102,16 @@ const AdminDashboard = () => {
         setTasks(response?.data || []);
       } catch (error) {
         console.error("Error fetching tasks:", error);
+      } finally {
+        setLoading(false); // İşlem tamamlandığında yükleme durumunu kapat
       }
     };
-
+  
     if (currentUser) {
       fetchTasks();
     }
   }, [currentUser]);
+  
 
   const handleAddTask = async (taskData) => {
     try {
@@ -162,12 +170,39 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteTask = async (taskId) => {
-    try {
-      await api.delete(`/tasks/${taskId}`);
-      const response = await api.get("/tasks");
-      setTasks(response.data);
-    } catch (error) {
-      console.error("Error deleting task:", error);
+    const result = await Swal.fire({
+      title: "Emin misiniz?",
+      text: "Bu görevi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Evet, sil!",
+      cancelButtonText: "Hayır, iptal et",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/tasks/${taskId}`);
+        const response = await api.get("/tasks");
+        // Başarı mesajı göster
+        Swal.fire({
+          title: "Silindi!",
+          text: "Varlık başarıyla silindi.",
+          icon: "success",
+          confirmButtonText: "Tamam",
+        });
+        setTasks(response.data);
+      } catch (error) {
+        // Hata durumunda mesaj göster
+        Swal.fire({
+          title: "Hata!",
+          text: "Varlık silinirken bir hata oluştu.",
+          icon: "error",
+          confirmButtonText: "Tamam",
+        });
+        console.error("Error deleting task:", error);
+      }
     }
   };
 
@@ -244,6 +279,11 @@ const AdminDashboard = () => {
         }}
         onSubmit={handleSendBackTask}
       />
+              {loading && (
+             <div className="flex justify-center items-center py-4">
+               <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+             </div>
+            )}
     </div>
   );
 };

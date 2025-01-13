@@ -9,12 +9,12 @@ const activityLogSchema = new mongoose.Schema({
   action: {
     type: String,
     required: true,
-    enum: ["create", "update", "delete"],
+    enum: ["create", "update", "delete", "pending", "reviewed", "completed", "sendback"],
   },
   resourceType: {
     type: String,
     required: true,
-    enum: ["product", "category", "user"],
+    enum: ["product", "category", "user", "task"],
   },
   resourceId: {
     type: mongoose.Schema.Types.ObjectId,

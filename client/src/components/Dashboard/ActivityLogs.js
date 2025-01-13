@@ -31,15 +31,7 @@ const ActivityLogs = () => {
 
   const fetchLogs = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await api.get(
-        "http://localhost:5000/api/activity-logs",
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await api.get("/activity-logs")
       setLogs(response.data);
       setLoading(false);
     } catch (error) {
@@ -80,12 +72,17 @@ const ActivityLogs = () => {
       delete: "sildi",
       login: "giriş yaptı",
       logout: "çıkış yaptı",
+      pending: "inceledi",
+      reviewed: "incelendi",
+      completed: "tamamladı",
+      sendback: "geri gönderdi",
     };
 
     const resourceMessages = {
       product: "varlık",
       category: "kategori",
       user: "kullanıcı",
+      task: "görev",
     };
 
     return `${log.user?.name || "Bilinmeyen Kullanıcı"} bir ${
@@ -143,6 +140,7 @@ const ActivityLogs = () => {
           <option value="product">Varlık</option>
           <option value="category">Kategori</option>
           <option value="user">Kullanıcı</option>
+          <option value="user">Görevler</option>
         </select>
         <button
           onClick={applyFilters}
