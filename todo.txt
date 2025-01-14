@@ -1,7 +1,6 @@
 Bütün tablolar için sayfalama (Loglar için )
 Kritik ve Gizlilik derecesi için bilgilendirme
 -Mail gönderme çalıştır.
-Profili düzenle
 
 
 +5 tane ana kullanıcı grubu olacak 

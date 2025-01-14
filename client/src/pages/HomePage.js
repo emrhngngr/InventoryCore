@@ -48,7 +48,7 @@ const HomePage = () => {
               ISO 27001 ile özelleştirilmiş Envanter Sistemi
             </h1>
             <p className="text-lg lg:text-xl mb-8">
-              ISO 27001 sertifikalı envanter yönetim sistemi ile işletmenizin
+              ISO 27001 destekli envanter yönetim sistemi ile işletmenizin
               envanterini modernleştirin ve verimliliği artırın.
             </p>
             <div className="space-x-4">

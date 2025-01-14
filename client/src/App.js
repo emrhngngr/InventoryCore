@@ -5,18 +5,17 @@ import CustomerRoute from "./routes/CustomerRoute";
 import AdminClasses from "./pages/Admin/AdminCategories";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminLogs from "./pages/Admin/AdminLogs";
 import AdminProcess from "./pages/Admin/AdminProcess";
 import AdminProducts from "./pages/Admin/AdminProducts";
-import AdminProfile from "./pages/Admin/AdminProfile";
+import AdminStatistics from "./pages/Admin/AdminStatistics";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AnnouncementsPage from "./pages/Admin/AnnouncementsPage";
+import ContactPage from "./pages/ContactPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
-import AdminLogs from "./pages/Admin/AdminLogs";
 import ServicePage from "./pages/ServicePage";
-import ContactPage from "./pages/ContactPage";
-import AdminStatistics from "./pages/Admin/AdminStatistics";
 
 function App() {
   return (
@@ -59,14 +58,6 @@ function App() {
             element={
               <AdminLayout>
                 <AdminUsers />
-              </AdminLayout>
-            }
-          />
-          <Route
-            path="profile"
-            element={
-              <AdminLayout>
-                <AdminProfile />
               </AdminLayout>
             }
           />

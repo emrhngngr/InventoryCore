@@ -6,6 +6,7 @@ import api from "../../api/api";
 import ProductModal from "../../components/Products/ProductModal";
 import ProductTable from "../../components/Products/ProductTable";
 import Button from "../../components/common/Button";
+import InfoModal from "../../components/Products/InfoModal";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -55,11 +56,12 @@ const AdminProducts = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [productsResponse, categoriesResponse, rolesResponse] = await Promise.all([
-          api.get("http://localhost:5000/api/products"),
-          api.get("http://localhost:5000/api/categories"),
-          api.get("http://localhost:5000/api/users/roles"),
-        ]);
+        const [productsResponse, categoriesResponse, rolesResponse] =
+          await Promise.all([
+            api.get("http://localhost:5000/api/products"),
+            api.get("http://localhost:5000/api/categories"),
+            api.get("http://localhost:5000/api/users/roles"),
+          ]);
         setProducts(productsResponse.data);
         setCategories(categoriesResponse.data);
         console.log("categoriesResponse.data ==> ", categoriesResponse.data);
@@ -74,8 +76,6 @@ const AdminProducts = () => {
     };
     fetchData();
   }, []);
-
-  
 
   // Open modal for adding new product
   const openAddModal = () => {
@@ -342,37 +342,52 @@ const AdminProducts = () => {
     });
 
   // Open info modal with specific content
-  const openModal = (content) => {
-    setInfoModalContent(content);
+  const openInfoModal = () => {
     setIsInfoModalOpen(true);
   };
 
+  // Modalı kapama
   const closeModal = () => {
     setIsInfoModalOpen(false);
+  };
+
+  // Bilgilendirici modal dışına tıklandığında kapanması için event handler
+  const handleOutsideClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      closeModal();
+    }
   };
 
   return (
     <div className="p-4">
       <ToastContainer />
       {/* Search and Filter Section */}
-      <div>
-        <div>
-          <h1
-            onClick={() =>
-              Swal.fire({
-                title: "Kritiklik Derecesi Nedir?",
-                text: "Kritiklik derecesi, bir Varlığın ne kadar kritik olduğunu belirten bir ölçüttür.",
-              })
-            }
-          >
-            Kritiklik Derecesi Nedir?
-          </h1>
-          <h1 onClick={() => Swal.fire("SweetAlert2 is working!")}>
-            Gizlilik Derecesi Nedir?
-          </h1>
+      
+      {isInfoModalOpen && (
+        <div
+          className="modal-overlay fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50"
+          onClick={handleOutsideClick}
+        >
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full sm:w-96 md:w-1/2 lg:w-1/3">
+            <h2 className="text-xl font-semibold mb-4">Bilgi</h2>
+            <p>{modalInfoContent}</p>
+            <div className="mt-4 flex justify-end">
+              <Button variant="outline" onClick={closeModal}>
+                Kapat
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+      
+        <InfoModal isOpen={isInfoModalOpen} onClose={closeModal} />
       <div className=" flex justify-end items-center mb-4 gap-4">
+      <h1
+          onClick={openInfoModal} // Modalı açan fonksiyon
+          className="cursor-pointer text-blue-600 hover:text-blue-800"
+        >
+          Gizlilik ve Hata Derecesi Nedir?
+        </h1>
         {/* Search Input */}
         <div className="w-max">
           <input
@@ -403,28 +418,13 @@ const AdminProducts = () => {
         {/* Add Product Button */}
         {currentUser && currentUser.permissions.includes("create_products") && (
           <>
-            <Button
-              variant="default"
-              onClick={openAddModal}
-            >
+            <Button variant="default" onClick={openAddModal}>
               Varlık Ekle
             </Button>
           </>
         )}
       </div>
-      {isInfoModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md">
-            <h2 className="text-xl font-semibold mb-4">Bilgi</h2>
-            <p>{modalInfoContent}</p>
-            <div className="mt-4 flex justify-end">
-              <Button variant="outline" onClick={closeModal}>
-                Kapat
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Modal */}
       {isModalOpen && (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 import Swal from "sweetalert2"; // SweetAlert2
 import api from "../../api/api";
 import { AdminTaskReview } from "../../components/Tasks/AdminTaskReview";
@@ -6,7 +7,6 @@ import { CompletionModal } from "../../components/Tasks/CompletionModal";
 import { SendBackModal } from "../../components/Tasks/SendBackModal";
 import { AddTaskModal } from "../../components/Tasks/TaskModal";
 import { TaskTable } from "../../components/Tasks/TaskTable";
-import { ClipLoader } from "react-spinners";
 
 const AdminDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -16,9 +16,22 @@ const AdminDashboard = () => {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false); // Loading state
-  
+  const [loading, setLoading] = useState(false); // Loading state
 
+  const [activeAnnouncement, setActiveAnnouncement] = useState(null);
+
+  useEffect(() => {
+    const fetchActiveAnnouncement = async () => {
+      try {
+        const response = await api.get("/announcements/active");
+        setActiveAnnouncement(response.data);
+      } catch (error) {
+        console.error("Duyuru yüklenirken hata:", error);
+      }
+    };
+
+    fetchActiveAnnouncement();
+  }, []);
   useEffect(() => {
     let isMounted = true;
 
@@ -106,12 +119,11 @@ const AdminDashboard = () => {
         setLoading(false); // İşlem tamamlandığında yükleme durumunu kapat
       }
     };
-  
+
     if (currentUser) {
       fetchTasks();
     }
   }, [currentUser]);
-  
 
   const handleAddTask = async (taskData) => {
     try {
@@ -188,7 +200,7 @@ const AdminDashboard = () => {
         // Başarı mesajı göster
         Swal.fire({
           title: "Silindi!",
-          text: "Varlık başarıyla silindi.",
+          text: "Görev başarıyla silindi.",
           icon: "success",
           confirmButtonText: "Tamam",
         });
@@ -197,7 +209,7 @@ const AdminDashboard = () => {
         // Hata durumunda mesaj göster
         Swal.fire({
           title: "Hata!",
-          text: "Varlık silinirken bir hata oluştu.",
+          text: "Görev silinirken bir hata oluştu.",
           icon: "error",
           confirmButtonText: "Tamam",
         });
@@ -250,11 +262,19 @@ const AdminDashboard = () => {
           />
         </div>
       ) : (
-        <TaskTable
-          tasks={tasks}
-          onComplete={openCompletionModal}
-          isAdmin={false}
-        />
+        <div>
+          <h2 className="text-xl font-semibold mb-4">
+            Duyuru: 
+            {activeAnnouncement
+              ? activeAnnouncement.content
+              : "Aktif duyuru bulunmamaktadır."}
+          </h2>
+          <TaskTable
+            tasks={tasks}
+            onComplete={openCompletionModal}
+            isAdmin={false}
+          />
+        </div>
       )}
 
       <AddTaskModal
@@ -279,11 +299,11 @@ const AdminDashboard = () => {
         }}
         onSubmit={handleSendBackTask}
       />
-              {loading && (
-             <div className="flex justify-center items-center py-4">
-               <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
-             </div>
-            )}
+      {loading && (
+        <div className="flex justify-center items-center py-4">
+          <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { CiLogout } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 
 const UserProfileHeader = ({ currentUser, onLogout }) => {
@@ -7,7 +8,6 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
   const dropdownRef = useRef(null); // Dropdown menüsünün referansı
   const userIconRef = useRef(null); // Kullanıcı simgesinin referansı
   const navigate = useNavigate();
-  const serverBaseUrl = "http://localhost:5000";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -59,7 +59,7 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
         <div className="relative" ref={userIconRef}>
           {currentUser?.profilePicture ? (
             <img
-              src={`${serverBaseUrl}/${currentUser.profilePicture}`}
+              src={`${process.env.REACT_APP_URL}/${currentUser.profilePicture}`}
               alt="Profil"
               className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200"
             />
@@ -77,20 +77,13 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
           ref={dropdownRef}
           className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border border-gray-200"
         >
-          <div className="p-2">
-            <button
-              onClick={() => navigate("/user/profile")}
-              className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer text-center"
-            >
-              Profil
-            </button>
-            <button
-              onClick={handleLogout}
-              className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer text-center"
-            >
-              Çıkış
-            </button>
-          </div>
+          <button
+            className="flex items-center gap-x-4 w-full px-4 py-2 text-md justify-center text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
+            onClick={handleLogout}
+          >
+            <CiLogout className="w-5 h-5 text-gray-500" />
+            <span className="ml-2">Çıkış</span>
+          </button>
         </div>
       )}
     </div>

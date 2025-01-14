@@ -65,11 +65,19 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
         <span
           className={`px-2 py-1 rounded-full text-xs ${
             user.role === "admin"
-              ? "bg-red-100 text-red-800"
-              : "bg-blue-100 text-blue-800"
+            ? "bg-red-100 text-red-800"
+            : user.role === "system_group"
+            ? "bg-green-100 text-green-800"
+            : user.role === "a_group"
+            ? "bg-yellow-100 text-yellow-800"
+            : user.role === "software_group"
+            ? "bg-blue-100 text-blue-800"
+            : user.role === "technical_service"
+            ? "bg-indigo-200 text-indigo-800"
+            : "bg-gray-100 text-gray-800"
           }`}
         >
-          {user.role}
+           {translateRole(user.role)}
         </span>
       </td>
       <td className="px-4 py-3">
@@ -98,6 +106,18 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
       </td>
     </tr>
   );
+};
+
+// İngilizce role değerlerini Türkçe'ye çeviren fonksiyon
+const translateRole = (role) => {
+  const roleTranslations = {
+    admin: 'Yönetici',
+    system_group: 'Sistem Grubu',
+    a_group: 'A Grubu',
+    software_group: 'Yazılım Grubu',
+    technical_service: 'Teknik Servis',
+  };
+  return roleTranslations[role] || 'Bilinmeyen Rol';
 };
 
 const getColumnLabel = (key) => {

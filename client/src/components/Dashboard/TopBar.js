@@ -13,10 +13,7 @@ const TopBar = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("http://localhost:5000/api/users/me", {
-          headers: { Authorization: token },
-        });
+        const response = await api.get("http://localhost:5000/api/users/me");
         setCurrentUser(response.data);
       } catch (error) {
         console.error("Error fetching current user:", error);

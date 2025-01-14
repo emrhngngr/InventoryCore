@@ -73,13 +73,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("http://localhost:5000/api/users", {
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await api.get("http://localhost:5000/api/users", {});
         setUsers(response.data);
         setLoading(false);
       } catch (error) {
@@ -179,7 +173,7 @@ const UserManagement = () => {
 
   // Handle input changes for new user
   const handleInputChange = (e) => {
-    const { name, value } = e.target; //burada files vardı
+    const { name, value } = e.target;
 
     // Handle file upload separately
     if (name === "profilePictureFile") {
@@ -203,19 +197,8 @@ const UserManagement = () => {
     setNewUser((prev) => ({
       ...prev,
       role: selectedRole,
-      // permissions: ROLE_PERMISSIONS[selectedRole] || [],
     }));
   };
-
-  // Toggle permission
-  // const togglePermission = (permissionKey) => {
-  //   setNewUser((prev) => ({
-  //     ...prev,
-  //     permissions: prev.permissions.includes(permissionKey)
-  //       ? prev.permissions.filter((p) => p !== permissionKey)
-  //       : [...prev.permissions, permissionKey],
-  //   }));
-  // };
 
   // Handle edit user click
   const handleEditClick = (user) => {
@@ -225,10 +208,9 @@ const UserManagement = () => {
       email: user.email,
       password: "",
       role: user.role,
-      // permissions: user.permissions || [],
       profilePicture: user.profilePicture
-        ? `${serverBaseUrl}/${user.profilePicture}` // Profil fotoğrafının tam URL'sini oluşturun
-        : null, // Profil fotoğrafı yoksa null      preview: null, // Düzenleme sırasında önizleme sıfırlanır
+        ? `${serverBaseUrl}/${user.profilePicture}`
+        : null, // Profil fotoğrafı yoksa null
     });
     setIsModalOpen(true);
   };
@@ -262,11 +244,6 @@ const UserManagement = () => {
       formData.append("email", newUser.email);
       formData.append("password", newUser.password);
       formData.append("role", newUser.role);
-
-      // Append permissions
-      // newUser.permissions.forEach((permission, index) => {
-      //   formData.append(`permissions[${index}]`, permission);
-      // });
 
       // Append profile picture if selected
       if (newUser.profilePictureFile) {
@@ -338,13 +315,7 @@ const UserManagement = () => {
     });
     if (result.isConfirmed) {
       try {
-        const token = localStorage.getItem("token");
-        await api.delete(`http://localhost:5000/api/users/${userId}`, {
-          headers: {
-            Authorization: token,
-            "Content-Type": "application/json",
-          },
-        });
+        await api.delete(`http://localhost:5000/api/users/${userId}`, {});
 
         // Remove user from state
         setUsers((prev) => prev.filter((user) => user._id !== userId));
@@ -393,7 +364,7 @@ const UserManagement = () => {
         </div>
         {loading ? (
           <div className="flex justify-center items-center py-4">
-            <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+            <ClipLoader color="#3498db" size={50} />
           </div>
         ) : (
           <>
@@ -469,10 +440,8 @@ const UserManagement = () => {
         editingUser={editingUser}
         newUser={newUser}
         currentUser={currentUser}
-        // PERMISSION_CONFIG={PERMISSION_CONFIG}
         handleInputChange={handleInputChange}
         handleRoleChange={handleRoleChange}
-        // togglePermission={togglePermission}
         handleSubmitUser={handleSubmitUser}
         handleProfilePictureChange={handleProfilePictureChange}
       />
@@ -481,61 +450,3 @@ const UserManagement = () => {
 };
 
 export default UserManagement;
-
-// const PERMISSION_CONFIG = [
-//   {
-//     group: "Ürünler",
-//     permissions: [
-//       { key: "read_products", label: "Ürünleri Görüntüleme" },
-//       { key: "create_products", label: "Ürün Ekleme" },
-//       { key: "edit_products", label: "Ürün Düzenleme" },
-//       { key: "delete_products", label: "Ürün Silme" },
-//     ],
-//   },
-//   {
-//     group: "Kategoriler",
-//     permissions: [
-//       { key: "read_categories", label: "Kategorileri Görüntüleme" },
-//       { key: "create_categories", label: "Kategoriler Ekleme" },
-//       { key: "edit_categories", label: "Kategoriler Düzenleme" },
-//       { key: "delete_categories", label: "Kategoriler Silme" },
-//     ],
-//   },
-//   {
-//     group: "Kullanıcılar",
-//     permissions: [
-//       { key: "read_users", label: "Kullanıcıları Görüntüleme" },
-//       { key: "manage_users", label: "Kullanıcı Yönetimi" },
-//     ],
-//   },
-// ];
-
-// const ROLE_PERMISSIONS = {
-//   product_viewer: ["read_products"],
-//   product_manager: [
-//     "read_products",
-//     "create_products",
-//     "edit_products",
-//     "delete_products",
-//   ],
-//   user_manager: ["read_users", "manage_users"],
-//   category_manager: [
-//     "read_categories",
-//     "create_categories",
-//     "edit_categories",
-//     "delete_categories",
-//   ],
-//   admin: [
-//     "read_products",
-//     "create_products",
-//     "edit_products",
-//     "delete_products",
-//     "read_categories",
-//     "create_categories",
-//     "edit_categories",
-//     "delete_categories",
-//     "read_users",
-//     "manage_users",
-//   ],
-  // user: [], // Default kullanıcı rolü
-// };

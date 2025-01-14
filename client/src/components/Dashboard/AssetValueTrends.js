@@ -72,7 +72,7 @@ const AssetValueTrends = ({ assetValues }) => {
     <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          Asset Risk Values Trend
+          Varlık Risk Değerleri İstatisliği
         </h2>
         <div className="text-sm text-gray-600">
           {products.length} Takip Edilen Varlıklar

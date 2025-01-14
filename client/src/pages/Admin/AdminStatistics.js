@@ -64,86 +64,56 @@ const AdminStatistics = () => {
   useEffect(() => {
     fetchAssetValues();
     fetchDashboardData();
-    console.log("assetValues ==> ", assetValues);
   }, []);
   
   return (
     <div className="space-y-6">
-      {/* İlk Kısım: Kartlar */}
-      <div className="grid grid-cols-12 gap-4">
+      {/* İlk Kısım: Kartlar ve Duyuru */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Dashboard Kartları */}
-        <div className="col-span-12 lg:col-span-8 grid grid-cols-4 gap-4">
-          <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
-            <AiOutlineProduct className="text-6xl" />
-            <div>Toplam Varlık Sayısı</div>
-            <div className="text-lg font-semibold">
-              {dashboardStats.totalProducts}
+        <div className="col-span-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
+              <AiOutlineProduct className="text-6xl" />
+              <div>Toplam Varlık Sayısı</div>
+              <div className="text-lg font-semibold">
+                {dashboardStats.totalProducts}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
-            <GoDuplicate className="text-6xl" />
-            <div>Kategori Sayısı</div>
-            <div className="text-lg font-semibold">
-              {dashboardStats.totalCategories}
+            <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
+              <GoDuplicate className="text-6xl" />
+              <div>Kategori Sayısı</div>
+              <div className="text-lg font-semibold">
+                {dashboardStats.totalCategories}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
-            <AiFillProduct className="text-6xl" />
-            <div>Aktif Varlıklar</div>
-            <div className="text-lg font-semibold">4</div>
-          </div>
-          <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
-            <FaRegUser className="text-6xl" />
-            <div>Üye Sayısı</div>
-            <div className="text-lg font-semibold">
-              {dashboardStats.totalUsers}
+            <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
+              <AiFillProduct className="text-6xl" />
+              <div>Aktif Varlıklar</div>
+              <div className="text-lg font-semibold">4</div>
+            </div>
+            <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
+              <FaRegUser className="text-6xl" />
+              <div>Üye Sayısı</div>
+              <div className="text-lg font-semibold">
+                {dashboardStats.totalUsers}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Active Announcement */}
-        <div className="col-span-12 lg:col-span-4">
+        <div className="col-span-4">
           <ActiveAnnouncement />
         </div>
       </div>
 
-      {/* Risk Değerleri Tablosu */}
-      {/* <div className="bg-white shadow-lg rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4">Risk Değerleri</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Ürün Adı</th>
-              <th className="border p-2">Toplam Risk Değeri</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assetValues.length > 0 ? (
-              assetValues.map((value) => (
-                <tr key={value._id}>
-                  <td className="border p-2">
-                    {value.product?.name || "Bilinmiyor"}
-                  </td>
-                  <td className="border p-2">{value.totalAssetValue}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="text-center p-4">
-                  Risk değeri bulunamadı.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div> */}
-
       {/* İkinci Kısım: Grafikler */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
           <AssetValueTrends assetValues={assetValues} />
         </div>
-        <div className="flex-1">
+        <div>
           <ProductAgePieChart />
         </div>
       </div>

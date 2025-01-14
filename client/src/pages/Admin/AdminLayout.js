@@ -9,8 +9,8 @@ const AdminLayout = ({ children }) => {
   // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
+      setIsMobile(window.innerWidth < 1028);
+      if (window.innerWidth < 1028) {
         setIsSidebarOpen(false);
       }
     };
@@ -60,7 +60,7 @@ const AdminLayout = ({ children }) => {
             ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"}
             pt-16`}
         >
-          <div className="w-full px-4 md:px-6 lg:px-8">
+          <div className="w-full ml-10 px-4 pr-20 md:px-6 md:pr-20 lg:px-8 lg:pr-20">
             {children}
           </div>
         </main>

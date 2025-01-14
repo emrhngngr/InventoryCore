@@ -13,9 +13,10 @@ const CustomDatePicker = ({ selectedDate, onChange, minDate }) => {
   };
 
   const isDateSelectable = (date) => {
-    const minimumDate = new Date(minDate);
-    minimumDate.setHours(0, 0, 0, 0);
-    return date >= minimumDate;
+    // Bugünün başlangıcını al (saat 00:00:00)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date >= today; // Bugün ve sonrası seçilebilir
   };
 
   const monthDays = getDaysInMonth(currentMonth);

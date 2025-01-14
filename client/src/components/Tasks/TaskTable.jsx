@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
   const [filter, setFilter] = useState('all');
@@ -114,7 +114,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
                     </span>
                   </td>
                   <td className="px-4 py-3">{task.feedback}</td>
-                  <td className="px-4 py-3">{task.assignedTo}</td>
+                  <td className="px-4 py-3">{translateRole(task.assignedTo)}</td>
                   <td className="px-4 py-3 space-x-2 whitespace-nowrap">
                     {task.status === 'pending' && (
                       <button
@@ -176,6 +176,17 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
       </div>
     </div>
   );
+};
+// İngilizce role değerlerini Türkçe'ye çeviren fonksiyon
+const translateRole = (role) => {
+  const roleTranslations = {
+    admin: 'Yönetici',
+    system_group: 'Sistem Grubu',
+    a_group: 'A Grubu',
+    software_group: 'Yazılım Grubu',
+    technical_service: 'Teknik Servis',
+  };
+  return roleTranslations[role] || 'Bilinmeyen Rol';
 };
 
 export default TaskTable;

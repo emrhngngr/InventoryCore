@@ -9,12 +9,10 @@ const router = express.Router();
 const {
   createActivityLogger,
 } = require("../middlewares/activityLogMiddleware");
-// Tüm görevleri getir (Admin için)
+// Tüm görevleri getir
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find()
-      .populate("createdBy", "name")
-      .populate("assignedAsset", "name");
+    const tasks = await Task.find().populate("assignedAsset", "name");
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: "Görevler getirilirken hata oluştu" });
@@ -27,7 +25,8 @@ router.get("/group/:groupType", authMiddleware, async (req, res) => {
     const tasks = await Task.find({
       assignedTo: req.params.groupType,
       status: { $ne: "approved" },
-    }).populate("createdBy", "name");
+    }).populate("assignedAsset", "name");
+
     res.json(tasks);
   } catch (error) {
     res

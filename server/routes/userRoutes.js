@@ -13,7 +13,7 @@ const {
 const multer = require("multer");
 const path = require("path");
 
-//Profile pic
+//Profil fotoğraf yüklenmesi için multer ayarları
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/profile-pictures/");
@@ -37,35 +37,32 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
-// User Login Route
+// Kullanıcı Girişi Route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Kullanıcı bulunamadı" });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Geçersiz şifre" });
     }
 
-    // Create JWT Token
+    // JWT Token oluştur
     const token = jwt.sign(
       {
         id: user._id,
         email: user.email,
         role: user.role,
-        // permissions: user.permissions,
       },
       process.env.JWT_SECRET
     );
 
-    // Remove sensitive information before sending response
+    // Şifreyi response'dan çıkar ve geri kalanı gönder
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -81,38 +78,31 @@ router.post("/login", async (req, res) => {
 router.get("/roles", async (req, res) => {
   try {
     const roles = User.getRoles(); // Enum'deki roller array olarak döner
-    res.json(roles); // Direk array olarak gönderiliyor
+    res.json(roles);
   } catch (err) {
     res.status(500).json({ message: "Rolleri alırken bir hata oluştu." });
   }
 });
 //get all
-router.get(
-  "/",
-  authMiddleware,
-  // authorizeRoles(["read_users", "manage_users"]),
-  async (req, res) => {
-    try {
-      // Exclude password when sending user data
-      const users = await User.find().select("-password");
-      res.json(users);
-    } catch (error) {
-      res.status(500).json({ message: "Kullanıcıları getirirken hata oluştu" });
-    }
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    // Exclude password when sending user data
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Kullanıcıları getirirken hata oluştu" });
   }
-);
+});
 //add user
 router.post(
   "/",
   authMiddleware,
-  // authorizeRoles(["manage_users"]),
   createActivityLogger("create", "user"),
   upload.single("profilePicture"),
   async (req, res) => {
     try {
       const { name, email, password, role } = req.body;
 
-      // Check if user already exists
       if (req.user.role !== "admin" && role === "admin") {
         return res.status(403).json({ message: "Admin ekleme yetkiniz yok." });
       }
@@ -134,23 +124,11 @@ router.post(
         password: hashedPassword,
         role,
         profilePicture: req.file ? req.file.path : null,
-        // permissions:
-        //   role === "admin"
-        //     ? [
-        //         "read_products",
-        //         "create_products",
-        //         "edit_products",
-        //         "delete_products",
-        //         "read_users",
-        //         "manage_users",
-        //       ]
-        //     : permissions,
       });
 
       console.log("newUser ==> ", newUser);
       await newUser.save();
 
-      // Remove password before sending response
       const userResponse = newUser.toObject();
       delete userResponse.password;
 
@@ -182,7 +160,6 @@ router.get("/me", authMiddleware, async (req, res) => {
 router.put(
   "/:id",
   authMiddleware,
-  // authorizeRoles(["manage_users"]),
   upload.single("profilePicture"),
   createActivityLogger("update", "user"),
 
@@ -194,7 +171,6 @@ router.put(
       if (req.file) {
         updateData.profilePicture = req.file.path;
       }
-      // If password is provided, hash it
       if (req.body.password) {
         const salt = await bcrypt.genSalt(10);
         updateData.password = await bcrypt.hash(req.body.password, salt);
@@ -215,11 +191,10 @@ router.put(
   }
 );
 
-//delete user
+//User Silme
 router.delete(
   "/:id",
   authMiddleware,
-  // authorizeRoles(["manage_users"]),
   createActivityLogger("delete", "user"),
 
   async (req, res) => {
