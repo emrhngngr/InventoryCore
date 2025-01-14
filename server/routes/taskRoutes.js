@@ -46,7 +46,6 @@ router.post(
         return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
       }
 
-      // Get the assigned product
       console.log("req.body.assignedAsset ==> ", req.body);
       const assignedProduct = await Product.findById(req.body.assignedAsset);
       let riskValue = 0;
@@ -104,6 +103,7 @@ router.put(
 router.put(
   "/complete-admin/:id",
   createActivityLogger("completed", "task"),
+  authorizeRoles(["admin"]),
   authMiddleware,
   async (req, res) => {
     try {
@@ -116,14 +116,12 @@ router.put(
         return res.status(404).json({ message: "Görev bulunamadı" });
       }
 
-      // Find the associated product
       const assignedProduct = await Product.findById(task.assignedAsset);
 
       if (!assignedProduct) {
         return res.status(404).json({ message: "Ürün bulunamadı" });
       }
 
-      // Update the product's updatedAt field
       assignedProduct.updatedAt = new Date();
       await assignedProduct.save();
 
@@ -140,6 +138,7 @@ router.put(
 router.put(
   "/approve/:id",
   createActivityLogger("completed", "task"),
+  authorizeRoles(["admin"]),
   authMiddleware,
   async (req, res) => {
     try {
@@ -159,14 +158,12 @@ router.put(
           .json({ message: "Görev onay için uygun durumda değil" });
       }
 
-      // Find the associated product
       const assignedProduct = await Product.findById(task.assignedAsset);
 
       if (!assignedProduct) {
         return res.status(404).json({ message: "Ürün bulunamadı" });
       }
 
-      // Update the product's updatedAt field
       assignedProduct.updatedAt = new Date();
       await assignedProduct.save();
 
@@ -183,6 +180,7 @@ router.put(
 router.put(
   "/sendback/:id",
   createActivityLogger("sendback", "task"),
+  authorizeRoles(["admin"]),
   authMiddleware,
   async (req, res) => {
     try {
@@ -218,6 +216,7 @@ router.put(
 router.delete(
   "/:id",
   createActivityLogger("delete", "task"),
+  authorizeRoles(["admin"]),
   authMiddleware,
   async (req, res) => {
     try {
@@ -241,6 +240,7 @@ router.delete(
 // Görevi güncelle (Admin için)
 router.put(
   "/:id",
+  authorizeRoles(["admin"]),
   createActivityLogger("update", "task"),
   authMiddleware,
   async (req, res) => {

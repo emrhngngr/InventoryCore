@@ -10,6 +10,9 @@ import {
   YAxis,
 } from "recharts";
 import { ClipLoader } from "react-spinners";
+import { DownloadCloud } from "lucide-react";
+import api from "../../api/api";
+
 
 const AssetValueTrends = ({ assetValues }) => {
   const generateColor = (index) => {
@@ -49,6 +52,29 @@ const AssetValueTrends = ({ assetValues }) => {
 
   const data = processData(assetValues);
 
+  const handleExcelDownload = async () => {
+    try {
+      const response = await api.get('/asset-values/download-excel', {
+        responseType: 'blob', // Important for file downloads
+      });
+      
+      const blob = new Blob([response.data], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'varlik-risk-degerleri.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Excel download failed:', error);
+      alert('Excel dosyası indirilirken bir hata oluştu. Lütfen tekrar deneyin.');
+    }
+  };
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -77,6 +103,13 @@ const AssetValueTrends = ({ assetValues }) => {
         <div className="text-sm text-gray-600">
           {products.length} Takip Edilen Varlıklar
         </div>
+        <button
+            onClick={handleExcelDownload}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+          >
+            <DownloadCloud size={20} />
+            Excel İndir
+          </button>
       </div>
 
       {assetValues.length === 0 ? (

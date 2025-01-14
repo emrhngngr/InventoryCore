@@ -44,10 +44,6 @@ const TopBar = () => {
     };
   }, []);
 
-  // Menü açma/kapama
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   return (
     <div className="w-full bg-white  top-0 left-0 right-0 p-4 shadow-md border-l border-b">

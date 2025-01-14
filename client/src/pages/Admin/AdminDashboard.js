@@ -131,7 +131,18 @@ const AdminDashboard = () => {
       const response = await api.get("/tasks");
       setTasks(response.data);
       setIsAddModalOpen(false);
+      Swal.fire({
+        icon: "success",
+        title: "Tebrikler!",
+        text: "Görev Başarılıyla Eklendi!",
+      });
     } catch (error) {
+      Swal.fire({
+        title: "Hata!",
+        text: "Görev eklenirken bir hata oluştu.",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
       console.error("Error adding task:", error);
     }
   };

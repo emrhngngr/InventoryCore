@@ -1,3 +1,4 @@
+// middlewares/validateUser.js
 const validateUser = (req, res, next) => {
   const { name, email, password, role } = req.body;
 
@@ -20,3 +21,5 @@ const validateUser = (req, res, next) => {
 
   next();
 };
+
+module.exports = validateUser;

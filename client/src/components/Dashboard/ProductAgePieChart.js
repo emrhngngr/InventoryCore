@@ -14,7 +14,7 @@ const ProductAgePieChart = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("http://localhost:5000/api/products");
+        const response = await api.get("/products");
         setProducts(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);

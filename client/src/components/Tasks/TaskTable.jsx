@@ -1,16 +1,39 @@
 import React, { useMemo, useState } from 'react';
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 
 export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: 'ascending'
+  });
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const requestSort = (key) => {
+    let direction = 'ascending';
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+    setCurrentPage(1);
+  };
+  
 
-  // Filter and search logic
-  const filteredTasks = useMemo(() => {
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return <FaSort className="inline ml-1 opacity-50" />;
+    }
+    return sortConfig.direction === 'ascending' ? (
+      <FaSortUp className="inline ml-1" />
+    ) : (
+      <FaSortDown className="inline ml-1" />
+    );
+  };
+
+  const filteredAndSortedTasks = useMemo(() => {
     let result = [...tasks];
     
-    // Status filter
     switch (filter) {
       case 'active': result = result.filter(task => task.status === 'pending'); break;
       case 'reviewing': result = result.filter(task => task.status === 'reviewing'); break;
@@ -18,7 +41,6 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
       default: break;
     }
     
-    // Search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       result = result.filter(task => 
@@ -28,14 +50,32 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
         task.assignedTo?.toLowerCase().includes(searchLower)
       );
     }
-    result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    if (sortConfig.key) {
+      result.sort((a, b) => {
+        let aValue = sortConfig.key.split('.').reduce((obj, key) => obj?.[key], a);
+        let bValue = sortConfig.key.split('.').reduce((obj, key) => obj?.[key], b);
+
+        if (sortConfig.key === 'createdAt' || sortConfig.key === 'deadline') {
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+        }
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
     
     return result;
-  }, [tasks, filter, searchTerm]);
+  }, [tasks, filter, searchTerm, sortConfig]);
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const currentTasks = filteredTasks.slice(
+  const totalPages = Math.ceil(filteredAndSortedTasks.length / itemsPerPage);
+  const currentTasks = filteredAndSortedTasks.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -44,11 +84,22 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
     return <div className="p-8 text-center text-gray-500">Yapılacak görev bulunmuyor.</div>;
   }
 
+  const columns = [
+    { key: 'assignedAsset.name', label: 'Varlık Adı', sortable: true },
+    { key: 'title', label: 'Başlık', sortable: true },
+    { key: 'description', label: 'Açıklama', sortable: true },
+    { key: 'createdAt', label: 'Oluşturulma Tarihi', sortable: true },
+    { key: 'deadline', label: 'Son Tarih', sortable: true },
+    { key: 'status', label: 'Durum', sortable: true },
+    { key: 'feedback', label: 'Geri Dönüş', sortable: true },
+    { key: 'assignedTo', label: 'Atanan Grup', sortable: true },
+    { key: 'actions', label: 'İşlemler', sortable: false }
+  ];
+
   return (
     <div className="flex-1 p-6 ml-16 mt-16 bg-gray-50">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          {/* Search Input */}
           <div className="relative">
             <input
               type="text"
@@ -72,7 +123,6 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
             </svg>
           </div>
 
-          {/* Filter Select */}
           <select 
             value={filter} 
             onChange={(e) => setFilter(e.target.value)}
@@ -89,9 +139,16 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {['Varlık Adı','Başlık', 'Açıklama', 'Oluşturulma Tarihi', 'Son Tarih', 'Durum', 'Geri Dönüş', 'Atanan Grup', 'İşlemler'].map(header => (
-                  <th key={header} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {header}
+                {columns.map(column => (
+                  <th 
+                    key={column.key} 
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => column.sortable && requestSort(column.key)}
+                  >
+                    <div className="flex items-center">
+                      {column.label}
+                      {column.sortable && getSortIcon(column.key)}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -139,37 +196,95 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
           </table>
         </div>
 
-        {/* Pagination */}
+        <div className="flex items-center justify-start mt-4">
+          <div className="text-sm text-gray-600">
+            Sayfa {currentPage} / {totalPages} (Toplam {filteredAndSortedTasks.length} görev)
+          </div>
+
+          <div className="flex items-center space-x-4 ml-7">
+            <label htmlFor="items-per-page" className="text-sm text-gray-600">
+              Sayfa başına:
+            </label>
+            <select
+              id="items-per-page"
+              value={itemsPerPage}
+              onChange={(e) => {
+                setItemsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="px-2 py-1 border border-gray-300 rounded-md text-sm"
+            >
+              {[5, 10, 20].map((option) => (
+                <option key={option} value={option}>
+                  {option} Kayıt
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {totalPages > 1 && (
           <div className="flex justify-center space-x-2 mt-4">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              İlk
+            </button>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Önceki
             </button>
-            
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded-md ${
-                  currentPage === i + 1 
-                    ? 'bg-blue-500 text-white' 
-                    : 'hover:bg-gray-50'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((page) => {
+                const showAllPages = 5;
+                if (page === 1 || page === totalPages) return true;
+                if (Math.abs(page - currentPage) < Math.ceil(showAllPages / 2)) return true;
+                return false;
+              })
+              .map((page, index, array) => {
+                const prevPage = array[index - 1];
+                return (
+                  <React.Fragment key={`page-${page}`}>
+                    {prevPage && page - prevPage > 1 && (
+                      <span key={`ellipsis-${index}`} className="px-2">
+                        ...
+                      </span>
+                    )}
+                    <button
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 border rounded-md ${
+                        currentPage === page
+                          ? "bg-blue-500 text-white"
+                          : "hover:bg-gray-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  </React.Fragment>
+                );
+              })}
+
             <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Sonraki
+            </button>
+
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+              Son
             </button>
           </div>
         )}
@@ -177,7 +292,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
     </div>
   );
 };
-// İngilizce role değerlerini Türkçe'ye çeviren fonksiyon
+
 const translateRole = (role) => {
   const roleTranslations = {
     admin: 'Yönetici',

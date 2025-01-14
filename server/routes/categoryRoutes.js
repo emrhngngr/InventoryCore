@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Category = require('../models/Category');  // Assuming you have a Category model
+const Category = require('../models/Category'); 
 const { authMiddleware, authorizeRoles } = require('../middlewares/authMiddleware')
 const { createActivityLogger } = require('../middlewares/activityLogMiddleware');
 
 // Get all categories
 router.get('/',
   authMiddleware, 
-  // authorizeRoles(['read_categories']),
    async (req, res) => {
   try {
     const categories = await Category.find();
@@ -17,10 +16,9 @@ router.get('/',
   }
 });
 
-// Create a new category
+// Kategori Oluştur
 router.post('/',
   authMiddleware, 
-  // authorizeRoles(['create_categories']),
   createActivityLogger('create', 'category'),
    async (req, res) => {
   const category = new Category({
@@ -36,10 +34,9 @@ router.post('/',
   }
 });
 
-// Update a category
+// Kategori Güncelle
 router.put('/:id', 
   authMiddleware, 
-  // authorizeRoles(['edit_categories']),
   createActivityLogger('update', 'category'),
 
   async (req, res) => {
@@ -63,10 +60,9 @@ router.put('/:id',
   }
 });
 
-// Delete a category
+// Kategori Sil
 router.delete('/:id',
   authMiddleware, 
-  // authorizeRoles(['delete_categories']),
   createActivityLogger('delete', 'category'),
    async (req, res) => {
   try {

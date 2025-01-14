@@ -3,39 +3,112 @@ const router = express.Router();
 const Task = require("../models/Task");
 const AssetValue = require("../models/AssetValue");
 const Product = require("../models/Product");
+const excel = require("excel4node");
+
+
+router.get("/download-excel", async (req, res) => {
+  try {
+    const riskValues = await AssetValue.find()
+      .populate({
+        path: 'product',
+        model: 'Product',
+        select: 'name criticalityDegree privacyDegree assignedTo amount'
+      })
+      .sort({ weekNumber: 1 });
+    
+    const wb = new excel.Workbook();
+    const ws = wb.addWorksheet('Risk Values');
+    
+    const headerStyle = wb.createStyle({
+      font: {
+        bold: true,
+        size: 12,
+      },
+      alignment: {
+        horizontal: 'center',
+      },
+      fill: {
+        type: 'pattern',
+        patternType: 'solid',
+        fgColor: '#E0E0E0',
+      },
+    });
+
+    const headers = [
+      'Hafta Aralığı',
+      'Varlık Adı',
+      'Risk Değeri',
+      'Kritiklik Derecesi',
+      'Gizlilik Derecesi',
+      'Atanan Grup',
+      'Miktar'
+    ];
+
+    headers.forEach((header, idx) => {
+      ws.cell(1, idx + 1)
+        .string(header)
+        .style(headerStyle);
+    });
+
+    riskValues.forEach((value, idx) => {
+      const row = idx + 2;
+      
+      ws.cell(row, 1).string(value.weekRange || '');
+      ws.cell(row, 2).string(value.product?.name || 'Bilinmeyen');
+      ws.cell(row, 3).number(value.totalAssetValue || 0);
+      ws.cell(row, 4).string(value.product?.criticalityDegree || '');
+      ws.cell(row, 5).string(value.product?.privacyDegree || '');
+      ws.cell(row, 6).string(value.product?.assignedTo || '');
+      ws.cell(row, 7).string(value.product?.amount?.toString() || '');
+    });
+
+    headers.forEach((_, idx) => {
+      ws.column(idx + 1).setWidth(20);
+    });
+    
+    // Set response headers
+    res.setHeader(
+      'Content-Type', 
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition', 
+      'attachment; filename=varlik-risk-degerleri.xlsx'
+    );
+    
+    wb.write('varlik-risk-degerleri.xlsx', res);
+  } catch (error) {
+    console.error('Excel indirme hatası:', error);
+    res.status(500).json({ error: "Excel dosyası oluşturulurken bir hata oluştu." });
+  }
+});
 
 router.post("/calculate-risk", async (req, res) => {
   try {
     const weekNumber = req.body.weekNumber || 1;
 
-    // Haftanın başlangıç ve bitiş tarihlerini hesaplama
     const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1); // Pazartesi
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
     startOfWeek.setHours(0, 0, 0, 0);
 
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6); // Pazar
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
 
-    // weekRange'i istenen formatta oluştur
     const formatDate = (date) =>
       date.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
     const weekRange = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 
-    // Tüm product'ları getir
     const products = await Product.find();
 
-    // Tüm taskleri, ilgili product'larla birlikte çek
-    const tasks = await Task.find({ status: { $ne: "approved" } }) // Sadece onaylanmamış taskler
+    const tasks = await Task.find({ status: { $ne: "approved" } })
       .populate("assignedAsset", "criticalityDegree privacyDegree");
 
-    // Risk hesaplama
     const riskSums = products.reduce((acc, product) => {
       // Başlangıç risk değerini sıfırla
       acc[product._id] = 0;
 
-      // İlgili product için tasklerden risk hesapla
       tasks.forEach((task) => {
         if (
           task.assignedAsset &&

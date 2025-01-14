@@ -53,7 +53,17 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
             </span>
           </div>
           <span className="text-xs text-gray-500">
-            {currentUser?.role === "admin" ? "Yönetici" : "Kullanıcı"}
+            {currentUser?.role === "admin"
+              ? "Yönetici"
+              : currentUser?.role === "a_group"
+              ? "A Grubu"
+              : currentUser?.role === "system_group"
+              ? "Sistem Grubu"
+              : currentUser?.role === "software_group"
+              ? "Yazılım Grubu"
+              : currentUser?.role === "technical_service"
+              ? "Teknik Servis"
+              : "Kullanıcı"}
           </span>
         </div>
         <div className="relative" ref={userIconRef}>

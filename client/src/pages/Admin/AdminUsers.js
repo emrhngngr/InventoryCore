@@ -234,6 +234,14 @@ const UserManagement = () => {
       toast.error("Lütfen geçerli bir e-posta adresi girin!");
       return;
     }
+    if(newUser.name.length <= 2){
+      toast.error("Kullanıcı ismi en az 2 karakter olmalıdır");
+      return;
+    }
+    if(newUser.password.length < 6){
+      toast.error("Şifre en az 6 karakter olmalıdır");
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");

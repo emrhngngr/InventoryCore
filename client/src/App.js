@@ -94,7 +94,6 @@ function App() {
             }
           />
 
-          {/* Diğer müşteri sayfaları buraya eklenebilir */}
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

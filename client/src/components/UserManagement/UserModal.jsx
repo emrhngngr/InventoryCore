@@ -1,6 +1,4 @@
 import React from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { RxCross2 } from 'react-icons/rx';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
 
@@ -33,6 +31,8 @@ const UserModal = ({
       reader.readAsDataURL(file);
     }
   };
+
+  
 
   return (
     <Modal
@@ -98,12 +98,6 @@ const UserModal = ({
           onChange={handleRoleChange}
           currentUser={currentUser}
         />
-
-        {/* <PermissionSection 
-          permissionConfig={PERMISSION_CONFIG}
-          selectedPermissions={newUser.permissions}
-          onTogglePermission={togglePermission}
-        /> */}
 
         <div className="flex justify-end space-x-2 mt-4">
           <Button variant="outline" onClick={onClose}>

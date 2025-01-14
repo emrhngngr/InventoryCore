@@ -4,7 +4,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const database = require("./config/database.js");
 const path = require("path");
-const contactRoutes = require("./routes/contactRoutes");
 
 dotenv.config();
 
@@ -23,14 +22,13 @@ app.use("/api/asset-values", require("./routes/assetValueRoutes.js"));
 app.use("/api/announcements", require("./routes/announcementRoutes.js"));
 app.use("/api/activity-logs", require("./routes/activityLogRoutes.js"));
 app.use("/api/tasks", require("./routes/taskRoutes.js"));
-app.use("/api/contact", contactRoutes);
 
 // Tüm diğer route'lara uymayan istekler için
 app.use((req, res, next) => {
   res.status(404).json({ message: "Sayfa bulunamadı" });
 });
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Hata detaylarını loglama
+  console.error(err.stack);
   res
     .status(500)
     .json({ message: "Bir hata oluştu, lütfen daha sonra tekrar deneyin" });

@@ -150,7 +150,6 @@ const ActivityLogs = () => {
         </button>
       </div>
 
-      {/* Logs Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border">
           <thead>
@@ -199,7 +198,7 @@ const ActivityLogs = () => {
               value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1); // Sayfa sayısı değişince ilk sayfaya dön
+                setCurrentPage(1);
               }}
               className="px-2 py-1 border border-gray-300 rounded-md text-sm"
             >

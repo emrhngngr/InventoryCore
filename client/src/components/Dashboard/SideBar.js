@@ -40,9 +40,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         )}
       </button>
 
-      {/* Sidebar Content */}
       <div className="mt-12">
-        {/* Başlık */}
         <div className="px-6 py-6">
           <div className="flex items-center space-x-3">
             {isSidebarOpen ? <IoCloud className="w-8 h-8 text-blue-500" /> : ""}
@@ -52,7 +50,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </div>
         </div>
 
-        {/* Menü */}
         <ul>
           <li
             onClick={() => navigate("/user/dashboard")}

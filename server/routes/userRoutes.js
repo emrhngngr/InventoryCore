@@ -10,6 +10,7 @@ const {
   authMiddleware,
   authorizeRoles,
 } = require("../middlewares/authMiddleware");
+const validateUser = require("../middlewares/validateUser");
 const multer = require("multer");
 const path = require("path");
 
@@ -77,26 +78,25 @@ router.post("/login", async (req, res) => {
 });
 router.get("/roles", async (req, res) => {
   try {
-    const roles = User.getRoles(); // Enum'deki roller array olarak döner
+    const roles = User.getRoles();
     res.json(roles);
   } catch (err) {
     res.status(500).json({ message: "Rolleri alırken bir hata oluştu." });
   }
 });
-//get all
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    // Exclude password when sending user data
     const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Kullanıcıları getirirken hata oluştu" });
   }
 });
-//add user
+//Kullanıcı Ekle
 router.post(
   "/",
   authMiddleware,
+  
   createActivityLogger("create", "user"),
   upload.single("profilePicture"),
   async (req, res) => {
@@ -112,12 +112,15 @@ router.post(
           .status(400)
           .json({ message: "Bu e-posta adresi zaten kayıtlı" });
       }
+      if (password.length < 6) {
+        return res
+          .status(400)
+          .json({ message: "Şifre en az 6 karakter olmalıdır" });
+      }
 
-      // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      // Create new user
       const newUser = new User({
         name,
         email,
@@ -156,7 +159,7 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
-// Update user
+// Güncelle üye
 router.put(
   "/:id",
   authMiddleware,
@@ -191,7 +194,7 @@ router.put(
   }
 );
 
-//User Silme
+//Üye Silme
 router.delete(
   "/:id",
   authMiddleware,
