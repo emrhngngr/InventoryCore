@@ -78,7 +78,7 @@ const ProductTable = ({
                   </td>
                 ))}
                 <td className="px-4 py-3 space-x-2 flex">
-                  {currentUser?.permissions.includes("edit_products") && (
+                  {currentUser?.role === "admin" && (
                     <Button
                       variant="outline"
                       className="text-sm"
@@ -87,7 +87,7 @@ const ProductTable = ({
                       <Pen size={16} />
                     </Button>
                   )}
-                  {currentUser?.permissions.includes("delete_products") && (
+                  {currentUser?.role === "admin" && (
                     <Button
                       variant="destructive"
                       className="text-sm"

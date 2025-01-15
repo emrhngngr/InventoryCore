@@ -60,7 +60,7 @@ const AdminLayout = ({ children }) => {
             ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"}
             pt-16`}
         >
-          <div className="w-full ml-10 px-4 pr-20 md:px-6 md:pr-20 lg:px-8 lg:pr-20">
+          <div className="w-full ml-12 px-4 pr-20 md:px-6 md:pr-20 lg:px-8 lg:pr-20">
             {children}
           </div>
         </main>

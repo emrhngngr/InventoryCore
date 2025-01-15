@@ -7,6 +7,8 @@ import { CompletionModal } from "../../components/Tasks/CompletionModal";
 import { SendBackModal } from "../../components/Tasks/SendBackModal";
 import { AddTaskModal } from "../../components/Tasks/TaskModal";
 import { TaskTable } from "../../components/Tasks/TaskTable";
+import EditTaskModal from "../../components/Tasks/EditTaskModal";
+
 
 const AdminDashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -17,6 +19,8 @@ const AdminDashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const [activeAnnouncement, setActiveAnnouncement] = useState(null);
 
@@ -124,6 +128,34 @@ const AdminDashboard = () => {
       fetchTasks();
     }
   }, [currentUser]);
+
+  const handleEditTask = async (taskId, updateData) => {
+    try {
+      await api.put(`/tasks/${taskId}`, updateData);
+      const response = await api.get("/tasks");
+      setTasks(response.data);
+      setIsEditModalOpen(false);
+      setSelectedTask(null);
+      Swal.fire({
+        icon: "success",
+        title: "Başarılı!",
+        text: "Görev başarıyla güncellendi!",
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Hata!",
+        text: "Görev güncellenirken bir hata oluştu.",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
+      console.error("Error updating task:", error);
+    }
+  };
+
+  const openEditModal = (task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
 
   const handleAddTask = async (taskData) => {
     try {
@@ -240,7 +272,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Hoş Geldin {currentUser?.name}</h1>
         {currentUser?.role === "admin" && (
@@ -270,12 +302,13 @@ const AdminDashboard = () => {
             onComplete={openCompletionModal}
             onDelete={handleDeleteTask}
             isAdmin={true}
+            onEdit={openEditModal}
           />
         </div>
       ) : (
         <div>
           <h2 className="text-xl font-semibold mb-4">
-            Duyuru: 
+            Duyuru:
             {activeAnnouncement
               ? activeAnnouncement.content
               : "Aktif duyuru bulunmamaktadır."}
@@ -309,6 +342,15 @@ const AdminDashboard = () => {
           setSelectedTaskId(null);
         }}
         onSubmit={handleSendBackTask}
+      />
+      <EditTaskModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedTask(null);
+        }}
+        onSubmit={handleEditTask}
+        task={selectedTask}
       />
       {loading && (
         <div className="flex justify-center items-center py-4">

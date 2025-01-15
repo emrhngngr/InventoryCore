@@ -19,6 +19,7 @@ router.get('/',
 // Kategori Oluştur
 router.post('/',
   authMiddleware, 
+  authorizeRoles(["admin"]),
   createActivityLogger('create', 'category'),
    async (req, res) => {
   const category = new Category({
@@ -36,7 +37,8 @@ router.post('/',
 
 // Kategori Güncelle
 router.put('/:id', 
-  authMiddleware, 
+  authMiddleware,
+  authorizeRoles(["admin"]),
   createActivityLogger('update', 'category'),
 
   async (req, res) => {
@@ -62,7 +64,8 @@ router.put('/:id',
 
 // Kategori Sil
 router.delete('/:id',
-  authMiddleware, 
+  authMiddleware,
+  authorizeRoles(["admin"]),
   createActivityLogger('delete', 'category'),
    async (req, res) => {
   try {

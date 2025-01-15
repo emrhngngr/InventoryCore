@@ -102,9 +102,9 @@ router.put(
 // Görevi tamamla (Admin için)
 router.put(
   "/complete-admin/:id",
-  createActivityLogger("completed", "task"),
-  authorizeRoles(["admin"]),
   authMiddleware,
+  authorizeRoles(["admin"]),
+  createActivityLogger("completed", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
@@ -215,9 +215,9 @@ router.put(
 // Görevi sil (Admin için)
 router.delete(
   "/:id",
-  createActivityLogger("delete", "task"),
-  authorizeRoles(["admin"]),
   authMiddleware,
+  authorizeRoles(["admin"]),
+  createActivityLogger("delete", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
@@ -238,11 +238,12 @@ router.delete(
 );
 
 // Görevi güncelle (Admin için)
+// tasks.js router dosyasındaki güncelleme endpoint'ini güncelleyelim
 router.put(
   "/:id",
-  authorizeRoles(["admin"]),
-  createActivityLogger("update", "task"),
   authMiddleware,
+  authorizeRoles(['admin']),
+  createActivityLogger("update", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
@@ -262,7 +263,7 @@ router.put(
           status: req.body.status,
         },
         { new: true }
-      );
+      ).populate("assignedAsset", "name");
 
       res.json(updatedTask);
     } catch (error) {

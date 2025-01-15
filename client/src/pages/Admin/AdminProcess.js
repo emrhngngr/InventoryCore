@@ -146,6 +146,14 @@ const AdminProcess = () => {
   };
 
   const handleCategoryChange = (categoryId) => {
+    if (!categoryId) {
+      setSelectedCategory(null);
+      setCurrentProduct((prev) => ({
+        ...prev,
+        category: "",
+      }));
+      return;
+    }
     const category = categories.find((cat) => cat._id === categoryId);
     setSelectedCategory(category);
     setCurrentProduct((prev) => ({

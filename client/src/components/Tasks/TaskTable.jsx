@@ -1,30 +1,32 @@
-import React, { useMemo, useState } from 'react';
-import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import { Pen } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
+import Button from "../common/Button";
+import TruncatedDescription from "../common/TruncatedDescription";
 
-export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
+  const [filter, setFilter] = useState("active");
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: 'ascending'
+    direction: "ascending",
   });
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
     setCurrentPage(1);
   };
-  
 
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) {
       return <FaSort className="inline ml-1 opacity-50" />;
     }
-    return sortConfig.direction === 'ascending' ? (
+    return sortConfig.direction === "ascending" ? (
       <FaSortUp className="inline ml-1" />
     ) : (
       <FaSortDown className="inline ml-1" />
@@ -33,44 +35,56 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
 
   const filteredAndSortedTasks = useMemo(() => {
     let result = [...tasks];
-    
+
     switch (filter) {
-      case 'active': result = result.filter(task => task.status === 'pending'); break;
-      case 'reviewing': result = result.filter(task => task.status === 'reviewing'); break;
-      case 'approved': result = result.filter(task => task.status === 'approved'); break;
-      default: break;
+      case "active":
+        result = result.filter((task) => task.status === "pending");
+        break;
+      case "reviewing":
+        result = result.filter((task) => task.status === "reviewing");
+        break;
+      case "approved":
+        result = result.filter((task) => task.status === "approved");
+        break;
+      default:
+        break;
     }
-    
+
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
-      result = result.filter(task => 
-        task.title?.toLowerCase().includes(searchLower) ||
-        task.description?.toLowerCase().includes(searchLower) ||
-        task.assignedAsset?.name?.toLowerCase().includes(searchLower) ||
-        task.assignedTo?.toLowerCase().includes(searchLower)
+      result = result.filter(
+        (task) =>
+          task.title?.toLowerCase().includes(searchLower) ||
+          task.description?.toLowerCase().includes(searchLower) ||
+          task.assignedAsset?.name?.toLowerCase().includes(searchLower) ||
+          task.assignedTo?.toLowerCase().includes(searchLower)
       );
     }
 
     if (sortConfig.key) {
       result.sort((a, b) => {
-        let aValue = sortConfig.key.split('.').reduce((obj, key) => obj?.[key], a);
-        let bValue = sortConfig.key.split('.').reduce((obj, key) => obj?.[key], b);
+        let aValue = sortConfig.key
+          .split(".")
+          .reduce((obj, key) => obj?.[key], a);
+        let bValue = sortConfig.key
+          .split(".")
+          .reduce((obj, key) => obj?.[key], b);
 
-        if (sortConfig.key === 'createdAt' || sortConfig.key === 'deadline') {
+        if (sortConfig.key === "createdAt" || sortConfig.key === "deadline") {
           aValue = new Date(aValue);
           bValue = new Date(bValue);
         }
 
         if (aValue < bValue) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
+          return sortConfig.direction === "ascending" ? -1 : 1;
         }
         if (aValue > bValue) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
+          return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
       });
     }
-    
+
     return result;
   }, [tasks, filter, searchTerm, sortConfig]);
 
@@ -81,23 +95,27 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
   );
 
   if (!tasks?.length) {
-    return <div className="p-8 text-center text-gray-500">Yapılacak görev bulunmuyor.</div>;
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Yapılacak görev bulunmuyor.
+      </div>
+    );
   }
 
   const columns = [
-    { key: 'assignedAsset.name', label: 'Varlık Adı', sortable: true },
-    { key: 'title', label: 'Başlık', sortable: true },
-    { key: 'description', label: 'Açıklama', sortable: true },
-    { key: 'createdAt', label: 'Oluşturulma Tarihi', sortable: true },
-    { key: 'deadline', label: 'Son Tarih', sortable: true },
-    { key: 'status', label: 'Durum', sortable: true },
-    { key: 'feedback', label: 'Geri Dönüş', sortable: true },
-    { key: 'assignedTo', label: 'Atanan Grup', sortable: true },
-    { key: 'actions', label: 'İşlemler', sortable: false }
+    { key: "assignedAsset.name", label: "Varlık Adı", sortable: true },
+    { key: "title", label: "Başlık", sortable: true },
+    { key: "description", label: "Açıklama", sortable: true },
+    { key: "createdAt", label: "Oluşturulma Tarihi", sortable: true },
+    { key: "deadline", label: "Son Tarih", sortable: true },
+    { key: "status", label: "Durum", sortable: true },
+    { key: "feedback", label: "Geri Dönüş", sortable: true },
+    { key: "assignedTo", label: "Atanan Grup", sortable: true },
+    { key: "actions", label: "İşlemler", sortable: false },
   ];
 
   return (
-    <div className="flex-1 p-6 ml-16 mt-16 bg-gray-50">
+    <div className="flex-1 p-6 mt-16 bg-gray-50">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div className="relative">
@@ -123,8 +141,8 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
             </svg>
           </div>
 
-          <select 
-            value={filter} 
+          <select
+            value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500"
           >
@@ -139,9 +157,9 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {columns.map(column => (
-                  <th 
-                    key={column.key} 
+                {columns.map((column) => (
+                  <th
+                    key={column.key}
                     className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                     onClick={() => column.sortable && requestSort(column.key)}
                   >
@@ -154,40 +172,95 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentTasks.map(task => (
-                <tr key={task._id} className={`hover:bg-gray-50 ${task.feedback && task.status !== 'approved' ? 'bg-red-50' : ''}`}>
-                  <td className="px-4 py-3 whitespace-nowrap">{task.assignedAsset.name}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">{task.title}</td>
-                  <td className="px-4 py-3">{task.description}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">{new Date(task.createdAt).toLocaleDateString('tr-TR')}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">{new Date(task.deadline).toLocaleDateString('tr-TR')}</td>
+              {currentTasks.map((task) => (
+                <tr
+                  key={task._id}
+                  className={`
+                    ${
+                      new Date(task.deadline) < new Date() && task.feedback
+                        ? "bg-red-200" // Deadline geçmiş ve feedback alınmış
+                        : new Date(task.deadline) < new Date()
+                        ? "bg-red-100" // Deadline geçmiş, feedback alınmamış
+                        : task.feedback && task.status !== "approved"
+                        ? "bg-red-50" // Feedback var ancak onaylanmamış
+                        : ""
+                    }
+                  `}
+                >
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-sm rounded-full
-                      ${task.status === 'pending' ? 'bg-blue-100 text-blue-800' : 
-                        task.status === 'reviewing' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-green-100 text-green-800'}`}>
-                      {task.status === 'pending' ? 'Aktif' :
-                       task.status === 'reviewing' ? 'İnceleme Bekliyor' : 'Tamamlandı'}
+                    {task.assignedAsset.name}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">{task.title}</td>
+                  <td className="px-4 py-3">
+                    {" "}
+                    <TruncatedDescription
+                      text={task.description}
+                      maxLength={10}
+                    />
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {new Date(task.createdAt).toLocaleDateString("tr-TR")}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {new Date(task.deadline).toLocaleDateString("tr-TR")}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span
+                      className={`inline-flex px-2 py-1 text-sm rounded-full
+                      ${
+                        task.status === "pending"
+                          ? "bg-blue-100 text-blue-800"
+                          : task.status === "reviewing"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {task.status === "pending"
+                        ? "Aktif"
+                        : task.status === "reviewing"
+                        ? "İnceleme Bekliyor"
+                        : "Tamamlandı"}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{task.feedback}</td>
-                  <td className="px-4 py-3">{translateRole(task.assignedTo)}</td>
-                  <td className="px-4 py-3 space-x-2 whitespace-nowrap">
-                    {task.status === 'pending' && (
-                      <button
+                  <td className="px-4 py-3">
+                    <TruncatedDescription text={task.feedback} maxLength={10} />
+                  </td>
+                  <td className="px-4 py-3">
+                    {translateRole(task.assignedTo)}
+                  </td>
+                  <td className="px-4 py-3 flex space-x-2 whitespace-nowrap">
+                    {task.status === "pending" ? (
+                      <Button
                         onClick={() => onComplete(task._id)}
                         className="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                       >
                         Tamamla
-                      </button>
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => onComplete(task._id)}
+                        className="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+                        disabled
+                      >
+                        Tamamla
+                      </Button>
                     )}
                     {isAdmin && (
-                      <button
-                        onClick={() => onDelete(task._id)}
-                        className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
-                      >
-                        Sil
-                      </button>
+                      <>
+                        <Button
+                          variant="outline"
+                          className="text-sm"
+                          onClick={() => onEdit(task)}
+                        >
+                          <Pen size={16} />
+                        </Button>
+                        <Button
+                          onClick={() => onDelete(task._id)}
+                          className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+                        >
+                          Sil
+                        </Button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -198,7 +271,8 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
 
         <div className="flex items-center justify-start mt-4">
           <div className="text-sm text-gray-600">
-            Sayfa {currentPage} / {totalPages} (Toplam {filteredAndSortedTasks.length} görev)
+            Sayfa {currentPage} / {totalPages} (Toplam{" "}
+            {filteredAndSortedTasks.length} görev)
           </div>
 
           <div className="flex items-center space-x-4 ml-7">
@@ -245,7 +319,8 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
               .filter((page) => {
                 const showAllPages = 5;
                 if (page === 1 || page === totalPages) return true;
-                if (Math.abs(page - currentPage) < Math.ceil(showAllPages / 2)) return true;
+                if (Math.abs(page - currentPage) < Math.ceil(showAllPages / 2))
+                  return true;
                 return false;
               })
               .map((page, index, array) => {
@@ -272,7 +347,9 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
               })}
 
             <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
@@ -295,13 +372,13 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin }) => {
 
 const translateRole = (role) => {
   const roleTranslations = {
-    admin: 'Yönetici',
-    system_group: 'Sistem Grubu',
-    a_group: 'A Grubu',
-    software_group: 'Yazılım Grubu',
-    technical_service: 'Teknik Servis',
+    admin: "Yönetici",
+    system_group: "Sistem Grubu",
+    a_group: "A Grubu",
+    software_group: "Yazılım Grubu",
+    technical_service: "Teknik Servis",
   };
-  return roleTranslations[role] || 'Bilinmeyen Rol';
+  return roleTranslations[role] || "Bilinmeyen Rol";
 };
 
 export default TaskTable;

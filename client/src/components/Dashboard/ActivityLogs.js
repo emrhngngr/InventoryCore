@@ -140,7 +140,7 @@ const ActivityLogs = () => {
           <option value="product">Varlık</option>
           <option value="category">Kategori</option>
           <option value="user">Kullanıcı</option>
-          <option value="user">Görevler</option>
+          <option value="task">Görevler</option>
         </select>
         <button
           onClick={applyFilters}

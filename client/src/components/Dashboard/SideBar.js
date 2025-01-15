@@ -3,13 +3,16 @@ import { FaBriefcase, FaShoppingBag } from "react-icons/fa";
 import { IoMdBuild } from "react-icons/io";
 import { IoCloud, IoNewspaperSharp } from "react-icons/io5";
 import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
-import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md"; // Menü ikonları
-import { useNavigate } from "react-router-dom";
+import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md";
+import { useNavigate, useLocation } from "react-router-dom"; // useLocation ekledik
 import api from "../../api/api";
 import { FaChartSimple } from "react-icons/fa6";
+
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
+  const location = useLocation(); // Mevcut URL'i almak için
   const [currentUser, setCurrentUser] = useState(null);
+
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
@@ -22,6 +25,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
     fetchCurrentUser();
   }, []);
+
+  // Aktif sayfayı kontrol eden yardımcı fonksiyon
+  const isActivePage = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <div
       className={`${
@@ -43,7 +52,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       <div className="mt-12">
         <div className="px-6 py-6">
           <div className="flex items-center space-x-3">
-            {isSidebarOpen ? <IoCloud className="w-8 h-8 text-blue-500" /> : ""}
+            {isSidebarOpen ? <IoCloud className="w-10 h-8 text-blue-500" /> : ""}
             <span className="text-xl font-semibold text-gray-800">
               {isSidebarOpen && "InventoryCore"}
             </span>
@@ -53,84 +62,74 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <ul>
           <li
             onClick={() => navigate("/user/dashboard")}
-            className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+            className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+              isActivePage("/user/dashboard") ? "bg-gray-200" : ""
+            }`}
           >
             <MdDashboard className="text-2xl min-w-[40px]" />
             {isSidebarOpen && <span className="ml-4">Ana Sayfa</span>}
           </li>
-          {currentUser && currentUser.role.includes("admin") && (
+          {currentUser && currentUser.role === "admin" && (
             <>
               <li
                 onClick={() => navigate("/user/products")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/products") ? "bg-gray-200" : ""
+                }`}
               >
                 <FaShoppingBag className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">Varlıklar</span>}
               </li>
-            </>
-          )}
-          {currentUser && currentUser.role.includes("admin") && (
-            <>
               <li
                 onClick={() => navigate("/user/classes")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/classes") ? "bg-gray-200" : ""
+                }`}
               >
                 <FaBriefcase className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">Kategoriler</span>}
               </li>
-            </>
-          )}
-          {currentUser &&
-            (currentUser.role.includes("human resources") ||
-              currentUser.role.includes("admin")) && (
-              <>
-                <li
-                  onClick={() => navigate("/user/users")}
-                  className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
-                >
-                  <MdPerson className="text-2xl min-w-[40px]" />
-                  {isSidebarOpen && <span className="ml-4">Üyeler</span>}
-                </li>
-              </>
-            )}
-          {currentUser && currentUser.role.includes("admin") && (
-            <>
+              <li
+                onClick={() => navigate("/user/users")}
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/users") ? "bg-gray-200" : ""
+                }`}
+              >
+                <MdPerson className="text-2xl min-w-[40px]" />
+                {isSidebarOpen && <span className="ml-4">Üyeler</span>}
+              </li>
               <li
                 onClick={() => navigate("/user/process")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/process") ? "bg-gray-200" : ""
+                }`}
               >
                 <IoMdBuild className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">İşlemler</span>}
               </li>
-            </>
-          )}
-          {currentUser && currentUser.role.includes("admin") && (
-            <>
               <li
                 onClick={() => navigate("/user/announcements")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/announcements") ? "bg-gray-200" : ""
+                }`}
               >
                 <IoNewspaperSharp className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">Duyurular</span>}
               </li>
-            </>
-          )}
-          {currentUser && currentUser.role.includes("admin") && (
-            <>
               <li
                 onClick={() => navigate("/user/logs")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/logs") ? "bg-gray-200" : ""
+                }`}
               >
                 <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">Aktivite</span>}
               </li>
-            </>
-          )}
-          {currentUser && currentUser.role.includes("admin") && (
-            <>
               <li
                 onClick={() => navigate("/user/statistics")}
-                className="flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md"
+                className={`flex items-center py-4 px-4 hover:bg-gray-200 cursor-pointer rounded-md ${
+                  isActivePage("/user/statistics") ? "bg-gray-200" : ""
+                }`}
               >
                 <FaChartSimple className="text-2xl min-w-[40px]" />
                 {isSidebarOpen && <span className="ml-4">İstatiklikler</span>}

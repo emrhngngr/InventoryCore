@@ -11,6 +11,8 @@ import {
 import React from "react";
 import Svg from "../assets/svg/undraw_growth-chart_h2w8.svg";
 import Navbar from "../components/MainPage/Navbar";
+import { motion } from 'framer-motion';
+
 const ServicePage = () => {
   const features = [
     {
@@ -49,26 +51,43 @@ const ServicePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar backgroundColor="transparent" hoverBackgroundColor="white" hoverTextColor="#313131" textColor='#313131"'/>
+      <Navbar backgroundColor="transparent" hoverBackgroundColor="white" hoverTextColor="#313131" textColor="#313131" />
+      
       {/* Header Section */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8 py-32">
-                  <div className="flex justify-center items-center">
-                    <img
-                      src={Svg}
-                      alt="Dashboard Illustration"
-                      className="w-full max-w-sm lg:max-w-md object-contain"
-                    />
-                  </div>
-          <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
-            Servislerimiz
-          </h1>
-          <p className="text-xl text-center text-gray-600 max-w-3xl mx-auto">
-            InventoryCore ile işletmenizin envanter yönetimini modernleştirin ve
-            verimliliğinizi artırın
-          </p>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white shadow-sm"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="flex justify-center items-center"
+          >
+            <img
+              src={Svg}
+              alt="Dashboard Illustration"
+              className="w-full max-w-sm lg:max-w-md object-contain hover:scale-105 transition-transform duration-500"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
+              Servislerimiz
+            </h1>
+            <p className="text-xl text-center text-gray-600 max-w-3xl mx-auto">
+              InventoryCore ile işletmenizin envanter yönetimini modernleştirin ve
+              verimliliğinizi artırın
+            </p>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Features Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

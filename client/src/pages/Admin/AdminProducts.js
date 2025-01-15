@@ -124,6 +124,14 @@ const AdminProducts = () => {
 
   // Handle category selection
   const handleCategoryChange = (categoryId) => {
+    if (!categoryId) {
+      setSelectedCategory(null);
+      setCurrentProduct((prev) => ({
+        ...prev,
+        category: "",
+      }));
+      return;
+    }
     const category = categories.find((cat) => cat._id === categoryId);
     setSelectedCategory(category);
     setCurrentProduct((prev) => ({
@@ -416,7 +424,7 @@ const AdminProducts = () => {
         </div>
 
         {/* Add Product Button */}
-        {currentUser && currentUser.permissions.includes("create_products") && (
+        {currentUser && currentUser?.role === "admin"&& (
           <>
             <Button variant="default" onClick={openAddModal}>
               Varlık Ekle

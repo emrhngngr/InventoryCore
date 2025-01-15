@@ -160,24 +160,27 @@ router.delete(
   }
 );
 
-router.put("/:id/confirm", authMiddleware, 
+router.put(
+  "/:id/confirm",
+  authMiddleware,
   authorizeRoles(["admin"]),
   async (req, res) => {
-  try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { updatedAt: Date.now() },
-      { new: true }
-    ).populate("category");
+    try {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        { updatedAt: Date.now() },
+        { new: true }
+      ).populate("category");
 
-    if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      res.json(updatedProduct);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
     }
-
-    res.json(updatedProduct);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
   }
-});
+);
 
 module.exports = router;
