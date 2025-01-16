@@ -163,11 +163,6 @@ const AdminDashboard = () => {
       const response = await api.get("/tasks");
       setTasks(response.data);
       setIsAddModalOpen(false);
-      Swal.fire({
-        icon: "success",
-        title: "Tebrikler!",
-        text: "Görev Başarılıyla Eklendi!",
-      });
     } catch (error) {
       Swal.fire({
         title: "Hata!",
@@ -204,9 +199,21 @@ const AdminDashboard = () => {
   const handleApproveTask = async (taskId) => {
     try {
       await api.put(`/tasks/approve/${taskId}`);
+      Swal.fire({
+        title: "Başarılı!",
+        text: "Görev başarıyla onaylandı.",
+        icon: "success",
+        confirmButtonText: "Tamam",
+      });
       const response = await api.get("/tasks");
       setTasks(response.data);
     } catch (error) {
+      Swal.fire({
+        title: "Hata!",
+        text: "Görev onaylanırken bir hata oluştu.",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
       console.error("Error approving task:", error);
     }
   };
@@ -215,11 +222,23 @@ const AdminDashboard = () => {
       await api.put(`/tasks/sendback/${selectedTaskId}`, {
         feedback: note,
       });
+      Swal.fire({
+        title: "Başarılı!",
+        text: "Göreve başarıyla geri dönüş yapıldı.",
+        icon: "success",
+        confirmButtonText: "Tamam",
+      });
       const response = await api.get(`/tasks/`);
       setTasks(response.data);
       setIsCompletionModalOpen(false);
       setSelectedTaskId(null);
     } catch (error) {
+      Swal.fire({
+        title: "Hata!",
+        text: "Görev geri dönüş yaparken bir hata oluştu.",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
       console.error("Error sending back task:", error);
     }
   };
@@ -278,7 +297,7 @@ const AdminDashboard = () => {
         {currentUser?.role === "admin" && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-2 py-1 lg:px-4 lg:py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Yeni Görev Ekle
           </button>

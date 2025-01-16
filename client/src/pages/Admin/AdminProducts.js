@@ -389,7 +389,7 @@ const AdminProducts = () => {
       )}
       
         <InfoModal isOpen={isInfoModalOpen} onClose={closeModal} />
-      <div className=" flex justify-end items-center mb-4 gap-4">
+      <div className=" flex flex-col md:flex-row justify-end items-center mb-4 gap-4">
       <h1
           onClick={openInfoModal} // Modalı açan fonksiyon
           className="cursor-pointer text-blue-600 hover:text-blue-800"

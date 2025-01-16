@@ -26,7 +26,11 @@ const AnnouncementsPage = () => {
 
       // Aktif duyuruyu bul
       const activeAnnouncement = response.data.find((ann) => ann.isActive);
-      setActiveAnn(activeAnnouncement ? activeAnnouncement.content : "Henüz bir duyuru aktif değil");
+      setActiveAnn(
+        activeAnnouncement
+          ? activeAnnouncement.content
+          : "Henüz bir duyuru aktif değil"
+      );
     } catch (error) {
       console.error("Duyurular yüklenirken hata:", error);
     }
@@ -49,8 +53,20 @@ const AnnouncementsPage = () => {
   const handleActivate = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/announcements/activate/${id}`);
+      Swal.fire({
+        title: "Başarılı!",
+        text: "Aktif duyuru başarıyla değiştirildi.",
+        icon: "success",
+        confirmButtonText: "Tamam",
+      });
       fetchAnnouncements(); // Yeniden duyuruları çek
     } catch (error) {
+      Swal.fire({
+        title: "Hata!",
+        text: "Aktif duyuru değiştirilirken bir hata oluştu.",
+        icon: "error",
+        confirmButtonText: "Tamam",
+      });
       console.error("Duyuru aktifleştirilirken hata:", error);
     }
   };
@@ -114,17 +130,16 @@ const AnnouncementsPage = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex">
+    <div className="p-2">
+      <div className="flex flex-col md:flex-row">
         <h1 className="text-2xl font-bold mb-6">Duyurular</h1>
-        <h2 className="mx-10">
+        <h2 className="mx-10 flex">
           Güncel Duyuru: <span className="text-blue-600">{activeAnn}</span>
         </h2>
       </div>
 
-      {/* Yeni Duyuru Formu */}
       <form onSubmit={handleSubmit} className="mb-8">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
             value={newAnnouncement}
@@ -142,34 +157,35 @@ const AnnouncementsPage = () => {
         </div>
       </form>
 
-      {/* Duyuru Listesi */}
       <div className="space-y-4">
         {announcements.map((announcement) => (
           <div
             key={announcement._id}
-            className="flex justify-between items-center p-4 bg-white border rounded shadow"
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-white border rounded shadow gap-4"
           >
             <div className="flex-1">
               {editingId === announcement._id ? (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="text"
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
                     className="flex-1 p-2 border rounded"
                   />
-                  <button
-                    onClick={() => handleEdit(announcement._id)}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                  >
-                    Kaydet
-                  </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                  >
-                    İptal
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(announcement._id)}
+                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    >
+                      Kaydet
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                    >
+                      İptal
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -182,12 +198,13 @@ const AnnouncementsPage = () => {
                 </>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               {!editingId && (
                 <>
                   <Button
                     onClick={() => startEditing(announcement)}
                     variant="outline"
+                    className="w-auto px-2 py-1 text-sm"
                   >
                     <Pen size={16} />
                   </Button>
@@ -195,12 +212,14 @@ const AnnouncementsPage = () => {
                     variant="outline"
                     onClick={() => handleActivate(announcement._id)}
                     disabled={announcement.isActive}
+                    className="w-auto px-2 py-1 text-sm"
                   >
                     Aktif Yap
                   </Button>
                   <Button
                     onClick={() => handleDelete(announcement._id)}
                     variant="destructive"
+                    className="w-auto px-2 py-1 text-sm"
                   >
                     Sil
                   </Button>
@@ -212,7 +231,7 @@ const AnnouncementsPage = () => {
       </div>
       {loading && (
         <div className="flex justify-center items-center py-4">
-          <ClipLoader color="#3498db" size={50} /> {/* Loading Spinner */}
+          <ClipLoader color="#3498db" size={50} />
         </div>
       )}
     </div>

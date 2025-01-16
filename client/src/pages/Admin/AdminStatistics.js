@@ -16,7 +16,7 @@ const OverdueTasksModal = ({ tasks, isOpen, onClose }) => {
         {/* Modal */}
         <div className="relative z-50 w-full max-w-lg bg-white rounded-lg shadow-xl p-6 m-4">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-semibold">Gecikmiş Görevler</h3>
+            <h3 className="text-lg font-semibold">Son Tarihi Geçmiş Görevler</h3>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
@@ -43,7 +43,7 @@ const OverdueTasksModal = ({ tasks, isOpen, onClose }) => {
                 </div>
               ))
             ) : (
-              <p>Aktif gecikmiş görev bulunmamaktadır.</p>
+              <p>Aktif Son Tarihi Geçmiş Görev Bulunmamaktadır.</p>
             )}
           </div>
         </div>
@@ -186,7 +186,7 @@ const AdminStatistics = () => {
                 <h2 className={`font-bold text-xl ${
                   overdueTasks.length > 0 ? 'text-red-800' : 'text-gray-800'
                 }`}>
-                  Gecikmiş görev sayısı: {overdueTasks.length}
+                  Son Tarihi Geçmiş Görevler: {overdueTasks.length}
                 </h2>
                 
                 {overdueTasks.length > 0 && (
@@ -200,7 +200,7 @@ const AdminStatistics = () => {
                     onClick={openModal}
                     className="group relative w-full text-left text-red-700 hover:text-red-800 transition-colors duration-200"
                   >
-                    Gecikmiş görevleri görmek için tıklayınız
+                    Son tarihi geçmiş görevleri görmek için tıklayınız
                     <span className="absolute -right-2 top-1/2 -translate-y-1/2 transform opacity-0 transition-all duration-200 group-hover:right-0 group-hover:opacity-100">
                       →
                     </span>

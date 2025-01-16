@@ -8,7 +8,7 @@ import {
 } from "../../services/categoryService";
 import ClipLoader from "react-spinners/ClipLoader"; // React Spinners
 import Button from "../../components/common/Button";
-import { Pen } from "lucide-react";
+import { CircleX, Pen } from "lucide-react";
 
 const AdminClasses = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -272,7 +272,7 @@ const AdminClasses = () => {
                         onClick={() => deleteAttributeField(index)}
                         className="text-red-500 hover:text-red-700"
                       >
-                        Sil
+                        <CircleX/>
                       </button>
                     )}
                   </div>

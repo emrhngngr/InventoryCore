@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react"; // lucide-react'ten ikonlar
+import { IoCloud } from "react-icons/io5";
 
 const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextColor }) => {
   const navigate = useNavigate();
@@ -29,7 +30,8 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center">
+          <div className="flex space-x-4 items-center">
+            <IoCloud className="w-10 h-8 text-blue-500"/>
             <span
               className="text-xl font-bold hover:text-[#3e7bca] cursor-pointer"
               onClick={() => navigate("/")}

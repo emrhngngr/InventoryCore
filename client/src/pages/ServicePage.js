@@ -12,6 +12,7 @@ import React from "react";
 import Svg from "../assets/svg/undraw_growth-chart_h2w8.svg";
 import Navbar from "../components/MainPage/Navbar";
 import { motion } from 'framer-motion';
+import Footer from "../components/MainPage/Footer";
 
 const ServicePage = () => {
   const features = [
@@ -60,7 +61,7 @@ const ServicePage = () => {
         transition={{ duration: 0.6 }}
         className="bg-white shadow-sm"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+        <div className="max-w-7xl mt-16 mx-auto px-4 sm:px-6 lg:px-8 py-32">
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -150,6 +151,7 @@ const ServicePage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

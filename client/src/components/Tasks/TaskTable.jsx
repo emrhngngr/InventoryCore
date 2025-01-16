@@ -97,7 +97,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
   if (!tasks?.length) {
     return (
       <div className="p-8 text-center text-gray-500">
-        Yapılacak görev bulunmuyor.
+        Şu anda yapılacak görev bulunmuyor.
       </div>
     );
   }
@@ -115,10 +115,10 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
   ];
 
   return (
-    <div className="flex-1 p-6 mt-16 bg-gray-50">
+    <div className="flex-1 p-6 bg-gray-50">
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="relative">
+      <div className="flex flex-col md:flex-row md:justify-between items-center">
+      <div className="relative">
             <input
               type="text"
               placeholder="Görev ara..."
@@ -177,14 +177,17 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                   key={task._id}
                   className={`
                     ${
-                      new Date(task.deadline) < new Date() && task.feedback
-                        ? "bg-red-200" // Deadline geçmiş ve feedback alınmış
-                        : new Date(task.deadline) < new Date()
+                      new Date(task.deadline) < new Date() &&
+                      task.feedback &&
+                      task.status !== "approved"
+                        ? "bg-red-200" // Deadline geçmiş, feedback alınmış ve approved değilse
+                        : new Date(task.deadline) < new Date() && task.status !== "approved" // Sadece deadline geçmiş ama feedback yok
                         ? "bg-red-100" // Deadline geçmiş, feedback alınmamış
-                        : task.feedback && task.status !== "approved"
+                        : task.feedback && task.status !== "approved" // Feedback var ve onaylanmamış
                         ? "bg-red-50" // Feedback var ancak onaylanmamış
                         : ""
                     }
+                    
                   `}
                 >
                   <td className="px-4 py-3 whitespace-nowrap">
@@ -228,18 +231,18 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                   <td className="px-4 py-3">
                     {translateRole(task.assignedTo)}
                   </td>
-                  <td className="px-4 py-3 flex space-x-2 whitespace-nowrap">
+                  <td className="px-2 py-1 lg:px-4 lg:py-3 flex space-x-2 whitespace-nowrap">
                     {task.status === "pending" ? (
                       <Button
                         onClick={() => onComplete(task._id)}
-                        className="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+                        className="px-1.5 lg:px-3 lg:py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                       >
                         Tamamla
                       </Button>
                     ) : (
                       <Button
                         onClick={() => onComplete(task._id)}
-                        className="px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+                        className="px-1.5 lg:px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                         disabled
                       >
                         Tamamla

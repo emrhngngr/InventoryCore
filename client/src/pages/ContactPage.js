@@ -2,6 +2,7 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import React, { useState } from "react";
 import Svg from "../assets/svg/undraw_emails_085h.svg";
 import Navbar from "../components/MainPage/Navbar";
+import Footer from "../components/MainPage/Footer";
 
 const ContactPage = () => {
   const contactInfo = [
@@ -84,6 +85,7 @@ const ContactPage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

@@ -61,7 +61,7 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Kritiklik Derecesi
+            Kritiklik Derecesi (1-5)
           </label>
           <input
             type="number"
@@ -81,7 +81,7 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gizlilik Derecesi
+            Gizlilik Derecesi (1-5)
           </label>
           <input
             type="number"

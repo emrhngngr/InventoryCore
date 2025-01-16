@@ -350,11 +350,11 @@ const UserManagement = () => {
     <div className="container mx-auto p-4">
       <ToastContainer />
       <div className="bg-white shadow-md rounded-lg">
-        <div className="flex justify-between items-center p-4 border-b">
+        <div className="flex flex-col md:flex-row justify-between items-center p-4 border-b">
           <h2 className="text-xl font-bold text-gray-800">
             Kullanıcı Yönetimi
           </h2>
-          <div className="flex space-x-4">
+          <div className="flex flex-col mt-4 md:mt-0 space-y-4 md:space-y-0 md:flex-row md:space-x-4">
             <input
               type="text"
               placeholder="İsim veya e-posta ile ara..."
@@ -363,9 +363,11 @@ const UserManagement = () => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1); // Reset to first page when searching
               }}
-              className="px-4 py-2 border border-gray-300 rounded-md"
+              className="px-4 py-1.5 border border-gray-300 rounded-md"
             />
-            <Button onClick={() => setIsModalOpen(true)}>
+            <Button 
+            className=""
+             onClick={() => setIsModalOpen(true)}>
               Yeni Kullanıcı Ekle
             </Button>
           </div>

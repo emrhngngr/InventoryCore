@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import CustomerRoute from "./routes/CustomerRoute";
+import LoginRoute from "./routes/LoginRoute";
 
 // Sayfalar
 import AdminClasses from "./pages/Admin/AdminCategories";
@@ -27,8 +27,7 @@ function App() {
         <Route path="/services" element={<ServicePage />} />
         <Route path="/contact" element={<ContactPage />} />
 
-        {/* Müşteri Rotaları */}
-        <Route path="/user/*" element={<CustomerRoute />}>
+        <Route path="/user/*" element={<LoginRoute />}>
           <Route
             path="dashboard"
             element={

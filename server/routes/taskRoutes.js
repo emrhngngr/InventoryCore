@@ -38,8 +38,8 @@ router.get("/group/:groupType", authMiddleware, async (req, res) => {
 // Yeni görev oluştur (Admin için)
 router.post(
   "/",
-  createActivityLogger("create", "task"),
   authMiddleware,
+  createActivityLogger("create", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
@@ -73,8 +73,8 @@ router.post(
 // Görevi tamamla (Grup üyeleri için)
 router.put(
   "/complete/:id",
-  createActivityLogger("pending", "task"),
   authMiddleware,
+  createActivityLogger("pending", "task"),
   async (req, res) => {
     try {
       const task = await Task.findById(req.params.id);
@@ -137,9 +137,9 @@ router.put(
 // Görevi onayla (Admin için)
 router.put(
   "/approve/:id",
-  createActivityLogger("completed", "task"),
-  authorizeRoles(["admin"]),
   authMiddleware,
+  authorizeRoles(["admin"]),
+  createActivityLogger("completed", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
@@ -179,9 +179,9 @@ router.put(
 // Görevi geri gönder (Admin için)
 router.put(
   "/sendback/:id",
-  createActivityLogger("sendback", "task"),
-  authorizeRoles(["admin"]),
   authMiddleware,
+  authorizeRoles(["admin"]),
+  createActivityLogger("sendback", "task"),
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
