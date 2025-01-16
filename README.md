@@ -42,16 +42,3 @@ This project is a **dynamic, user-friendly inventory management system** designe
 | **Bcrypt** | Password hashing for security |
 
 ---
-
-## 📂 Database Schemas  
-
-•	Assets
-•	Category
-•	Tasks
-•	Users
-•	ActivityLog
-•	AssetValues
-•	Announcement
-
-
----
