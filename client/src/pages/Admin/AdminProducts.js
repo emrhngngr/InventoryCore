@@ -394,7 +394,7 @@ const AdminProducts = () => {
           onClick={openInfoModal} // Modalı açan fonksiyon
           className="cursor-pointer text-blue-600 hover:text-blue-800"
         >
-          Gizlilik ve Hata Derecesi Nedir?
+          Gizlilik ve Kritiklik Derecesi Nedir?
         </h1>
         {/* Search Input */}
         <div className="w-max">

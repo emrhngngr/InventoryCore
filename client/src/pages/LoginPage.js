@@ -9,6 +9,7 @@ import Svg from "../assets/svg/12643932_5031661.svg";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +83,7 @@ const LoginPage = () => {
 
                 <input
                   type="email"
-                  className="w-full bg-transparent text-black dark:text-white font-normal placeholder:font-light group-focus-within:text-blue-600"
+                  className="w-full bg-transparent text-black font-normal placeholder:font-light group-focus-within:text-blue-600"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

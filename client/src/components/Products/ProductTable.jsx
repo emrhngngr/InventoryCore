@@ -31,7 +31,7 @@ const ProductTable = ({
     { key: 'assignedTo', label: 'Sorumlu Grup' },
     { key: 'category', label: 'Kategori' },
     { key: 'amount', label: 'Adet' },
-    { key: 'criticalityDegree', label: 'Kritik Derecesi' },
+    { key: 'criticalityDegree', label: 'Kritiklik Derecesi' },
     { key: 'privacyDegree', label: 'Gizlilik Derecesi' }
   ];
 

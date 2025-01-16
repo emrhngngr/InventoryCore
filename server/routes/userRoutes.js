@@ -56,12 +56,16 @@ router.post("/login", async (req, res) => {
     // JWT Token oluştur
     const token = jwt.sign(
       {
-        id: user._id,
-        email: user.email,
-        role: user.role,
+          id: user._id,
+          email: user.email,
+          role: user.role,
       },
-      process.env.JWT_SECRET
-    );
+      process.env.JWT_SECRET,
+      { 
+          expiresIn: '24h', 
+          algorithm: 'HS256'
+      }
+  );
 
     // Şifreyi response'dan çıkar ve geri kalanı gönder
     const userResponse = user.toObject();
