@@ -54,3 +54,18 @@ This project is a **dynamic, user-friendly inventory management system** designe
 | **Bcrypt** | Password hashing for security |
 
 ---
+
+## 📷 Screenshots From Website
+
+**Main Page**
+
+![image](https://github.com/user-attachments/assets/85eebcc1-ae8d-4fef-83dd-899ee4b22b05)
+
+**Statistics Page**
+
+![image](https://github.com/user-attachments/assets/478b480e-66bf-45f7-8c2e-41d1cab8ee32)
+
+**User Management Page**
+
+![image](https://github.com/user-attachments/assets/0ab6a830-3ec3-45a3-a7df-ee50ee793fa2)
+
