@@ -7,25 +7,37 @@ This project is a **dynamic, user-friendly inventory management system** designe
 ## 📌 Features  
 
 ✅ **Dynamic Asset Management**  
-- Three different **categories** (system_group, a_group, software_group).  
+- Three different **groups** (system_group, a_group, software_group).  
 - **Custom attributes per category** (add, update, delete dynamically).  
 
-✅ **Role-Based Task Management**  
-- **Admin** manages users, assigns tasks, and has full system access.  
-- **Other roles** have restricted access based on permissions.  
-- Tasks are **assigned to users** and require **admin approval upon completion**.  
+✅ **Dynamic Categories & Attributes:**
 
-✅ **Risk & Security Management**  
-- Graphical representation of **criticality and confidentiality levels** of assets.  
-- If tasks are delayed, **risk levels increase dynamically**.  
+- Each category has unique attributes (e.g., Hardware has price, detail attributes; Operating System has version attribute, etc.).
 
-✅ **Weekly Update Tracking**  
-- Newly added assets **must be updated weekly**, or users receive alerts.  
-- **Switch-based control** allows enabling/disabling this feature.  
+- Product forms adjust dynamically based on the selected category.
 
-✅ **Secure User Authentication**  
-- **JWT tokens** for session management.  
-- **Bcrypt encryption** for storing user passwords.  
+✅ **User Roles & Permissions:**
+
+- Admin authentication system.
+
+- Role-based access control.
+
+✅ **Task & Risk Management:**
+- Task tracking with risk evaluation.
+- **Task Creation:** Admins can create, assign, and track tasks within the system.
+- **Group Assignment:** Each task is assigned to a group, and tasks appear on the respective group's homepage.
+
+✅ **Asset Value Tracking:**
+
+- Weekly inventory value calculations.
+
+✅ **Announcements & Notifications:**
+
+- Simple announcement system for users.
+
+✅ **Activity Log:**
+
+- Tracks user actions within the system.
 
 ---
 
