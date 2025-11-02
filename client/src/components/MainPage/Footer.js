@@ -9,50 +9,49 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
             <div>
               <h3 className="text-white text-lg font-semibold mb-4">
-                Hakkımızda
+                About Us
               </h3>
               <p className="text-gray-400">
-                InventoryCore, modern işletmelerin envanter yönetimi
-                ihtiyaçlarını karşılamak için geliştirilmiş yenilikçi bir
-                platformdur.
+                InventoryCore is an innovative platform built to meet the
+                inventory management needs of modern businesses.
               </p>
             </div>
             <div>
               <h3 className="text-white text-lg font-semibold mb-4">
-                Hızlı Erişim
+                Quick Links
               </h3>
               <ul className="space-y-2">
                 <li>
                   <a href="#" className="hover:text-white transition-colors">
-                    Ana Sayfa
+                    Home
                   </a>
                 </li>
                 <li>
                   <a href="/services" className="hover:text-white transition-colors">
-                    Servisler
+                    Services
                   </a>
                 </li>
                 <li>
                   <a href="/contact" className="hover:text-white transition-colors">
-                    İletişim
+                    Contact
                   </a>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-white text-lg font-semibold mb-4">
-                İletişim
+                Contact
               </h3>
               <ul className="space-y-2">
                 <li>Email: info@inventorycore.com</li>
                 <li>Tel: +90 (555) 123 45 67</li>
-                <li>Adres: Merkez Mah. Teknoloji Cad.</li>
+                <li>Address: Merkez Mah. Teknoloji Cad.</li>
                 <li>No: 1 Afyonkarahisar</li>
               </ul>
             </div>
             <div>
               <h3 className="text-white text-lg font-semibold mb-4">
-                Bizi Takip Edin
+                Follow Us
               </h3>
               <div className="flex space-x-4">
                 <a href="#" className="hover:text-white transition-colors">
@@ -69,7 +68,7 @@ const Footer = () => {
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 text-center">
             <p className="text-gray-400">
-              © {new Date().getFullYear()} InventoryCore. Tüm hakları saklıdır.
+              © {new Date().getFullYear()} InventoryCore. All rights reserved.
             </p>
           </div>
         </div>

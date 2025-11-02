@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const UserProfileHeader = ({ currentUser, onLogout }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null); // Dropdown menüsünün referansı
-  const userIconRef = useRef(null); // Kullanıcı simgesinin referansı
+  const dropdownRef = useRef(null); // reference for the dropdown menu
+  const userIconRef = useRef(null); // reference for the user icon
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,16 +26,16 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
       }
     };
 
-    // Event listener'ı ekle
+    // add event listener
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Component unmount olduğunda event listener'ı temizle
+    // clean up event listener on unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  // Menü açma/kapama
+  // Toggle menu open/close
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -44,33 +44,33 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
     <div className="relative">
       <div
         className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-        onClick={toggleDropdown} // Dropdown'ı toggle et
+  onClick={toggleDropdown} // toggle the dropdown
       >
         <div className="flex flex-col items-end">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-900">
-              {currentUser?.name || "Kullanıcı"}
+              {currentUser?.name || "User"}
             </span>
           </div>
           <span className="text-xs text-gray-500">
             {currentUser?.role === "admin"
-              ? "Yönetici"
+              ? "Admin"
               : currentUser?.role === "a_group"
-              ? "A Grubu"
+              ? "Group A"
               : currentUser?.role === "system_group"
-              ? "Sistem Grubu"
+              ? "System Group"
               : currentUser?.role === "software_group"
-              ? "Yazılım Grubu"
+              ? "Software Group"
               : currentUser?.role === "technical_service"
-              ? "Teknik Servis"
-              : "Kullanıcı"}
+              ? "Technical Service"
+              : "User"}
           </span>
         </div>
         <div className="relative" ref={userIconRef}>
           {currentUser?.profilePicture ? (
             <img
               src={`${process.env.REACT_APP_URL}/${currentUser.profilePicture}`}
-              alt="Profil"
+                alt="Profile"
               className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200"
             />
           ) : (
@@ -81,7 +81,7 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
         </div>
       </div>
 
-      {/* Dropdown Menü */}
+  {/* Dropdown menu */}
       {isDropdownOpen && (
         <div
           ref={dropdownRef}
@@ -92,7 +92,7 @@ const UserProfileHeader = ({ currentUser, onLogout }) => {
             onClick={handleLogout}
           >
             <CiLogout className="w-5 h-5 text-gray-500" />
-            <span className="ml-2">Çıkış</span>
+            <span className="ml-2">Logout</span>
           </button>
         </div>
       )}

@@ -59,13 +59,82 @@ This project is a **dynamic, user-friendly inventory management system** designe
 
 **Main Page**
 
-![image](https://github.com/user-attachments/assets/85eebcc1-ae8d-4fef-83dd-899ee4b22b05)
+![Main Page](client/public/main.jpg)
 
 **Statistics Page**
 
-![image](https://github.com/user-attachments/assets/478b480e-66bf-45f7-8c2e-41d1cab8ee32)
+![Statistics Page](client/public/statistics.jpg)
 
 **User Management Page**
 
-![image](https://github.com/user-attachments/assets/0ab6a830-3ec3-45a3-a7df-ee50ee793fa2)
+![User Management Page](client/public/usermanagement.jpg)
+
+---
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+- Node.js installed
+- MongoDB installed and running
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/emrhngngr/InventoryCore.git
+cd InventoryCore
+```
+
+### 2. Setup Environment Variables
+
+**Server (.env)**
+```env
+MONGO_URI=mongodb://localhost:27017/inventory-db
+JWT_SECRET=your-secret-jwt-key
+ADMIN_CREATION_KEY=your-admin-creation-key
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+PORT=5000
+```
+
+**Client (.env)**
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+### 3. Install Dependencies
+```bash
+# Install server dependencies
+cd server
+npm install
+
+# Install client dependencies
+cd ../client
+npm install
+```
+
+### 4. Seed Database
+```bash
+cd server
+npm run seed
+```
+
+This will create:
+- **Admin user**: admin@example.com / admin123
+- **Sample users** for each group (password: 123456)
+- **Categories**: Computer, Printer, Monitor, Network Equipment, Phone, Furniture
+- **Sample products** and announcements
+
+### 5. Run the Application
+```bash
+# Start server (from server directory)
+npm start
+
+# Start client (from client directory - in another terminal)
+npm start
+```
+
+The application will run on:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:5000
+
+---
 

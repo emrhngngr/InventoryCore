@@ -16,7 +16,7 @@ router.get('/',
   }
 });
 
-// Kategori Oluştur
+// Create category
 router.post('/',
   authMiddleware, 
   authorizeRoles(["admin"]),
@@ -35,7 +35,7 @@ router.post('/',
   }
 });
 
-// Kategori Güncelle
+// Update category
 router.put('/:id', 
   authMiddleware,
   authorizeRoles(["admin"]),
@@ -53,7 +53,7 @@ router.put('/:id',
     );
 
     if (!updatedCategory) {
-      return res.status(404).json({ message: 'Kategori bulunamadı' });
+      return res.status(404).json({ message: 'Category not found' });
     }
 
     res.json(updatedCategory);
@@ -62,7 +62,7 @@ router.put('/:id',
   }
 });
 
-// Kategori Sil
+// Delete category
 router.delete('/:id',
   authMiddleware,
   authorizeRoles(["admin"]),
@@ -72,10 +72,10 @@ router.delete('/:id',
     const deletedCategory = await Category.findByIdAndDelete(req.params.id);
 
     if (!deletedCategory) {
-      return res.status(404).json({ message: 'Kategori bulunamadı' });
+      return res.status(404).json({ message: 'Category not found' });
     }
 
-    res.json({ message: 'Kategori silindi', deletedCategory });
+    res.json({ message: 'Category deleted', deletedCategory });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

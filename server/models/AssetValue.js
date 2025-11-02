@@ -19,7 +19,7 @@ const AssetValueSchema = new mongoose.Schema({
     default: Date.now
   },
   weekRange: {
-    type: String, // Örn: "01 Jan - 07 Jan"
+    type: String, // e.g.: "01 Jan - 07 Jan"
     required: true
   }
 });

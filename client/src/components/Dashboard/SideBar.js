@@ -4,13 +4,13 @@ import { IoMdBuild } from "react-icons/io";
 import { IoCloud, IoNewspaperSharp } from "react-icons/io5";
 import { LuArrowLeftFromLine, LuArrowRightFromLine } from "react-icons/lu";
 import { MdDashboard, MdOutlinePendingActions, MdPerson } from "react-icons/md";
-import { useNavigate, useLocation } from "react-router-dom"; // useLocation ekledik
+import { useNavigate, useLocation } from "react-router-dom"; // useLocation added
 import api from "../../api/api";
 import { FaChartSimple } from "react-icons/fa6";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
-  const location = useLocation(); // Mevcut URL'i almak için
+  const location = useLocation(); // to get current URL
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     fetchCurrentUser();
   }, []);
 
-  // Aktif sayfayı kontrol eden yardımcı fonksiyon
+  // Helper to check active page
   const isActivePage = (path) => {
     return location.pathname === path;
   };
@@ -67,7 +67,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
             }`}
           >
             <MdDashboard className="text-2xl min-w-[40px]" />
-            {isSidebarOpen && <span className="ml-4">Ana Sayfa</span>}
+            {isSidebarOpen && <span className="ml-4">Home</span>}
           </li>
           {currentUser && currentUser.role === "admin" && (
             <>
@@ -78,7 +78,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <FaShoppingBag className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Varlıklar</span>}
+                {isSidebarOpen && <span className="ml-4">Assets</span>}
               </li>
               <li
                 onClick={() => navigate("/user/classes")}
@@ -87,7 +87,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <FaBriefcase className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Kategoriler</span>}
+                {isSidebarOpen && <span className="ml-4">Categories</span>}
               </li>
               <li
                 onClick={() => navigate("/user/users")}
@@ -96,7 +96,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <MdPerson className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Üyeler</span>}
+                {isSidebarOpen && <span className="ml-4">Users</span>}
               </li>
               <li
                 onClick={() => navigate("/user/process")}
@@ -105,7 +105,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <IoMdBuild className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">İşlemler</span>}
+                {isSidebarOpen && <span className="ml-4">Processes</span>}
               </li>
               <li
                 onClick={() => navigate("/user/announcements")}
@@ -114,7 +114,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <IoNewspaperSharp className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Duyurular</span>}
+                {isSidebarOpen && <span className="ml-4">Announcements</span>}
               </li>
               <li
                 onClick={() => navigate("/user/logs")}
@@ -123,7 +123,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <MdOutlinePendingActions className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">Aktivite</span>}
+                {isSidebarOpen && <span className="ml-4">Activity</span>}
               </li>
               <li
                 onClick={() => navigate("/user/statistics")}
@@ -132,7 +132,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 }`}
               >
                 <FaChartSimple className="text-2xl min-w-[40px]" />
-                {isSidebarOpen && <span className="ml-4">İstatiklikler</span>}
+                {isSidebarOpen && <span className="ml-4">Statistics</span>}
               </li>
             </>
           )}

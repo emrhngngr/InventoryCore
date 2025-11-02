@@ -6,8 +6,8 @@ const database = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    .then(() => console.log("MongoDB bağlantısı başarılı"))
-    .catch((err) => console.log("MongoDB bağlantı hatası:", err));
+  .then(() => console.log("MongoDB connection successful"))
+  .catch((err) => console.log("MongoDB connection error:", err));
 };
 
 module.exports = database;

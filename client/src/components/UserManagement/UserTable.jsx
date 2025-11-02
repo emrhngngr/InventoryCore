@@ -23,7 +23,7 @@ const UserTable = ({
           </th>
         ))}
         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          İşlemler
+          Actions
         </th>
       </tr>
     </thead>
@@ -45,7 +45,7 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
   const canModify = 
     currentUser?.role === 'admin' || 
     (currentUser?.role !== 'admin' && user.role !== 'admin');
-    const serverBaseUrl = "http://localhost:5000"; // Backend'in temel URL'si
+  const serverBaseUrl = "http://localhost:5000"; // Backend base URL
     const defaultPhoto = "uploads/profile-pictures/1732807319854-Person.png"
 
 
@@ -55,8 +55,8 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
           <img 
           src={user.profilePicture 
             ? `${serverBaseUrl}/${user.profilePicture}` 
-            : `${serverBaseUrl}/${defaultPhoto}` } // Eğer fotoğraf yoksa varsayılan bir resim
-          alt={`${user.name} profil resmi`}
+            : `${serverBaseUrl}/${defaultPhoto}` } // If no photo, use default image
+          alt={`${user.name} profile picture`}
           className="w-10 h-10 rounded-full object-cover"
         /></td>
       <td className="px-4 py-3">{user.name}</td>
@@ -81,7 +81,7 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
         </span>
       </td>
       <td className="px-4 py-3">
-        {new Date(user.createdAt).toLocaleString("tr-TR")}
+  {new Date(user.createdAt).toLocaleString("en-US")}
       </td>
       <td className="px-4 flex py-3 space-x-2">
         {canModify && (
@@ -99,7 +99,7 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
               className="text-sm"
               onClick={onDelete}
             >
-              Sil
+              Delete
             </Button>
           </>
         )}
@@ -108,25 +108,24 @@ const UserTableRow = ({ user, currentUser, onEdit, onDelete }) => {
   );
 };
 
-// İngilizce role değerlerini Türkçe'ye çeviren fonksiyon
 const translateRole = (role) => {
   const roleTranslations = {
-    admin: 'Yönetici',
-    system_group: 'Sistem Grubu',
-    a_group: 'A Grubu',
-    software_group: 'Yazılım Grubu',
-    technical_service: 'Teknik Servis',
+    admin: 'Admin',
+    system_group: 'System Group',
+    a_group: 'A Group',
+    software_group: 'Software Group',
+    technical_service: 'Technical Service',
   };
-  return roleTranslations[role] || 'Bilinmeyen Rol';
+  return roleTranslations[role] || 'Unknown Role';
 };
 
 const getColumnLabel = (key) => {
   const labels = {
-    profilePicture: 'Fotoğraf',
-    name: 'Ad',
-    email: 'E-posta',
-    role: 'Rol',
-    createdAt: 'Oluşturulma Tarihi'
+    profilePicture: 'Photo',
+    name: 'Name',
+    email: 'Email',
+    role: 'Role',
+    createdAt: 'Created At'
   };
   return labels[key];
 };

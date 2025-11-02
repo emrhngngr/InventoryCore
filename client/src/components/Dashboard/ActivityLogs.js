@@ -17,7 +17,7 @@ const ActivityLogs = () => {
     action: "",
     resourceType: "",
   });
-  const [selectedDetails, setSelectedDetails] = useState(null); // Modal için seçilen detay
+  const [selectedDetails, setSelectedDetails] = useState(null); // selected details for modal
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -67,27 +67,34 @@ const ActivityLogs = () => {
 
   const getFriendlyActionMessage = (log) => {
     const actionMessages = {
-      create: "oluşturdu",
-      update: "güncelledi",
-      delete: "sildi",
-      login: "giriş yaptı",
-      logout: "çıkış yaptı",
-      pending: "inceledi",
-      reviewed: "incelendi",
-      completed: "tamamladı",
-      sendback: "geri gönderdi",
+      create: "created",
+      update: "updated",
+      delete: "deleted",
+      login: "logged in",
+      logout: "logged out",
+      pending: "pending",
+      reviewed: "reviewed",
+      completed: "completed",
+      sendback: "sent back",
     };
 
     const resourceMessages = {
-      product: "varlık",
-      category: "kategori",
-      user: "kullanıcı",
-      task: "görev",
+      product: "asset",
+      category: "category",
+      user: "user",
+      task: "task",
     };
 
-    return `${log.user?.name || "Bilinmeyen Kullanıcı"} bir ${
-      resourceMessages[log.resourceType]
-    } ${actionMessages[log.action]}.`;
+    const actor = log.user?.name || "Unknown User";
+    const action = actionMessages[log.action] || log.action;
+    const resource = resourceMessages[log.resourceType] || log.resourceType;
+
+    // For login/logout actions we don't include a resource
+    if (log.action === "login" || log.action === "logout") {
+      return `${actor} ${action}.`;
+    }
+
+    return `${actor} ${action} a ${resource}.`;
   };
 
   if (loading) {
@@ -100,7 +107,7 @@ const ActivityLogs = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Aktivite Logları</h2>
+  <h2 className="text-2xl font-bold mb-4">Activity Logs</h2>
       {/* Filters */}
       <div className="mb-4 grid grid-cols-1 md:grid-cols-5 gap-4">
         <input
@@ -109,7 +116,7 @@ const ActivityLogs = () => {
           value={filters.startDate}
           onChange={handleFilterChange}
           className="border p-2 rounded"
-          placeholder="Başlangıç Tarihi"
+          placeholder="Start Date"
         />
         <input
           type="date"
@@ -117,7 +124,7 @@ const ActivityLogs = () => {
           value={filters.endDate}
           onChange={handleFilterChange}
           className="border p-2 rounded"
-          placeholder="Bitiş Tarihi"
+          placeholder="End Date"
         />
         <select
           name="action"
@@ -125,10 +132,10 @@ const ActivityLogs = () => {
           onChange={handleFilterChange}
           className="border p-2 rounded"
         >
-          <option value="">Tüm Aksiyonlar</option>
-          <option value="create">Oluşturma</option>
-          <option value="update">Güncelleme</option>
-          <option value="delete">Silme</option>
+          <option value="">All Actions</option>
+          <option value="create">Create</option>
+          <option value="update">Update</option>
+          <option value="delete">Delete</option>
         </select>
         <select
           name="resourceType"
@@ -136,17 +143,17 @@ const ActivityLogs = () => {
           onChange={handleFilterChange}
           className="border p-2 rounded"
         >
-          <option value="">Tüm Kaynaklar</option>
-          <option value="product">Varlık</option>
-          <option value="category">Kategori</option>
-          <option value="user">Kullanıcı</option>
-          <option value="task">Görevler</option>
+          <option value="">All Resources</option>
+          <option value="product">Asset</option>
+          <option value="category">Category</option>
+          <option value="user">User</option>
+          <option value="task">Tasks</option>
         </select>
         <button
           onClick={applyFilters}
           className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
-          Filtrele
+          Filter
         </button>
       </div>
 
@@ -154,10 +161,10 @@ const ActivityLogs = () => {
         <table className="min-w-full bg-white border">
           <thead>
             <tr>
-              <th className="p-2 border">Tarih</th>
-              <th className="p-2 border">Aksiyon</th>
-              <th className="p-2 border">IP Adresi</th>
-              <th className="p-2 border">Detay</th>
+              <th className="p-2 border">Date</th>
+              <th className="p-2 border">Action</th>
+              <th className="p-2 border">IP Address</th>
+              <th className="p-2 border">Details</th>
             </tr>
           </thead>
           <tbody>
@@ -176,7 +183,7 @@ const ActivityLogs = () => {
                     }}
                     className="bg-gray-200 text-blue-500 px-2 py-1 rounded hover:bg-gray-300"
                   >
-                    Detay JSON
+                    Details JSON
                   </button>
                 </td>
               </tr>
@@ -184,14 +191,14 @@ const ActivityLogs = () => {
           </tbody>
         </table>
         <div className="flex items-center justify-start mt-4">
-          <div className="text-sm text-gray-600">
-            Sayfa {currentPage} / {Math.ceil(logs.length / itemsPerPage)}{" "}
-            (Toplam {logs.length} varlık)
+            <div className="text-sm text-gray-600">
+            Page {currentPage} / {Math.ceil(logs.length / itemsPerPage)}{" "}
+            (Total {logs.length} entries)
           </div>
 
           <div className="flex items-center space-x-4 ml-7">
             <label htmlFor="items-per-page" className="text-sm text-gray-600">
-              Sayfa başına:
+              Per page:
             </label>
             <select
               id="items-per-page"
@@ -204,7 +211,7 @@ const ActivityLogs = () => {
             >
               {[5, 10, 20].map((option) => (
                 <option key={option} value={option}>
-                  {option} Kayıt
+                  {option} records
                 </option>
               ))}
             </select>
@@ -213,38 +220,36 @@ const ActivityLogs = () => {
       </div>
       {Math.ceil(logs.length / itemsPerPage) > 1 && (
         <div className="flex justify-center space-x-2 mt-4">
-  {/* İlk Sayfa Butonu */}
+  {/* First page button */}
   <button
     onClick={() => setCurrentPage(1)}
     disabled={currentPage === 1}
     className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
   >
-    İlk
+    First
   </button>
 
-  {/* Önceki Sayfa Butonu */}
+  {/* Previous page button */}
   <button
     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
     disabled={currentPage === 1}
     className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
   >
-    Önceki
+    Previous
   </button>
 
-  {/* Sayfa Numaraları */}
+  {/* Page numbers */}
   {Array.from({ length: totalPages }, (_, i) => i + 1)
     .filter((page) => {
-      // Sadece ilgili sayfaları göster
-      const showAllPages = 5; // Etrafında gösterilecek toplam sayfa sayısı
-      if (page === 1 || page === totalPages) return true; // İlk ve son sayfalar her zaman gösterilir
-      if (
-        Math.abs(page - currentPage) < Math.ceil(showAllPages / 2)
-      )
-        return true; // Mevcut sayfanın etrafındaki sayfalar gösterilir
+      // Only show relevant pages
+      const showAllPages = 5; // Number of pages to show around the current page
+      if (page === 1 || page === totalPages) return true; // First and last pages are always shown
+      if (Math.abs(page - currentPage) < Math.ceil(showAllPages / 2))
+        return true; // Pages around the current page are shown
       return false;
     })
     .map((page, index, array) => {
-      // "..." eklemek için
+  // to add "..."
       const prevPage = array[index - 1];
       return (
         <>
@@ -278,7 +283,7 @@ const ActivityLogs = () => {
     disabled={currentPage === totalPages}
     className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
   >
-    Sonraki
+    Next
   </button>
 
   {/* Son Sayfa Butonu */}
@@ -287,7 +292,7 @@ const ActivityLogs = () => {
     disabled={currentPage === totalPages}
     className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
   >
-    Son
+    Last
   </button>
 </div>
 

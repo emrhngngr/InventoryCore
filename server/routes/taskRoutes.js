@@ -9,17 +9,17 @@ const router = express.Router();
 const {
   createActivityLogger,
 } = require("../middlewares/activityLogMiddleware");
-// Tüm görevleri getir
+// Get all tasks
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const tasks = await Task.find().populate("assignedAsset", "name");
     res.json(tasks);
   } catch (error) {
-    res.status(500).json({ message: "Görevler getirilirken hata oluştu" });
+    res.status(500).json({ message: "Error fetching tasks" });
   }
 });
 
-// Gruba atanan görevleri getir
+// Get tasks assigned to a group
 router.get("/group/:groupType", authMiddleware, async (req, res) => {
   try {
     const tasks = await Task.find({
@@ -29,13 +29,11 @@ router.get("/group/:groupType", authMiddleware, async (req, res) => {
 
     res.json(tasks);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Grup görevleri getirilirken hata oluştu" });
+    res.status(500).json({ message: "Error fetching group tasks" });
   }
 });
 
-// Yeni görev oluştur (Admin için)
+// Create a new task (Admin only)
 router.post(
   "/",
   authMiddleware,
@@ -43,7 +41,7 @@ router.post(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
 
       console.log("req.body.assignedAsset ==> ", req.body);
@@ -65,12 +63,12 @@ router.post(
       res.status(201).json(newTask);
     } catch (error) {
       console.error("Task creation error:", error);
-      res.status(500).json({ message: "Görev oluşturulurken hata oluştu" });
+      res.status(500).json({ message: "Error creating task" });
     }
   }
 );
 
-// Görevi tamamla (Grup üyeleri için)
+// Complete task (for group members)
 router.put(
   "/complete/:id",
   authMiddleware,
@@ -80,13 +78,11 @@ router.put(
       const task = await Task.findById(req.params.id);
 
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
       if (task.assignedTo !== req.user.role) {
-        return res
-          .status(403)
-          .json({ message: "Bu görevi tamamlama yetkiniz yok" });
+        return res.status(403).json({ message: "You are not authorized to complete this task" });
       }
 
       task.status = "reviewing";
@@ -95,11 +91,11 @@ router.put(
       await task.save();
       res.json(task);
     } catch (error) {
-      res.status(500).json({ message: "Görev güncellenirken hata oluştu" });
+      res.status(500).json({ message: "Error updating task" });
     }
   }
 );
-// Görevi tamamla (Admin için)
+// Complete task (Admin)
 router.put(
   "/complete-admin/:id",
   authMiddleware,
@@ -108,18 +104,18 @@ router.put(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
       const task = await Task.findById(req.params.id);
 
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
       const assignedProduct = await Product.findById(task.assignedAsset);
 
       if (!assignedProduct) {
-        return res.status(404).json({ message: "Ürün bulunamadı" });
+        return res.status(404).json({ message: "Product not found" });
       }
 
       assignedProduct.updatedAt = new Date();
@@ -129,12 +125,12 @@ router.put(
       await task.save();
       res.json(task);
     } catch (error) {
-      res.status(500).json({ message: "Görev güncellenirken hata oluştu" });
+      res.status(500).json({ message: "Error updating task" });
     }
   }
 );
 
-// Görevi onayla (Admin için)
+// Approve task (Admin)
 router.put(
   "/approve/:id",
   authMiddleware,
@@ -143,25 +139,23 @@ router.put(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
 
       const task = await Task.findById(req.params.id);
 
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
       if (task.status !== "reviewing") {
-        return res
-          .status(400)
-          .json({ message: "Görev onay için uygun durumda değil" });
+        return res.status(400).json({ message: "Task is not in a state suitable for approval" });
       }
 
       const assignedProduct = await Product.findById(task.assignedAsset);
 
       if (!assignedProduct) {
-        return res.status(404).json({ message: "Ürün bulunamadı" });
+        return res.status(404).json({ message: "Product not found" });
       }
 
       assignedProduct.updatedAt = new Date();
@@ -171,12 +165,12 @@ router.put(
       await task.save();
       res.json(task);
     } catch (error) {
-      res.status(500).json({ message: "Görev onaylanırken hata oluştu" });
+      res.status(500).json({ message: "Error approving task" });
     }
   }
 );
 
-// Görevi geri gönder (Admin için)
+// Send task back (Admin)
 router.put(
   "/sendback/:id",
   authMiddleware,
@@ -185,34 +179,32 @@ router.put(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
 
       const task = await Task.findById(req.params.id);
 
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
       if (task.status !== "reviewing") {
-        return res
-          .status(400)
-          .json({ message: "Görev geri gönderilmek için uygun değil" });
+        return res.status(400).json({ message: "Task is not eligible to be sent back" });
       }
 
       console.log("req.body ==> ", req.body);
       task.status = "pending";
-      task.feedback = req.body.feedback || "Görev yeniden düzenlenmelidir.";
+      task.feedback = req.body.feedback || "Task needs to be revised.";
 
       await task.save();
       res.json(task);
     } catch (error) {
-      res.status(500).json({ message: "Görev geri gönderilirken hata oluştu" });
+      res.status(500).json({ message: "Error sending task back" });
     }
   }
 );
 
-// Görevi sil (Admin için)
+// Delete task (Admin)
 router.delete(
   "/:id",
   authMiddleware,
@@ -221,24 +213,24 @@ router.delete(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
 
       const task = await Task.findByIdAndDelete(req.params.id);
 
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
-      res.json({ message: "Görev başarıyla silindi" });
+      res.json({ message: "Task deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Görev silinirken hata oluştu" });
+      res.status(500).json({ message: "Error deleting task" });
     }
   }
 );
 
-// Görevi güncelle (Admin için)
-// tasks.js router dosyasındaki güncelleme endpoint'ini güncelleyelim
+// Update task (Admin)
+// Update the task endpoint in tasks.js router
 router.put(
   "/:id",
   authMiddleware,
@@ -247,12 +239,12 @@ router.put(
   async (req, res) => {
     try {
       if (req.user.role !== "admin") {
-        return res.status(403).json({ message: "Yetkiniz bulunmamaktadır" });
+        return res.status(403).json({ message: "You do not have permission" });
       }
 
       const task = await Task.findById(req.params.id);
       if (!task) {
-        return res.status(404).json({ message: "Görev bulunamadı" });
+        return res.status(404).json({ message: "Task not found" });
       }
 
       const updatedTask = await Task.findByIdAndUpdate(
@@ -267,7 +259,7 @@ router.put(
 
       res.json(updatedTask);
     } catch (error) {
-      res.status(500).json({ message: "Görev güncellenirken hata oluştu" });
+      res.status(500).json({ message: "Error updating task" });
     }
   }
 );

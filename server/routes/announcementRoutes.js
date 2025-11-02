@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Announcement = require('../models/Announcement');
 
-// Tüm duyuruları getir
+// Get all announcements
 router.get('/', async (req, res) => {
   try {
     const announcements = await Announcement.find().sort({ createdAt: -1 });
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Aktif duyuruyu getir
+// Get active announcement
 router.get('/active', async (req, res) => {
   try {
     const activeAnnouncement = await Announcement.findOne({ isActive: true });
@@ -22,7 +22,7 @@ router.get('/active', async (req, res) => {
   }
 });
 
-// Yeni duyuru ekle
+// Create new announcement
 router.post('/', async (req, res) => {
   const announcement = new Announcement({
     content: req.body.content
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Duyuruyu güncelle
+// Update announcement
 router.put('/:id', async (req, res) => {
   try {
     const announcement = await Announcement.findByIdAndUpdate(
@@ -46,7 +46,7 @@ router.put('/:id', async (req, res) => {
     );
     
     if (!announcement) {
-      return res.status(404).json({ message: 'Duyuru bulunamadı' });
+      return res.status(404).json({ message: 'Announcement not found' });
     }
     
     res.json(announcement);
@@ -55,7 +55,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Duyuruyu aktif yap
+// Activate announcement
 router.put('/activate/:id', async (req, res) => {
   try {
     await Announcement.updateMany({}, { isActive: false });
@@ -67,7 +67,7 @@ router.put('/activate/:id', async (req, res) => {
     );
     
     if (!announcement) {
-      return res.status(404).json({ message: 'Duyuru bulunamadı' });
+      return res.status(404).json({ message: 'Announcement not found' });
     }
     
     res.json(announcement);
@@ -76,16 +76,16 @@ router.put('/activate/:id', async (req, res) => {
   }
 });
 
-// Duyuruyu sil
+// Delete announcement
 router.delete('/:id', async (req, res) => {
   try {
     const announcement = await Announcement.findByIdAndDelete(req.params.id);
     
     if (!announcement) {
-      return res.status(404).json({ message: 'Duyuru bulunamadı' });
+      return res.status(404).json({ message: 'Announcement not found' });
     }
-    
-    res.json({ message: 'Duyuru başarıyla silindi' });
+
+    res.json({ message: 'Announcement deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

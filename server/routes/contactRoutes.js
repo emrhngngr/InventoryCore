@@ -18,12 +18,12 @@ router.post('/', async (req, res) => {
   try {
     // Email validation
     if (!email || !email.includes('@')) {
-      return res.status(400).json({ message: 'Geçerli bir email adresi giriniz.' });
+      return res.status(400).json({ message: 'Please enter a valid email address.' });
     }
 
     // Content validation
     if (!name || !subject || !message) {
-      return res.status(400).json({ message: 'Lütfen tüm alanları doldurunuz.' });
+      return res.status(400).json({ message: 'Please fill in all fields.' });
     }
 
     // Configure email

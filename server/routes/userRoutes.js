@@ -14,7 +14,7 @@ const validateUser = require("../middlewares/validateUser");
 const multer = require("multer");
 const path = require("path");
 
-//Profil fotoğraf yüklenmesi için multer ayarları
+// Multer settings for profile picture upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/profile-pictures/");
@@ -38,22 +38,22 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
-// Kullanıcı Girişi Route
+// User login route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Kullanıcı bulunamadı" });
+      return res.status(400).json({ message: "User not found" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Geçersiz şifre" });
+      return res.status(400).json({ message: "Invalid password" });
     }
 
-    // JWT Token oluştur
+  // Create JWT token
     const token = jwt.sign(
       {
           id: user._id,
@@ -67,7 +67,7 @@ router.post("/login", async (req, res) => {
       }
   );
 
-    // Şifreyi response'dan çıkar ve geri kalanı gönder
+  // Remove password from response and return the rest
     const userResponse = user.toObject();
     delete userResponse.password;
 
@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Giriş sırasında bir hata oluştu" });
+    res.status(500).json({ message: "Error during login" });
   }
 });
 router.get("/roles", async (req, res) => {
@@ -85,7 +85,7 @@ router.get("/roles", async (req, res) => {
     const roles = User.getRoles();
     res.json(roles);
   } catch (err) {
-    res.status(500).json({ message: "Rolleri alırken bir hata oluştu." });
+    res.status(500).json({ message: "Error fetching roles." });
   }
 });
 router.get("/", authMiddleware, async (req, res) => {
@@ -93,10 +93,10 @@ router.get("/", authMiddleware, async (req, res) => {
     const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: "Kullanıcıları getirirken hata oluştu" });
+    res.status(500).json({ message: "Error fetching users" });
   }
 });
-//Kullanıcı Ekle
+// Create user
 router.post(
   "/",
   authMiddleware,
@@ -108,18 +108,18 @@ router.post(
       const { name, email, password, role } = req.body;
 
       if (req.user.role !== "admin" && role === "admin") {
-        return res.status(403).json({ message: "Admin ekleme yetkiniz yok." });
+        return res.status(403).json({ message: "You do not have permission to add an admin." });
       }
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res
           .status(400)
-          .json({ message: "Bu e-posta adresi zaten kayıtlı" });
+          .json({ message: "This email is already registered" });
       }
       if (password.length < 6) {
         return res
           .status(400)
-          .json({ message: "Şifre en az 6 karakter olmalıdır" });
+          .json({ message: "Password must be at least 6 characters" });
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -142,28 +142,26 @@ router.post(
       res.status(201).json(userResponse);
     } catch (error) {
       console.error("User creation error:", error);
-      res.status(500).json({ message: "Kullanıcı oluşturulurken hata oluştu" });
+      res.status(500).json({ message: "Error creating user" });
     }
   }
 );
 
-//şu anki kişinin bilgilerini al
+// Get current user info
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+      return res.status(404).json({ message: "User not found" });
     }
     res.json(user);
   } catch (error) {
     console.error("auth/me error:", error);
-    res
-      .status(500)
-      .json({ message: "Kullanıcı bilgileri alınırken hata oluştu" });
+    res.status(500).json({ message: "Error fetching user info" });
   }
 });
 
-// Güncelle üye
+// Update user
 router.put(
   "/:id",
   authMiddleware,
@@ -188,17 +186,17 @@ router.put(
       }).select("-password");
 
       if (!user) {
-        return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+        return res.status(404).json({ message: "User not found" });
       }
 
       res.json(user);
     } catch (error) {
-      res.status(500).json({ message: "Kullanıcı güncellenirken hata oluştu" });
+      res.status(500).json({ message: "Error updating user" });
     }
   }
 );
 
-//Üye Silme
+// Delete user
 router.delete(
   "/:id",
   authMiddleware,
@@ -208,11 +206,11 @@ router.delete(
     try {
       const user = await User.findByIdAndDelete(req.params.id);
       if (!user) {
-        return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+        return res.status(404).json({ message: "User not found" });
       }
-      res.json({ message: "Kullanıcı başarıyla silindi" });
+      res.json({ message: "User deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Kullanıcı silinirken hata oluştu" });
+      res.status(500).json({ message: "Error deleting user" });
     }
   }
 );

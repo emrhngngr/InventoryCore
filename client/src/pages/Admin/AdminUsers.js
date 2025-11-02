@@ -210,7 +210,7 @@ const UserManagement = () => {
       role: user.role,
       profilePicture: user.profilePicture
         ? `${serverBaseUrl}/${user.profilePicture}`
-        : null, // Profil fotoğrafı yoksa null
+  : null, // null if no profile picture
     });
     setIsModalOpen(true);
   };
@@ -231,15 +231,15 @@ const UserManagement = () => {
   const handleSubmitUser = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newUser.email)) {
-      toast.error("Lütfen geçerli bir e-posta adresi girin!");
+  toast.error("Please enter a valid email address!");
       return;
     }
     if(newUser.name.length <= 2){
-      toast.error("Kullanıcı ismi en az 2 karakter olmalıdır");
+  toast.error("Username must be at least 2 characters");
       return;
     }
     if(newUser.password.length < 6){
-      toast.error("Şifre en az 6 karakter olmalıdır");
+  toast.error("Password must be at least 6 characters");
       return;
     }
 
@@ -280,7 +280,7 @@ const UserManagement = () => {
         );
         Swal.fire({
           icon: "success",
-          title: "Kullanıcı Güncellendi!",
+          title: "User updated!",
           confirmButtonText: "Tamam",
           timer: 3000,
         });
@@ -294,7 +294,7 @@ const UserManagement = () => {
         setUsers((prev) => [...prev, response.data]);
         Swal.fire({
           icon: "success",
-          title: "Yeni Kullanıcı Eklendi!",
+          title: "New user added!",
           confirmButtonText: "Tamam",
           timer: 3000,
         });
@@ -304,7 +304,7 @@ const UserManagement = () => {
       resetForm();
       setIsModalOpen(false);
     } catch (error) {
-      toast.error("Kullanıcı kaydedilirken bir hata oluştu");
+  toast.error("An error occurred while saving the user");
       console.error("Error saving user:", error);
     }
   };
@@ -313,13 +313,13 @@ const UserManagement = () => {
   const handleDeleteUser = async (userId) => {
     const result = await Swal.fire({
       title: "Emin misiniz?",
-      text: "Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+  text: "Are you sure you want to delete this user? This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Evet, sil!",
-      cancelButtonText: "Hayır, iptal et",
+  cancelButtonText: "No, cancel",
     });
     if (result.isConfirmed) {
       try {
@@ -329,7 +329,7 @@ const UserManagement = () => {
         setUsers((prev) => prev.filter((user) => user._id !== userId));
         Swal.fire({
           icon: "success",
-          title: "Kullanıcı Silindi!",
+          title: "User deleted!",
           confirmButtonText: "Tamam",
           timer: 3000,
         });
@@ -337,8 +337,8 @@ const UserManagement = () => {
         console.error("Error deleting user:", error);
         Swal.fire({
           icon: "error",
-          title: "Hata Oluştu",
-          text: "Kullanıcı silinirken bir hata oluştu.",
+          title: "Error",
+          text: "An error occurred while deleting the user.",
           confirmButtonText: "Tamam",
           timer: 3000,
         });
@@ -352,12 +352,12 @@ const UserManagement = () => {
       <div className="bg-white shadow-md rounded-lg">
         <div className="flex flex-col md:flex-row justify-between items-center p-4 border-b">
           <h2 className="text-xl font-bold text-gray-800">
-            Kullanıcı Yönetimi
+            User Management
           </h2>
           <div className="flex flex-col mt-4 md:mt-0 space-y-4 md:space-y-0 md:flex-row md:space-x-4">
             <input
               type="text"
-              placeholder="İsim veya e-posta ile ara..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -368,7 +368,7 @@ const UserManagement = () => {
             <Button 
             className=""
              onClick={() => setIsModalOpen(true)}>
-              Yeni Kullanıcı Ekle
+              Add New User
             </Button>
           </div>
         </div>
@@ -392,7 +392,7 @@ const UserManagement = () => {
               <div className="flex items-center space-x-4">
                 <div className="text-sm text-gray-600">
                   Sayfa {currentPage} / {totalPages}
-                  {` (Toplam ${filteredUsers.length} kullanıcı)`}
+                  {` (Total ${filteredUsers.length} users)`}
                 </div>
 
                 {/* Users per page selector */}
@@ -401,7 +401,7 @@ const UserManagement = () => {
                     htmlFor="users-per-page"
                     className="text-sm text-gray-600"
                   >
-                    Sayfa başına:
+                    Per page:
                   </label>
                   <select
                     id="users-per-page"
@@ -425,7 +425,7 @@ const UserManagement = () => {
                   disabled={currentPage === 1}
                   className="flex items-center"
                 >
-                  <FaChevronLeft className="mr-2" /> Önceki
+                  <FaChevronLeft className="mr-2" /> Previous
                 </Button>
                 <Button
                   variant="outline"

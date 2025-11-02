@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, startOfWeek, endOfWeek } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 const CustomDatePicker = ({ selectedDate, onChange, minDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -13,14 +13,14 @@ const CustomDatePicker = ({ selectedDate, onChange, minDate }) => {
   };
 
   const isDateSelectable = (date) => {
-    // Bugünün başlangıcını al (saat 00:00:00)
+    // Get start of today (00:00:00)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return date >= today; // Bugün ve sonrası seçilebilir
+  return date >= today; // Today and later can be selected
   };
 
   const monthDays = getDaysInMonth(currentMonth);
-  const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
     <div className="relative w-full">
@@ -32,7 +32,7 @@ const CustomDatePicker = ({ selectedDate, onChange, minDate }) => {
                  flex items-center justify-between"
       >
         <span className="text-gray-700">
-          {format(selectedDate, 'd MMMM yyyy', { locale: tr })}
+          {format(selectedDate, 'd MMMM yyyy', { locale: enUS })}
         </span>
         <svg 
           className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
@@ -57,7 +57,7 @@ const CustomDatePicker = ({ selectedDate, onChange, minDate }) => {
               </svg>
             </button>
             <h2 className="text-lg font-semibold text-gray-800">
-              {format(currentMonth, 'MMMM yyyy', { locale: tr })}
+              {format(currentMonth, 'MMMM yyyy', { locale: enUS })}
             </h2>
             <button
               type='button'

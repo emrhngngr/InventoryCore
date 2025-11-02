@@ -16,7 +16,7 @@ const OverdueTasksModal = ({ tasks, isOpen, onClose }) => {
         {/* Modal */}
         <div className="relative z-50 w-full max-w-lg bg-white rounded-lg shadow-xl p-6 m-4">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-semibold">Son Tarihi Geçmiş Görevler</h3>
+            <h3 className="text-lg font-semibold">Recently Overdue Tasks</h3>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
@@ -30,10 +30,10 @@ const OverdueTasksModal = ({ tasks, isOpen, onClose }) => {
               tasks.map((task, index) => (
                 <div key={index} className="mb-4">
                   <div>
-                    <strong>Görev Başlığı: </strong> {task.title}
+                    <strong>Task Title: </strong> {task.title}
                   </div>
                   <div>
-                    <strong>Görev Durumu: </strong> {task.status}
+                    <strong>Task Status: </strong> {task.status}
                   </div>
                   <div>
                     <strong>Son Tarih: </strong>
@@ -43,7 +43,7 @@ const OverdueTasksModal = ({ tasks, isOpen, onClose }) => {
                 </div>
               ))
             ) : (
-              <p>Aktif Son Tarihi Geçmiş Görev Bulunmamaktadır.</p>
+              <p>No active overdue tasks found.</p>
             )}
           </div>
         </div>
@@ -62,7 +62,7 @@ const AdminStatistics = () => {
   const [assetValues, setAssetValues] = useState([]);
   const [overdueTasks, setOverdueTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeTasks, setActiveTasks] = useState(0); // Bu kısmı düzeltelim
+  const [activeTasks, setActiveTasks] = useState(0); // Fix this part
 
   const fetchDashboardData = async () => {
     try {
@@ -76,7 +76,7 @@ const AdminStatistics = () => {
         totalUsers: usersResponse.data.length,
       });
     } catch (error) {
-      console.error("Dashboard verilerini çekerken hata oluştu:", error);
+  console.error("Error fetching dashboard data:", error);
     }
   };
 
@@ -93,21 +93,21 @@ const AdminStatistics = () => {
     try {
       const tasksResponse = await api.get("http://localhost:5000/api/tasks");
 
-      // Deadline kontrolü
+  // Deadline check
       const today = new Date();
       const overdue = tasksResponse.data.filter((task) => {
         return new Date(task.deadline) < today && task.status !== "approved";
       });
       setOverdueTasks(overdue);
 
-      //Aktif Görevleri Almak
+  // Fetch active tasks
       const activeTask = tasksResponse.data.filter((task) => {
         return task.status === "pending";
       });
-      setActiveTasks(activeTask.length); // Burada sadece length kullanıyoruz
+  setActiveTasks(activeTask.length); // Here we only use length
 
       if (overdue.length > 0) {
-        console.log("Gecikmiş Görevler:", overdue);
+  console.log("Overdue tasks:", overdue);
       }
 
       const currentWeek = getCurrentWeek();
@@ -120,7 +120,7 @@ const AdminStatistics = () => {
       );
       setAssetValues(response.data);
     } catch (error) {
-      console.error("Risk değerlerini çekerken hata oluştu:", error);
+  console.error("Error fetching risk values:", error);
     }
   };
 
@@ -141,33 +141,33 @@ const AdminStatistics = () => {
 
   return (
     <div className="space-y-6">
-      {/* İlk Kısım: Kartlar ve Duyuru */}
+  {/* First part: Cards and announcement */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Dashboard Kartları */}
+  {/* Dashboard cards */}
         <div className="col-span-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
               <AiOutlineProduct className="text-6xl" />
-              <div>Toplam Varlık Sayısı</div>
+              <div>Total Assets</div>
               <div className="text-lg font-semibold">
                 {dashboardStats.totalProducts}
               </div>
             </div>
             <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
               <GoDuplicate className="text-6xl" />
-              <div>Kategori Sayısı</div>
+              <div>Category Count</div>
               <div className="text-lg font-semibold">
                 {dashboardStats.totalCategories}
               </div>
             </div>
             <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
               <AiFillProduct className="text-6xl" />
-              <div>Aktif Görevler</div>
+              <div>Active Tasks</div>
               <div className="text-lg font-semibold">{activeTasks}</div>
             </div>
             <div className="flex flex-col items-center bg-white shadow-lg rounded-xl p-4 border border-gray-200 transform transition-all hover:scale-105 duration-300">
               <FaRegUser className="text-6xl" />
-              <div>Üye Sayısı</div>
+              <div>Member Count</div>
               <div className="text-lg font-semibold">
                 {dashboardStats.totalUsers}
               </div>
@@ -186,7 +186,7 @@ const AdminStatistics = () => {
                 <h2 className={`font-bold text-xl ${
                   overdueTasks.length > 0 ? 'text-red-800' : 'text-gray-800'
                 }`}>
-                  Son Tarihi Geçmiş Görevler: {overdueTasks.length}
+                  Recently Overdue Tasks: {overdueTasks.length}
                 </h2>
                 
                 {overdueTasks.length > 0 && (
@@ -200,13 +200,13 @@ const AdminStatistics = () => {
                     onClick={openModal}
                     className="group relative w-full text-left text-red-700 hover:text-red-800 transition-colors duration-200"
                   >
-                    Son tarihi geçmiş görevleri görmek için tıklayınız
+                    Click to view overdue tasks
                     <span className="absolute -right-2 top-1/2 -translate-y-1/2 transform opacity-0 transition-all duration-200 group-hover:right-0 group-hover:opacity-100">
                       →
                     </span>
                   </button>
                 ) : (
-                  <p className="text-green-700">Aktif gecikmiş görev bulunmamaktadır.</p>
+                  <p className="text-green-700">No active overdue tasks found.</p>
                 )}
               </div>
             </div>
@@ -214,7 +214,7 @@ const AdminStatistics = () => {
         </div>
       </div>
 
-      {/* İkinci Kısım: Grafikler */}
+  {/* Second part: Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <AssetValueTrends assetValues={assetValues} />

@@ -13,7 +13,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif; /* Burada Inter fontunu kullanıyoruz */
+  font-family: 'Inter', sans-serif; /* Using Inter font here */
   background-color: var(--bg-color);
   color: var(--text-color);
 }

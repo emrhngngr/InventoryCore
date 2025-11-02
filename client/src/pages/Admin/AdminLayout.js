@@ -58,9 +58,9 @@ const AdminLayout = ({ children }) => {
         <main
           className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 
             ${isSidebarOpen ? "lg:ml-64" : "lg:ml-16"}
-            pt-16`}
+            pt-6`}
         >
-          <div className="w-full ml-12 px-4 pr-16 md:px-6 md:pr-20 lg:px-8 lg:pr-20">
+          <div className="w-full px-4 pr-16 md:px-6 md:pr-20 lg:pr-20">
             {children}
           </div>
         </main>

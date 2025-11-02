@@ -18,34 +18,34 @@ const ServicePage = () => {
   const features = [
     {
       icon: <Box className="w-8 h-8" />,
-      title: "Envanter Yönetimi",
-      description: "Detaylı envanter takibi ve yönetimi yapın",
+      title: "Inventory Management",
+      description: "Track and manage inventory in detail",
       details: [
-        "Varlık özelleştirillmiş kategorilendirme",
-        "ISO 27001 ile uyumlu güvenlik",
-        "Detaylı Varlık işlemleri",
-        "Özelleştirilebilir Kategori İşlemleri",
+        "Asset custom categorization",
+        "ISO 27001 compliant security",
+        "Detailed asset operations",
+        "Customizable category management",
       ],
     },
     {
       icon: <Shield className="w-8 h-8" />,
-      title: "Gelişmiş Görev Yönetimi",
-      description: "İş süreçlerinizi kolaylaştırmak için görev yönetimi araçları.",
+      title: "Advanced Task Management",
+      description: "Task management tools to streamline your workflows.",
       details: [
-        "Kapsamlı görev atama seçenekleri",
-        "Haftalık görev takibi seçimleri",
-        "Gerçek zamanlı durum güncellemeleri",
-        "Görev bazlı performans raporlamaları",
+        "Comprehensive task assignment options",
+        "Weekly task tracking options",
+        "Real-time status updates",
+        "Task-based performance reporting",
       ],
     },
     {
       icon: <Users className="w-8 h-8" />,
-      title: "Kullanıcı Yönetimi",
-      description: "Ekip üyeleriniz için rol tabanlı erişim",
+      title: "User Management",
+      description: "Role-based access for your team members",
       details: [
-        "Rol ve yetki yönetimi",
-        "Kullanıcı aktivite logları",
-        "Grup bazlı organizasyon",
+        "Role and permission management",
+        "User activity logs",
+        "Group-based organization",
       ],
     },
   ];
@@ -80,11 +80,11 @@ const ServicePage = () => {
             transition={{ delay: 0.3, duration: 0.6 }}
           >
             <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
-              Servislerimiz
+              Our Services
             </h1>
             <p className="text-xl text-center text-gray-600 max-w-3xl mx-auto">
-              InventoryCore ile işletmenizin envanter yönetimini modernleştirin ve
-              verimliliğinizi artırın
+              Modernize your inventory management and boost efficiency with
+              InventoryCore.
             </p>
           </motion.div>
         </div>
@@ -127,15 +127,15 @@ const ServicePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900">
-              Neden InventoryCore?
+              Why InventoryCore?
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { icon: <Zap />, title: "Hızlı ve Güvenilir" },
-              { icon: <ShieldCheck />, title: "Güvenli Altyapı" },
-              { icon: <Smartphone />, title: "Mobil Uyumlu" },
-              { icon: <Clock />, title: "7/24 Destek" },
+              { icon: <Zap />, title: "Fast & Reliable" },
+              { icon: <ShieldCheck />, title: "Secure Infrastructure" },
+              { icon: <Smartphone />, title: "Mobile Friendly" },
+              { icon: <Clock />, title: "24/7 Support" },
             ].map((item, index) => (
               <div key={index} className="text-center">
                 <div className="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">

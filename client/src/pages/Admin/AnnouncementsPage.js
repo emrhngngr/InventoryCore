@@ -12,7 +12,7 @@ const AnnouncementsPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
-  const [activeAnn, setActiveAnn] = useState(""); // Aktif duyuru
+  const [activeAnn, setActiveAnn] = useState(""); // Active announcement
 
   useEffect(() => {
     fetchAnnouncements();
@@ -24,15 +24,13 @@ const AnnouncementsPage = () => {
       const response = await api.get("http://localhost:5000/api/announcements");
       setAnnouncements(response.data);
 
-      // Aktif duyuruyu bul
+      // Find the active announcement
       const activeAnnouncement = response.data.find((ann) => ann.isActive);
       setActiveAnn(
-        activeAnnouncement
-          ? activeAnnouncement.content
-          : "Henüz bir duyuru aktif değil"
+        activeAnnouncement ? activeAnnouncement.content : "There is no active announcement yet"
       );
     } catch (error) {
-      console.error("Duyurular yüklenirken hata:", error);
+      console.error("Error loading announcements:", error);
     }
     setLoading(false);
   };
@@ -46,7 +44,7 @@ const AnnouncementsPage = () => {
       setNewAnnouncement("");
       fetchAnnouncements();
     } catch (error) {
-      console.error("Duyuru eklenirken hata:", error);
+      console.error("Error adding announcement:", error);
     }
   };
 
@@ -54,59 +52,59 @@ const AnnouncementsPage = () => {
     try {
       await axios.put(`http://localhost:5000/api/announcements/activate/${id}`);
       Swal.fire({
-        title: "Başarılı!",
-        text: "Aktif duyuru başarıyla değiştirildi.",
+        title: "Success!",
+        text: "Active announcement changed successfully.",
         icon: "success",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
-      fetchAnnouncements(); // Yeniden duyuruları çek
+  fetchAnnouncements(); // Refresh announcements
     } catch (error) {
       Swal.fire({
-        title: "Hata!",
-        text: "Aktif duyuru değiştirilirken bir hata oluştu.",
+        title: "Error!",
+        text: "An error occurred while changing the active announcement.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
-      console.error("Duyuru aktifleştirilirken hata:", error);
+      console.error("Error activating announcement:", error);
     }
   };
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: "Emin misiniz?",
-      text: "Bu duyuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      title: "Are you sure?",
+      text: "Are you sure you want to delete this announcement? This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Evet, sil!",
-      cancelButtonText: "Hayır, iptal et",
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel",
     });
     if (result.isConfirmed) {
       try {
         await axios.delete(`http://localhost:5000/api/announcements/${id}`);
         fetchAnnouncements();
         Swal.fire({
-          title: "Silindi!",
-          text: "Duyuru başarıyla silindi.",
+          title: "Deleted!",
+          text: "Announcement deleted successfully.",
           icon: "success",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
       } catch (error) {
         Swal.fire({
-          title: "Hata!",
-          text: "Duyuru silinirken bir hata oluştu.",
+          title: "Error!",
+          text: "An error occurred while deleting the announcement.",
           icon: "error",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
-        console.error("Duyuru silinirken hata:", error);
+        console.error("Error deleting announcement:", error);
       }
     } else {
       Swal.fire({
-        title: "İptal edildi!",
-        text: "Duyuru işlemi iptal edildi.",
+        title: "Cancelled!",
+        text: "Announcement action cancelled.",
         icon: "info",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -125,26 +123,26 @@ const AnnouncementsPage = () => {
       setEditContent("");
       fetchAnnouncements();
     } catch (error) {
-      console.error("Duyuru düzenlenirken hata:", error);
+      console.error("Error editing announcement:", error);
     }
   };
 
   return (
     <div className="p-2">
       <div className="flex flex-col md:flex-row">
-        <h1 className="text-2xl font-bold mb-6">Duyurular</h1>
+        <h1 className="text-2xl font-bold mb-6">Announcements</h1>
         <h2 className="mx-10 flex">
-          Güncel Duyuru: <span className="text-blue-600">{activeAnn}</span>
+          Current Announcement: <span className="text-blue-600">{activeAnn}</span>
         </h2>
       </div>
 
       <form onSubmit={handleSubmit} className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
-          <input
+            <input
             type="text"
             value={newAnnouncement}
             onChange={(e) => setNewAnnouncement(e.target.value)}
-            placeholder="Yeni duyuru metni..."
+            placeholder="New announcement text..."
             className="flex-1 p-2 border rounded"
             required
           />
@@ -152,7 +150,7 @@ const AnnouncementsPage = () => {
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Ekle
+            Add
           </button>
         </div>
       </form>
@@ -172,18 +170,18 @@ const AnnouncementsPage = () => {
                     onChange={(e) => setEditContent(e.target.value)}
                     className="flex-1 p-2 border rounded"
                   />
-                  <div className="flex gap-2">
+                    <div className="flex gap-2">
                     <button
                       onClick={() => handleEdit(announcement._id)}
                       className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                      Kaydet
+                      Save
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
                       className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                     >
-                      İptal
+                      Cancel
                     </button>
                   </div>
                 </div>
@@ -214,14 +212,14 @@ const AnnouncementsPage = () => {
                     disabled={announcement.isActive}
                     className="w-auto px-2 py-1 text-sm"
                   >
-                    Aktif Yap
+                    Make Active
                   </Button>
                   <Button
                     onClick={() => handleDelete(announcement._id)}
                     variant="destructive"
                     className="w-auto px-2 py-1 text-sm"
                   >
-                    Sil
+                    Delete
                   </Button>
                 </>
               )}

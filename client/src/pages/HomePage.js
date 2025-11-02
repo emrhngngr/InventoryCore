@@ -22,52 +22,52 @@ const HomePage = () => {
   const features = [
     {
       icon: <Box className="w-6 h-6" />,
-      title: "Envanter Yönetimi",
-      description: "Kolay ve etkili envanter takibi",
+      title: "Inventory Management",
+      description: "Easy and effective inventory tracking",
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
-      title: "Analitik",
-      description: "Detaylı raporlar ve grafikler",
+      title: "Analytics",
+      description: "Detailed reports and charts",
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Çoklu Kullanıcı",
-      description: "Ekip yönetimi ve yetkilendirme",
+      title: "Multi-User",
+      description: "Team management and authorization",
     },
     {
       icon: <Settings className="w-6 h-6" />,
-      title: "Özelleştirme",
-      description: "İhtiyaçlarınıza göre ayarlamalar",
+      title: "Customization",
+      description: "Adjustments to fit your needs",
     },
   ];
 
   const people = [
     {
-      name: "Ahmet Yılmaz",
-      position: "IT Müdürü",
+      name: "John Smith",
+      position: "IT Manager",
       company: "Tech Solutions",
       image: PersonImage,
       content:
-        "InventoryCore sayesinde envanter yönetimimiz çok daha verimli hale geldi. Özellikle ISO 27001 uyumluluğu bizim için büyük bir artı.",
+        "Thanks to InventoryCore our inventory management has become much more efficient. ISO 27001 compliance was a big plus for us.",
       rating: 5,
     },
     {
-      name: "Ayşe Kaya",
-      position: "Operasyon Direktörü",
+      name: "Jane Doe",
+      position: "Operations Director",
       company: "Mega Holding",
       image: PersonImage,
       content:
-        "Kullanıcı dostu arayüzü ve detaylı raporlama özellikleri ile tam aradığımız çözüm. Ekip verimliliğimiz gözle görülür şekilde arttı.",
+        "With its user-friendly interface and detailed reporting, it's exactly the solution we needed. Our team's efficiency noticeably increased.",
       rating: 5,
     },
     {
       name: "Mehmet Demir",
-      position: "Sistem Yöneticisi",
+      position: "System Administrator",
       company: "Global Lojistik",
       image: PersonImage,
       content:
-        "7/24 destek ve sürekli güncellenen özellikleri ile kendini sürekli geliştiren bir platform. Kesinlikle tavsiye ediyorum.",
+        "With 24/7 support and continually updated features, it's a platform that keeps improving. Highly recommended.",
       rating: 5,
     },
   ];
@@ -96,14 +96,14 @@ const HomePage = () => {
             className="w-full lg:w-1/2 flex flex-col justify-center mt-32 mb-8 lg:mb-0"
           >
             <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
-              Envanter Yönetiminde
+              Next-Generation
               <br />
-              <span className="text-blue-600">Yeni Nesil</span> Çözüm
+              <span className="text-blue-600">Inventory Management</span> Solution
             </h1>
             <p className="text-lg lg:text-xl mb-8 text-gray-600">
-              <b>ISO 27001</b> destekli envanter yönetim sistemi ile
-              işletmenizin verimliliğini artırın. Modern, güvenli ve kullanıcı
-              dostu arayüz.
+              <b>ISO 27001</b> supported inventory management system to boost
+              your company's efficiency. Modern, secure and user-friendly
+              interface.
             </p>
             <div className="space-x-4 flex flex-wrap gap-4">
               <motion.button
@@ -112,7 +112,7 @@ const HomePage = () => {
                 onClick={() => navigate("/contact")}
                 className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg"
               >
-                İletişime Geçin
+                Contact Us
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -120,7 +120,7 @@ const HomePage = () => {
                 onClick={() => navigate("/services")}
                 className="border-2 border-gray-300 px-8 py-4 rounded-xl font-semibold hover:border-blue-600 hover:text-blue-600 transition-colors flex items-center gap-2"
               >
-                Daha Fazlası <ArrowRight className="w-5 h-5" />
+                Learn More <ArrowRight className="w-5 h-5" />
               </motion.button>
             </div>
           </motion.div>
@@ -143,18 +143,18 @@ const HomePage = () => {
 
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <motion.div
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            Neden InventoryCore?
+            Why InventoryCore?
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Modern işletmelerin ihtiyaçlarına özel geliştirilmiş kapsamlı
-            çözümler sunuyoruz.
+            We offer comprehensive solutions tailored to the needs of modern
+            businesses.
           </p>
         </motion.div>
 
@@ -189,45 +189,45 @@ const HomePage = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Öne Çıkan Özellikler
+              Key Features
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              İşletmenizin ihtiyaç duyduğu tüm özellikler tek bir platformda
+              All the features your business needs in a single platform
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {[
               {
-                title: "ISO 27001 Uyumluluğu",
+                title: "ISO 27001 Compliance",
                 description:
-                  "Uluslararası güvenlik standartlarına uygun altyapı ve süreç yönetimi",
+                  "Infrastructure and process management compliant with international security standards",
                 features: [
-                  "Güvenlik politikaları yönetimi",
-                  "Risk değerlendirme araçları",
-                  "Denetim takibi",
-                  "Uyumluluk raporlaması",
+                  "Security policy management",
+                  "Risk assessment tools",
+                  "Audit tracking",
+                  "Compliance reporting",
                 ],
               },
               {
-                title: "Gelişmiş Raporlama",
+                title: "Advanced Reporting",
                 description:
-                  "Kapsamlı analiz ve raporlama araçları ile verilerinizi anlamlandırın",
+                  "Make sense of your data with comprehensive analytics and reporting tools",
                 features: [
-                  "Özelleştirilebilir dashboardlar",
-                  "Gerçek zamanlı metrikler",
-                  "Excel çıktısı",
-                  "Otomatik raporlama",
+                  "Customizable dashboards",
+                  "Real-time metrics",
+                  "Excel export",
+                  "Automated reporting",
                 ],
               },
               {
-                title: "Gelişmiş Görev Yönetimi",
+                title: "Advanced Task Management",
                 description:
-                  "İş süreçlerinizi kolaylaştırmak için görev yönetimi araçları.",
+                  "Task management tools to streamline your workflows.",
                 features: [
-                  "Kapsamlı görev atama seçenekleri",
-                  "Haftalık görev takibi seçimleri",
-                  "Gerçek zamanlı durum güncellemeleri",
+                  "Comprehensive task assignment options",
+                  "Weekly task tracking options",
+                  "Real-time status updates",
                 ],
               },
             ].map((item, index) => (
@@ -264,10 +264,10 @@ const HomePage = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Müşterilerimiz Ne Diyor?
+              What Our Customers Say?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Başarı hikayelerimizi ve müşteri deneyimlerimizi keşfedin
+              Explore our success stories and customer experiences
             </p>
           </motion.div>
 

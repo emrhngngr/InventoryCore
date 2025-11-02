@@ -59,7 +59,7 @@ const AdminProcess = () => {
   };
 
   useEffect(() => {
-    // Başlangıçta ürünlerin isAuto durumunu yükleme
+    // Load isAuto status for products on init
     const initialAutoSettings = {};
     products.forEach((product) => {
       initialAutoSettings[product._id] = product.isAuto;
@@ -76,13 +76,13 @@ const AdminProcess = () => {
       return product;
     });
     
-    // Arayüzü hemen güncelle
+    // Update UI immediately
     setAutoTaskSettings((prev) => ({
       ...prev,
       [productId]: !prev[productId],
     }));
 
-    // Sunucuda değişikliği güncelle
+    // Update change on server
     try {
       await api.put(`http://localhost:5000/api/products/${productId}`, {
         ...products.find((p) => p._id === productId),
@@ -91,7 +91,7 @@ const AdminProcess = () => {
       setProducts(updatedProducts);
     } catch (error) {
       console.error("Error updating auto task setting:", error);
-      // Hata durumunda eski duruma döndür
+      // Revert on error
       setAutoTaskSettings((prev) => ({
         ...prev,
         [productId]: prev[productId],
@@ -193,12 +193,12 @@ const AdminProcess = () => {
       currentProduct.criticalityDegree > 5
     ) {
       alert(
-        "Kritiklik derecesi ve gizlilik derecesi en az 1 ve en fazla 5 olmalıdır."
+        "Criticality and privacy degrees must be between 1 and 5."
       );
       return;
     }
     if (currentProduct.amount < 0) {
-      alert("Adet negatif bir değer olamaz.");
+      alert("Amount cannot be negative.");
       return;
     }
 
@@ -225,14 +225,14 @@ const AdminProcess = () => {
 
   const confirmProduct = async (productId) => {
     const result = await Swal.fire({
-      title: "Emin misiniz?",
-      text: "Bu nesneyi onaylamak istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      title: "Are you sure?",
+      text: "Are you sure you want to confirm this item? This action cannot be undone!",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "green",
       cancelButtonColor: "red",
-      confirmButtonText: "Evet, Onayla!",
-      cancelButtonText: "Hayır, iptal et",
+      confirmButtonText: "Yes, confirm!",
+      cancelButtonText: "No, cancel",
     });
     if (result.isConfirmed) {
       try {
@@ -246,26 +246,26 @@ const AdminProcess = () => {
           prev.map((p) => (p._id === response.data._id ? response.data : p))
         );
         Swal.fire({
-          title: "Onaylandı!",
-          text: "Varlık başarıyla onaylandı.",
+          title: "Confirmed!",
+          text: "Asset confirmed successfully.",
           icon: "success",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
       } catch (error) {
         Swal.fire({
-          title: "Hata!",
-          text: "Onaylanırken bir hata oluştu.",
+          title: "Error!",
+          text: "An error occurred while confirming.",
           icon: "error",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
         console.error("Error confirming product:", error);
       }
     } else {
       Swal.fire({
-        title: "İptal Edildi",
-        text: "Varlığı onaylama işlemi iptal edildi.",
+        title: "Cancelled",
+        text: "Asset confirmation cancelled.",
         icon: "info",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -279,21 +279,21 @@ const AdminProcess = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Varlık Güncelleme</h1>
+  <h1 className="text-2xl font-bold mb-4">Asset Update</h1>
 
       {/* Product Age Filter */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Varlık Güncelleme Filtresi
+          Asset Update Filter
         </label>
         <select
           value={productAgeFilter}
           onChange={(e) => setProductAgeFilter(e.target.value)}
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value="all">Tüm Varlıklar</option>
-          <option value="new">Güncel Varlıklar</option>
-          <option value="old">Güncellenmesi Gereken Varlıklar</option>
+          <option value="all">All Assets</option>
+          <option value="new">Current Assets</option>
+          <option value="old">Assets Needing Update</option>
         </select>
       </div>
 
@@ -301,15 +301,15 @@ const AdminProcess = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">Varlık Adı</th>
-              <th scope="col" className="px-6 py-3">Atanmış Grup</th>
-              <th scope="col" className="px-6 py-3">Oluşturulma Tarihi</th>
-              <th scope="col" className="px-6 py-3">Güncellenme Tarihi</th>
-              <th scope="col" className="px-6 py-3">Kritiklik Derecesi</th>
-              <th scope="col" className="px-6 py-3">Gizlilik Derecesi</th>
-              <th scope="col" className="px-6 py-3">Varlık Değeri</th>
-              <th scope="col" className="px-6 py-3">Otomatik Görev</th>
-              <th scope="col" className="px-6 py-3">İşlemler</th>
+              <th scope="col" className="px-6 py-3">Asset Name</th>
+              <th scope="col" className="px-6 py-3">Assigned Group</th>
+              <th scope="col" className="px-6 py-3">Created At</th>
+              <th scope="col" className="px-6 py-3">Updated At</th>
+              <th scope="col" className="px-6 py-3">Criticality Degree</th>
+              <th scope="col" className="px-6 py-3">Privacy Degree</th>
+              <th scope="col" className="px-6 py-3">Asset Value</th>
+              <th scope="col" className="px-6 py-3">Auto Task</th>
+              <th scope="col" className="px-6 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -389,11 +389,11 @@ const AdminProcess = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
-            <h2 className="text-xl font-bold mb-4">Varlık Düzenle</h2>
+            <h2 className="text-xl font-bold mb-4">Edit Asset</h2>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-              Varlık Adı
+              Asset Name
               </label>
               <input
                 type="text"
@@ -404,13 +404,13 @@ const AdminProcess = () => {
                     name: e.target.value,
                   }))
                 }
-                placeholder="Varlık adını girin"
+                placeholder="Enter asset name"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-              Atanmış Grup
+              Assigned Group
               </label>
               <input
                 type="text"
@@ -421,13 +421,13 @@ const AdminProcess = () => {
                     assignedTo: e.target.value,
                   }))
                 }
-                placeholder="Atanmış grup adını girin"
+                placeholder="Enter assigned group name"
                 className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Adet
+                Quantity
               </label>
               <input
                 type="number"
@@ -444,7 +444,7 @@ const AdminProcess = () => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kritiklik Derecesi
+                Criticality Degree
               </label>
               <input
                 type="number"
@@ -463,7 +463,7 @@ const AdminProcess = () => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Gizlilik Derecesi
+                Privacy Degree
               </label>
               <input
                 type="number"
@@ -484,14 +484,14 @@ const AdminProcess = () => {
             {/* Category Selection */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Kategori Seç
+                Select Category
               </label>
               <select
                 onChange={(e) => handleCategoryChange(e.target.value)}
                 value={currentProduct.category}
                 className="w-full px-3 py-2 border rounded-md"
               >
-                <option value="">Kategori seçin</option>
+                <option value="">Select a category</option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>
                     {category.name}
@@ -504,7 +504,7 @@ const AdminProcess = () => {
             {selectedCategory && (
               <div>
                 <h3 className="text-md font-semibold mb-2">
-                  {selectedCategory.name} Özellikleri
+                  {selectedCategory.name} Attributes
                 </h3>
                 {selectedCategory.attributes.map((attr) => (
                   <div key={attr} className="mb-2">
@@ -517,7 +517,7 @@ const AdminProcess = () => {
                       onChange={(e) =>
                         handleAttributeChange(attr, e.target.value)
                       }
-                      placeholder={`${attr} girin`}
+                      placeholder={`Enter ${attr}`}
                       className="w-full px-3 py-2 border rounded-md"
                     />
                   </div>
@@ -527,18 +527,18 @@ const AdminProcess = () => {
 
             {/* Modal Buttons */}
             <div className="flex justify-end space-x-2 mt-4">
-              <button
+                <button
                 onClick={() => setIsModalOpen(false)}
                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
               >
-                İptal
+                Cancel
               </button>
               <button
                 onClick={saveProduct}
                 disabled={!currentProduct.name || !currentProduct.category}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
               >
-                Güncelle
+                Update
               </button>
             </div>
           </div>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react"; // lucide-react'ten ikonlar
+import { Menu, X } from "lucide-react"; // icons from lucide-react
 import { IoCloud } from "react-icons/io5";
 
 const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextColor }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Hamburger menü durumu
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Hamburger menu state
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +58,7 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
               }`}
               onClick={() => navigate("/services")}
             >
-              Servisler
+              Services
             </button>
             <button
               className={`px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors ${
@@ -66,13 +66,13 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
               }`}
               onClick={() => navigate("/contact")}
             >
-              İletişim
+              Contact
             </button>
             <button
               className="px-4 py-2 font-bold bg-[#6c63ff] rounded-md text-white transition-colors"
               onClick={() => navigate("/login")}
             >
-              Giriş Yap
+              Sign In
             </button>
           </div>
         </div>
@@ -86,19 +86,19 @@ const Navbar = ({ backgroundColor, hoverBackgroundColor, textColor, hoverTextCol
               className="px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors"
               onClick={() => navigate("/services")}
             >
-              Servisler
+              Services
             </button>
             <button
               className="px-4 py-2 font-bold hover:text-[#3e7bca] transition-colors"
               onClick={() => navigate("/contact")}
             >
-              İletişim
+              Contact
             </button>
             <button
               className="px-4 py-2 font-bold bg-[#6c63ff] rounded-md text-white transition-colors"
               onClick={() => navigate("/login")}
             >
-              Giriş Yap
+              Sign In
             </button>
           </div>
         </div>

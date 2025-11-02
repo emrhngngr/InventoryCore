@@ -3,20 +3,18 @@ const validateUser = (req, res, next) => {
   const { name, email, password, role } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: "Tüm alanları doldurunuz" });
+    return res.status(400).json({ message: "Please fill in all fields" });
   }
 
   if (password.length < 6) {
     return res
       .status(400)
-      .json({ message: "Şifre en az 6 karakter olmalıdır" });
+      .json({ message: "Password must be at least 6 characters" });
   }
 
   const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!emailRegex.test(email)) {
-    return res
-      .status(400)
-      .json({ message: "Geçerli bir email adresi giriniz" });
+    return res.status(400).json({ message: "Please enter a valid email address" });
   }
 
   next();

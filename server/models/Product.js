@@ -18,9 +18,9 @@ const ProductSchema = new mongoose.Schema({
       "admin",
     ],
   },
-  amount: { type: String, required: false },
-  criticalityDegree: { type: String, required: false },
-  privacyDegree: { type: String, required: false },
+  amount: { type: Number, required: false, default: 1 },
+  criticalityDegree: { type: Number, required: false, min: 1, max: 5, default: 1 },
+  privacyDegree: { type: Number, required: false, min: 1, max: 5, default: 1 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   isAuto: {

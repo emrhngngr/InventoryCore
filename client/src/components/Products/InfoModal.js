@@ -21,7 +21,7 @@ const InfoModal = ({ isOpen, onClose }) => {
           <div className="flex items-center justify-between">
             <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 pr-8">
               <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
-              <span className="line-clamp-1">Gizlilik ve Kritiklik Derecesi Nedir?</span>
+              <span className="line-clamp-1">What are Privacy and Criticality Levels?</span>
             </h2>
             <button
               onClick={onClose}
@@ -34,19 +34,19 @@ const InfoModal = ({ isOpen, onClose }) => {
 
         {/* Content */}
         <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Gizlilik Derecesi Section */}
+          {/* Privacy Section */}
           <div className="space-y-3 sm:space-y-4">
             <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-blue-700">
               <Shield className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-              Gizlilik Derecesi
+              Privacy Level
             </h3>
             <div className="space-y-3 sm:space-y-4 pl-2 sm:pl-4">
               <div className="border border-red-200 bg-red-50 rounded-lg p-3 sm:p-4">
                 <div className="flex gap-2 sm:gap-3">
                   <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-red-700">Çok Gizli (Puan: 5)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığa ait erişim bilgilerinin ortaya çıkması durumunda, sisteme yetkisiz kişilerin erişmesi mümkün hale gelir. Sistem ve bilgiler tamamen tehlikeye girer.</p>
+                    <div className="font-semibold text-red-700">Top Secret (Score: 5)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">If access information for the asset is exposed, unauthorized parties may gain access to the system. The system and information are fully at risk.</p>
                   </div>
                 </div>
               </div>
@@ -55,8 +55,8 @@ const InfoModal = ({ isOpen, onClose }) => {
                 <div className="flex gap-2 sm:gap-3">
                   <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-yellow-700">Gizli (Puan: 3)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığa ait erişim bilgilerinin ortaya çıkması durumunda, sistem güvenliği tehlikeye girmez ancak yalnızca bu donanıma yetkisiz kişilerin erişmesi mümkün hale gelir.</p>
+                    <div className="font-semibold text-yellow-700">Confidential (Score: 3)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">If access information for the asset is exposed, system security is not jeopardized but unauthorized access to this hardware may be possible.</p>
                   </div>
                 </div>
               </div>
@@ -65,8 +65,8 @@ const InfoModal = ({ isOpen, onClose }) => {
                 <div className="flex gap-2 sm:gap-3">
                   <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-green-700">Önemsiz Gizlilik (Puan: 1)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığa ait erişim bilgilerinin ortaya çıkması, sistem güvenliği ve iş sürekliliğini etkilemez.</p>
+                    <div className="font-semibold text-green-700">Low Sensitivity (Score: 1)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Exposure of access information does not affect system security and business continuity.</p>
                   </div>
                 </div>
               </div>
@@ -77,15 +77,15 @@ const InfoModal = ({ isOpen, onClose }) => {
           <div className="space-y-3 sm:space-y-4">
             <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2 text-blue-700">
               <Clock className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-              Kritiklik (Erişilebilirlik + Bütünlük)
+              Criticality (Availability + Integrity)
             </h3>
             <div className="space-y-3 sm:space-y-4 pl-2 sm:pl-4">
               <div className="border border-red-200 bg-red-50 rounded-lg p-3 sm:p-4">
                 <div className="flex gap-2 sm:gap-3">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-red-700">Yüksek (Puan: 5)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığın devre dışı kalması tüm sistemi devre dışı bırakır. 1 saate kadar devre dışı kalması kabul edilebilir. Sistem bütünlüğünün sağlanması çok önemlidir.</p>
+                    <div className="font-semibold text-red-700">High (Score: 5)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">If the asset goes offline it may disable the entire system. Up to 1 hour of downtime may be acceptable. Ensuring system integrity is crucial.</p>
                   </div>
                 </div>
               </div>
@@ -94,8 +94,8 @@ const InfoModal = ({ isOpen, onClose }) => {
                 <div className="flex gap-2 sm:gap-3">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-yellow-700">Orta (Puan: 3)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığın devre dışı kalması durumunda sistem çalışmaya devam eder. 24 saate kadar devre dışı kalması kabul edilebilir.</p>
+                    <div className="font-semibold text-yellow-700">Medium (Score: 3)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">If the asset goes offline the system continues to operate. Up to 24 hours of downtime may be acceptable.</p>
                   </div>
                 </div>
               </div>
@@ -104,8 +104,8 @@ const InfoModal = ({ isOpen, onClose }) => {
                 <div className="flex gap-2 sm:gap-3">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0 mt-1" />
                   <div>
-                    <div className="font-semibold text-green-700">Düşük (Puan: 1)</div>
-                    <p className="mt-1 text-gray-700 text-sm sm:text-base">Varlığın devre dışı kalması sistem güvenliğini etkilemez. 2 güne kadar devre dışı kalması kabul edilebilir.</p>
+                    <div className="font-semibold text-green-700">Low (Score: 1)</div>
+                    <p className="mt-1 text-gray-700 text-sm sm:text-base">If the asset goes offline it does not affect system security. Up to 2 days of downtime may be acceptable.</p>
                   </div>
                 </div>
               </div>

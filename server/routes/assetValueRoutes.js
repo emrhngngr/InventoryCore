@@ -35,13 +35,13 @@ router.get("/download-excel", async (req, res) => {
     });
 
     const headers = [
-      'Hafta Aralığı',
-      'Varlık Adı',
-      'Risk Değeri',
-      'Kritiklik Derecesi',
-      'Gizlilik Derecesi',
-      'Atanan Grup',
-      'Miktar'
+      'Week Range',
+      'Asset Name',
+      'Risk Value',
+      'Criticality Degree',
+      'Privacy Degree',
+      'Assigned Group',
+      'Amount'
     ];
 
     headers.forEach((header, idx) => {
@@ -54,7 +54,7 @@ router.get("/download-excel", async (req, res) => {
       const row = idx + 2;
       
       ws.cell(row, 1).string(value.weekRange || '');
-      ws.cell(row, 2).string(value.product?.name || 'Bilinmeyen');
+  ws.cell(row, 2).string(value.product?.name || 'Unknown');
       ws.cell(row, 3).number(value.totalAssetValue || 0);
       ws.cell(row, 4).string(value.product?.criticalityDegree || '');
       ws.cell(row, 5).string(value.product?.privacyDegree || '');
@@ -73,13 +73,13 @@ router.get("/download-excel", async (req, res) => {
     );
     res.setHeader(
       'Content-Disposition', 
-      'attachment; filename=varlik-risk-degerleri.xlsx'
+      'attachment; filename=asset-risk-values.xlsx'
     );
     
-    wb.write('varlik-risk-degerleri.xlsx', res);
+  wb.write('asset-risk-values.xlsx', res);
   } catch (error) {
-    console.error('Excel indirme hatası:', error);
-    res.status(500).json({ error: "Excel dosyası oluşturulurken bir hata oluştu." });
+    console.error('Excel download error:', error);
+    res.status(500).json({ error: "Error generating Excel file." });
   }
 });
 
@@ -96,7 +96,7 @@ router.post("/calculate-risk", async (req, res) => {
     endOfWeek.setHours(23, 59, 59, 999);
 
     const formatDate = (date) =>
-      date.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+      date.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" });
 
     const weekRange = `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 
@@ -106,8 +106,8 @@ router.post("/calculate-risk", async (req, res) => {
       .populate("assignedAsset", "criticalityDegree privacyDegree");
 
     const riskSums = products.reduce((acc, product) => {
-      // Başlangıç risk değerini sıfırla
-      acc[product._id] = 0;
+  // Reset starting risk value
+  acc[product._id] = 0;
 
       tasks.forEach((task) => {
         if (
@@ -118,7 +118,7 @@ router.post("/calculate-risk", async (req, res) => {
           const privacyDegree = parseFloat(product.privacyDegree || 0);
           const taskRiskValue = criticalityDegree * privacyDegree;
 
-          // Eğer deadline geçmişse risk puanını çarp
+          // If the deadline has passed, multiply the risk score
           if (new Date(task.deadline) <= Date.now()) {
             acc[product._id] += taskRiskValue * 2;
           } else {
@@ -130,7 +130,7 @@ router.post("/calculate-risk", async (req, res) => {
       return acc;
     }, {});
 
-    // AssetValue güncellemesi
+  // AssetValue updates
     const updates = await Promise.all(
       Object.entries(riskSums).map(async ([productId, totalRisk]) => {
         return AssetValue.findOneAndUpdate(
@@ -150,11 +150,11 @@ router.post("/calculate-risk", async (req, res) => {
   }
 });
 
-// GET Route: Her ürün için toplam risk değerlerini getir
+// GET Route: Get total risk values per product
 router.get("/risk-values", async (req, res) => {
   try {
-    // AssetValue koleksiyonundan tüm değerleri çek
-    const riskValues = await AssetValue.find().populate("product", "name"); // Product adını almak için populate
+    // Fetch all values from the AssetValue collection
+    const riskValues = await AssetValue.find().populate("product", "name"); // populate to get product name
     res.status(200).json(riskValues);
   } catch (error) {
     console.error(error);

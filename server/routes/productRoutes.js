@@ -21,7 +21,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// Varlık Oluştur
+// Create product
 router.post(
   "/",
   authMiddleware,
@@ -65,7 +65,7 @@ router.post(
   }
 );
 
-// Varlığı Güncelle
+// Update product
 router.put(
   "/:id",
   authMiddleware,
@@ -133,7 +133,7 @@ router.put(
   }
 );
 
-// Varlığı Sil
+// Delete product
 router.delete(
   "/:id",
   authMiddleware,

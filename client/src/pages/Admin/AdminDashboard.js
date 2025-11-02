@@ -30,7 +30,7 @@ const AdminDashboard = () => {
         const response = await api.get("/announcements/active");
         setActiveAnnouncement(response.data);
       } catch (error) {
-        console.error("Duyuru yüklenirken hata:", error);
+        console.error("Error loading announcement:", error);
       }
     };
 
@@ -55,8 +55,8 @@ const AdminDashboard = () => {
         for (const product of oldProducts) {
           const assetControlTasks = tasksResponse.data.filter(
             (task) =>
-              task.assignedAsset._id === product._id &&
-              task.title === "Eski Varlıkların Kontrolü"
+        task.assignedAsset._id === product._id &&
+        task.title === "Old Asset Inspection"
           );
 
           const hasActiveControlTask = assetControlTasks.some(
@@ -65,8 +65,8 @@ const AdminDashboard = () => {
 
           if (!hasActiveControlTask) {
             await handleAddTask({
-              title: "Eski Varlıkların Kontrolü",
-              description: `Eski varlık ${product.name} kontrol edilmelidir.`,
+              title: "Old Asset Inspection",
+              description: `Old asset ${product.name} should be inspected.`,
               assignedTo: product.assignedTo || "system_group",
               assignedAsset: product._id,
               deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -108,7 +108,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      setLoading(true); // Loading başlangıcı
+  setLoading(true); // start loading
       try {
         let response;
         if (currentUser?.role === "admin") {
@@ -120,7 +120,7 @@ const AdminDashboard = () => {
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
-        setLoading(false); // İşlem tamamlandığında yükleme durumunu kapat
+        setLoading(false); // stop loading when operation completes
       }
     };
 
@@ -138,15 +138,15 @@ const AdminDashboard = () => {
       setSelectedTask(null);
       Swal.fire({
         icon: "success",
-        title: "Başarılı!",
-        text: "Görev başarıyla güncellendi!",
+        title: "Success!",
+        text: "Task updated successfully!",
       });
     } catch (error) {
       Swal.fire({
-        title: "Hata!",
-        text: "Görev güncellenirken bir hata oluştu.",
+        title: "Error!",
+        text: "An error occurred while updating the task.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       console.error("Error updating task:", error);
     }
@@ -165,10 +165,10 @@ const AdminDashboard = () => {
       setIsAddModalOpen(false);
     } catch (error) {
       Swal.fire({
-        title: "Hata!",
-        text: "Görev eklenirken bir hata oluştu.",
+        title: "Error!",
+        text: "An error occurred while adding the task.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       console.error("Error adding task:", error);
     }
@@ -200,19 +200,19 @@ const AdminDashboard = () => {
     try {
       await api.put(`/tasks/approve/${taskId}`);
       Swal.fire({
-        title: "Başarılı!",
-        text: "Görev başarıyla onaylandı.",
+        title: "Success!",
+        text: "Task approved successfully.",
         icon: "success",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       const response = await api.get("/tasks");
       setTasks(response.data);
     } catch (error) {
       Swal.fire({
-        title: "Hata!",
-        text: "Görev onaylanırken bir hata oluştu.",
+        title: "Error!",
+        text: "An error occurred while approving the task.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       console.error("Error approving task:", error);
     }
@@ -223,10 +223,10 @@ const AdminDashboard = () => {
         feedback: note,
       });
       Swal.fire({
-        title: "Başarılı!",
-        text: "Göreve başarıyla geri dönüş yapıldı.",
+        title: "Success!",
+        text: "Task successfully sent back.",
         icon: "success",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       const response = await api.get(`/tasks/`);
       setTasks(response.data);
@@ -234,10 +234,10 @@ const AdminDashboard = () => {
       setSelectedTaskId(null);
     } catch (error) {
       Swal.fire({
-        title: "Hata!",
-        text: "Görev geri dönüş yaparken bir hata oluştu.",
+        title: "Error!",
+        text: "An error occurred while sending back the task.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       console.error("Error sending back task:", error);
     }
@@ -245,35 +245,35 @@ const AdminDashboard = () => {
 
   const handleDeleteTask = async (taskId) => {
     const result = await Swal.fire({
-      title: "Emin misiniz?",
-      text: "Bu görevi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      title: "Are you sure?",
+      text: "Are you sure you want to delete this task? This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Evet, sil!",
-      cancelButtonText: "Hayır, iptal et",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
     });
 
     if (result.isConfirmed) {
       try {
         await api.delete(`/tasks/${taskId}`);
         const response = await api.get("/tasks");
-        // Başarı mesajı göster
+        // show success message
         Swal.fire({
-          title: "Silindi!",
-          text: "Görev başarıyla silindi.",
+          title: "Deleted!",
+          text: "Task deleted successfully.",
           icon: "success",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
         setTasks(response.data);
       } catch (error) {
-        // Hata durumunda mesaj göster
+        // show error message
         Swal.fire({
-          title: "Hata!",
-          text: "Görev silinirken bir hata oluştu.",
+          title: "Error!",
+          text: "An error occurred while deleting the task.",
           icon: "error",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
         console.error("Error deleting task:", error);
       }
@@ -292,14 +292,14 @@ const AdminDashboard = () => {
 
   return (
     <div className="container mx-auto px-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Hoş Geldin {currentUser?.name}</h1>
+      <div className="flex justify-between items-center mb-4">
+  <h1 className="text-2xl font-bold">Welcome {currentUser?.name}</h1>
         {currentUser?.role === "admin" && (
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-2 py-1 lg:px-4 lg:py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Yeni Görev Ekle
+            Add New Task
           </button>
         )}
       </div>
@@ -307,7 +307,7 @@ const AdminDashboard = () => {
       {currentUser?.role === "admin" ? (
         <div>
           <h2 className="text-xl font-semibold mb-4">
-            İnceleme Bekleyen Görevler
+            Tasks Pending Review
           </h2>
           <AdminTaskReview
             tasks={tasks.filter((task) => task.status === "reviewing")}
@@ -315,7 +315,7 @@ const AdminDashboard = () => {
             onSendBack={openSendBackModal}
           />
 
-          <h2 className="text-xl font-semibold mt-8 mb-4">Tüm Görevler</h2>
+          <h2 className="text-xl font-semibold mt-8 mb-4">All Tasks</h2>
           <TaskTable
             tasks={tasks}
             onComplete={openCompletionModal}
@@ -327,10 +327,10 @@ const AdminDashboard = () => {
       ) : (
         <div>
           <h2 className="text-xl font-semibold mb-4">
-            Duyuru:
+            Announcement:
             {activeAnnouncement
               ? activeAnnouncement.content
-              : "Aktif duyuru bulunmamaktadır."}
+              : "No active announcement found."}
           </h2>
           <TaskTable
             tasks={tasks}

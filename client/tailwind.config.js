@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'], // Varsayılan fontu Inter olarak ayarladık
+        sans: ['Inter', 'sans-serif'], // Set default font to Inter
       },
     },
   },

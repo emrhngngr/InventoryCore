@@ -1,7 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoginRoute from "./routes/LoginRoute";
 
-// Sayfalar
+// Pages
 import AdminClasses from "./pages/Admin/AdminCategories";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./pages/Admin/AdminLayout";
@@ -21,7 +21,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Ortak Rotalar */}
+  {/* Common Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/services" element={<ServicePage />} />

@@ -11,7 +11,7 @@ router.get("/", authMiddleware, authorizeRoles(["admin"]), async (req, res) => {
       .sort({ createdAt: -1 });
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ message: "Loglar getirilirken hata oluştu" });
+    res.status(500).json({ message: "Error fetching logs" });
   }
 });
 
@@ -39,7 +39,7 @@ router.get("/filter", authMiddleware, authorizeRoles(["admin"]), async (req, res
       
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ message: "Loglar filtrelenirken hata oluştu" });
+    res.status(500).json({ message: "Error filtering logs" });
   }
 });
 

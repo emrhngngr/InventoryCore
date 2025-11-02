@@ -57,7 +57,7 @@ const AdminClasses = () => {
     if (attributes.length > 1) {
       setAttributes(attributes.filter((_, index) => index !== indexToRemove));
     } else {
-      alert("En az bir özellik olmalıdır!");
+      alert("At least one attribute is required!");
     }
   };
 
@@ -71,40 +71,40 @@ const AdminClasses = () => {
 
   const handleRemoveCategory = async (categoryId) => {
     const result = await Swal.fire({
-      title: "Emin misiniz?",
-      text: "Bu kategoriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+      title: "Are you sure?",
+    text: "Are you sure you want to delete this category? This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Evet, sil!",
-      cancelButtonText: "Hayır, iptal et",
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel",
     });
     if (result.isConfirmed) {
       try {
         await deleteCategory(categoryId);
         getCategories();
         Swal.fire({
-          title: "Silindi!",
-          text: "Kategori başarıyla silindi.",
+          title: "Deleted!",
+          text: "Category deleted successfully.",
           icon: "success",
-          confirmButtonText: "Tamam", 
+          confirmButtonText: "OK", 
         });
       } catch (error) {
         Swal.fire({
-          title: "Hata!",
-          text: "Kategori silinirken bir hata oluştu.",
+          title: "Error!",
+          text: "An error occurred while deleting the category.",
           icon: "error",
-          confirmButtonText: "Tamam",
+          confirmButtonText: "OK",
         });
-        console.error("Kategori silinirken bir hata oluştu:", error);
+        console.error("Error deleting category:", error);
       }
     } else {
       Swal.fire({
-        title: "İptal Edildi",
-        text: "Kategori silme işlemi iptal edildi.",
+        title: "Cancelled",
+        text: "Category deletion cancelled.",
         icon: "info",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -120,10 +120,10 @@ const AdminClasses = () => {
 
     if (isCategoryExist) {
       Swal.fire({
-        title: "İptal Edildi",
-        text: "Bu kategori zaten mevcut!",
+        title: "Cancelled",
+        text: "This category already exists!",
         icon: "info",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
       return;
     }
@@ -137,33 +137,33 @@ const AdminClasses = () => {
         };
         await updateCategory(currentCategory._id, updatedCategory);
         Swal.fire({
-          title: "Başarılı!",
-          text: "Kategori başarıyla güncellendi.",
+          title: "Success!",
+          text: "Category updated successfully.",
           icon: "success",
-          confirmButtonText: "Tamam", 
+          confirmButtonText: "OK", 
         });
       } else {
         // Add new category
         const newCategory = { name: categoryName, attributes };
         await api.post("http://localhost:5000/api/categories", newCategory);
         Swal.fire({
-          title: "Başarılı!",
-          text: "Kategori başarıyla eklendi.",
+          title: "Success!",
+          text: "Category added successfully.",
           icon: "success",
-          confirmButtonText: "Tamam", 
+          confirmButtonText: "OK", 
         });
       }
 
       getCategories();
       closeModal();
     } catch (err) {
-      console.error("İşlem sırasında bir hata oluştu:", err);
+      console.error("An error occurred during the operation:", err);
       alert(err.response?.data?.message || "");
       Swal.fire({
-        title: "Hata!",
-        text: "İşlem sırasında bir hata oluştu!",
+        title: "Error!",
+        text: "An error occurred during the operation.",
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -175,7 +175,7 @@ const AdminClasses = () => {
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
             onClick={openModal}
           >
-            Kategori Ekle
+            Add Category
           </button>
         </div>
       </div>
@@ -184,14 +184,14 @@ const AdminClasses = () => {
         <table className="w-full text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3">
-                Kategori İsmi
+                <th scope="col" className="px-6 py-3">
+                Category Name
               </th>
               <th scope="col" className="px-6 py-3">
-                Özellikler
+                Attributes
               </th>
               <th scope="col" className="px-6 py-3">
-                İşlemler
+                Actions
               </th>
             </tr>
           </thead>
@@ -218,7 +218,7 @@ const AdminClasses = () => {
                       className="text-sm"
                       onClick={() => handleRemoveCategory(category._id)}
                     >
-                      Sil
+                      Delete
                     </Button>
                 </td>
               </tr>
@@ -236,12 +236,12 @@ const AdminClasses = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-1/2">
             <h2 className="text-xl font-bold mb-4">
-              {isEditMode ? "Kategori Düzenle" : "Yeni Kategori Ekle"}
+              {isEditMode ? "Edit Category" : "Add New Category"}
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="categoryName" className="block mb-2">
-                  Kategori İsmi
+                  Category Name
                 </label>
                 <input
                   type="text"
@@ -253,7 +253,7 @@ const AdminClasses = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block mb-2">Özellikler</label>
+                <label className="block mb-2">Attributes</label>
                 {attributes.map((attribute, index) => (
                   <div key={index} className="flex items-center mb-2 space-x-2">
                     <input
@@ -263,7 +263,7 @@ const AdminClasses = () => {
                       onChange={(e) =>
                         handleAttributeChange(e.target.value, index)
                       }
-                      placeholder={`Özellikler ${index + 1}`}
+                      placeholder={`Attribute ${index + 1}`}
                       required
                     />
                     {attributes.length > 1 && (
@@ -282,7 +282,7 @@ const AdminClasses = () => {
                   className="text-blue-500 hover:underline"
                   onClick={addAttributeField}
                 >
-                  Yeni Alan Ekle
+                  Add New Field
                 </button>
               </div>
               <div className="flex justify-end">
@@ -291,13 +291,13 @@ const AdminClasses = () => {
                   className="px-4 py-2 mr-2 bg-gray-500 text-white rounded"
                   onClick={closeModal}
                 >
-                  İptal
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-blue-500 text-white rounded"
                 >
-                  {isEditMode ? "Güncelle" : "Kaydet"}
+                  {isEditMode ? "Update" : "Save"}
                 </button>
               </div>
             </form>

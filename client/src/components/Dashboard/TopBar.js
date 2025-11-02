@@ -4,8 +4,8 @@ import UserProfileHeader from "./UserProfileHeader";
 import api from "../../api/api";
 const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null); // Dropdown menüsünün referansı
-  const userIconRef = useRef(null); // Kullanıcı simgesinin referansı
+  const dropdownRef = useRef(null); // reference for the dropdown menu
+  const userIconRef = useRef(null); // reference for the user icon
   const [currentUser, setCurrentUser] = useState(null);
 
 
@@ -35,10 +35,10 @@ const TopBar = () => {
       }
     };
 
-    // Event listener'ı ekle
+    // add event listener
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Component unmount olduğunda event listener'ı temizle
+    // clean up event listener on unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };

@@ -20,12 +20,12 @@ const ProductModal = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-96 max-h-screen overflow-y-auto">
         <h2 className="text-xl font-bold mb-4">
-          {isEditMode ? "Varlığı Düzenle" : "Yeni Varlık Ekle"}
+          {isEditMode ? "Edit Product" : "Add New Product"}
         </h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Varlık Adı
+            Product Name
           </label>
           <input
             type="text"
@@ -36,14 +36,14 @@ const ProductModal = ({
                 name: e.target.value,
               }))
             }
-            placeholder="Varlık adını girin"
+            placeholder="Enter product name"
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Adet
+            Quantity
           </label>
           <input
             type="number"
@@ -61,7 +61,7 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Kritiklik Derecesi (1-5)
+            Criticality Degree (1-5)
           </label>
           <input
             type="number"
@@ -81,7 +81,7 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gizlilik Derecesi (1-5)
+            Privacy Degree (1-5)
           </label>
           <input
             type="number"
@@ -101,14 +101,14 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Kategori Seç
+            Select Category
           </label>
           <select
             onChange={(e) => handleCategoryChange(e.target.value)}
             value={currentProduct.category}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="">Kategori seçin</option>
+            <option value="">Select a category</option>
             {categories.map((category) => (
               <option key={category._id} value={category._id}>
                 {category.name}
@@ -119,7 +119,7 @@ const ProductModal = ({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sorumlu Seç
+            Assign To
           </label>
           <select
             onChange={(e) =>
@@ -131,7 +131,7 @@ const ProductModal = ({
             value={currentProduct.assignedTo}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="">Sorumlu seçin</option>
+            <option value="">Select assignee</option>
             {roles.map((role, index) => (
               <option key={role._id || index} value={role._id}>
                 {role}
@@ -143,7 +143,7 @@ const ProductModal = ({
         {selectedCategory && (
           <div>
             <h3 className="text-md font-semibold mb-2">
-              {selectedCategory.name} Özellikleri
+              {selectedCategory.name} Attributes
             </h3>
             {selectedCategory.attributes.map((attr) => (
               <div key={attr} className="mb-2">
@@ -154,7 +154,7 @@ const ProductModal = ({
                   type="text"
                   value={dynamicAttributes[attr] || ""}
                   onChange={(e) => handleAttributeChange(attr, e.target.value)}
-                  placeholder={`${attr} girin`}
+                  placeholder={`Enter ${attr}`}
                   className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
@@ -167,14 +167,14 @@ const ProductModal = ({
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
           >
-            İptal
+            Cancel
           </button>
           <button
             onClick={saveProduct}
             disabled={!currentProduct.name || !currentProduct.category}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
           >
-            {isEditMode ? "Güncelle" : "Oluştur"}
+            {isEditMode ? "Update" : "Create"}
           </button>
         </div>
       </div>

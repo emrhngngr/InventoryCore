@@ -16,7 +16,7 @@ const TruncatedDescription = ({ text, maxLength = 100 }) => {
         className="cursor-pointer hover:text-blue-600"
       >
         {truncatedText}
-        <span className="ml-1 text-blue-500 text-sm">(devamı...)</span>
+        <span className="ml-1 text-blue-500 text-sm">(more...)</span>
       </span>
 
       {isOpen && (
@@ -30,7 +30,7 @@ const TruncatedDescription = ({ text, maxLength = 100 }) => {
           {/* Modal */}
           <div className="relative z-50 w-full max-w-lg bg-white rounded-lg shadow-xl p-6 m-4">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-semibold">Detaylı Açıklama</h3>
+              <h3 className="text-lg font-semibold">Detailed Description</h3>
               <button 
                 onClick={() => setIsOpen(false)}
                 className="text-gray-500 hover:text-gray-700"

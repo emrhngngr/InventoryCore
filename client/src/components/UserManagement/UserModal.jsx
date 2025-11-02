@@ -38,14 +38,14 @@ const UserModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editingUser ? "Kullanıcı Düzenle" : "Yeni Kullanıcı Oluştur"}
+  title={editingUser ? "Edit User" : "Create New User"}
     >
       <div className="space-y-4">
         {/* Profile Picture Upload */}
         <div className="flex items-center space-x-4">
           <div className="flex-grow">
             <InputField 
-              label="Ad Soyad"
+              label="Full Name"
               name="name"
               value={newUser.name}
               onChange={handleInputChange}
@@ -71,7 +71,7 @@ const UserModal = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-gray-500">Fotoğraf Ekle</span>
+                  <span className="text-gray-500">Add Photo</span>
                 )}
               </div>
             </label>
@@ -79,14 +79,14 @@ const UserModal = ({
         </div>
 
         <InputField 
-          label="E-posta"
+          label="Email"
           type="email"
           name="email"
           value={newUser.email}
           onChange={handleInputChange}
         />
         <InputField 
-          label={editingUser ? "Şifre (Boş bırakılırsa değiştirilmez)" : "Şifre"}
+          label={editingUser ? "Password (leave blank to keep unchanged)" : "Password"}
           type="password"
           name="password"
           value={newUser.password}
@@ -101,7 +101,7 @@ const UserModal = ({
 
         <div className="flex justify-end space-x-2 mt-4">
           <Button variant="outline" onClick={onClose}>
-            İptal
+            Cancel
           </Button>
           <Button
             onClick={handleSubmitUser}
@@ -111,7 +111,7 @@ const UserModal = ({
               (!editingUser && !newUser.password)
             }
           >
-            {editingUser ? "Kaydet" : "Kullanıcı Oluştur"}
+            {editingUser ? "Save" : "Create User"}
           </Button>
         </div>
       </div>
@@ -137,19 +137,19 @@ const InputField = ({ label, type = "text", name, value, onChange }) => (
 const RoleSelector = ({ value, onChange, currentUser }) => (
   <div>
     <label className="block text-sm font-medium text-gray-700">
-      Rol
+      Role
     </label>
     <select
       value={value}
       onChange={onChange}
       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
     >
-      <option value="system_group">Sistem Grubu</option>
-      <option value="a_group">A Grubu</option>
-      <option value="software_group">Yazılım Grubu</option>
-      <option value="technical_service">Teknik Servis Grubu</option>
+      <option value="system_group">System Group</option>
+      <option value="a_group">Group A</option>
+      <option value="software_group">Software Group</option>
+      <option value="technical_service">Technical Service</option>
       {currentUser?.role === "admin" && (
-        <option value="admin">Yönetici</option>
+        <option value="admin">Admin</option>
       )}
     </select>
   </div>
@@ -161,7 +161,7 @@ const RoleSelector = ({ value, onChange, currentUser }) => (
 //   onTogglePermission 
 // }) => (
 //   <div>
-//     <h3 className="text-lg font-semibold mb-4">İzinler</h3>
+//     <h3 className="text-lg font-semibold mb-4">Permissions</h3>
 //     {permissionConfig.map((group) => (
 //       <PermissionGroup 
 //         key={group.group} 

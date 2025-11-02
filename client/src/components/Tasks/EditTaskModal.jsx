@@ -35,12 +35,12 @@ const EditTaskModal = ({ isOpen, onClose, onSubmit, task }) => {
           <X size={24} />
         </button>
         
-        <h2 className="text-xl font-semibold mb-4">Görevi Düzenle</h2>
+  <h2 className="text-xl font-semibold mb-4">Edit Task</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Başlık
+              Title
             </label>
             <input
               type="text"
@@ -53,7 +53,7 @@ const EditTaskModal = ({ isOpen, onClose, onSubmit, task }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Atanan Grup
+              Assigned Group
             </label>
             <select
               value={formData.assignedTo}
@@ -61,17 +61,17 @@ const EditTaskModal = ({ isOpen, onClose, onSubmit, task }) => {
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="">Grup Seçin</option>
-              <option value="system_group">Sistem Grubu</option>
-              <option value="a_group">A Grubu</option>
-              <option value="software_group">Yazılım Grubu</option>
-              <option value="technical_service">Teknik Servis</option>
+              <option value="">Select Group</option>
+              <option value="system_group">System Group</option>
+              <option value="a_group">A Group</option>
+              <option value="software_group">Software Group</option>
+              <option value="technical_service">Technical Service</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Durum
+              Status
             </label>
             <select
               value={formData.status}
@@ -79,9 +79,9 @@ const EditTaskModal = ({ isOpen, onClose, onSubmit, task }) => {
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="pending">Aktif</option>
-              <option value="reviewing">İnceleme Bekliyor</option>
-              <option value="approved">Tamamlandı</option>
+              <option value="pending">Active</option>
+              <option value="reviewing">Reviewing</option>
+              <option value="approved">Completed</option>
             </select>
           </div>
 
@@ -91,13 +91,13 @@ const EditTaskModal = ({ isOpen, onClose, onSubmit, task }) => {
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
             >
-              İptal
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
             >
-              Güncelle
+              Update
             </button>
           </div>
         </form>

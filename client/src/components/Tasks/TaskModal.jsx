@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-import { tr } from 'date-fns/locale';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../api/api';
@@ -21,7 +19,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
         const response = await api.get("http://localhost:5000/api/products");
         setAssets(response.data);
       } catch (error) {
-        toast.error("Veriler alınırken bir hata oluştu.");
+  toast.error("An error occurred while fetching data.");
         console.error("Error fetching data:", error);
       }
     };
@@ -55,10 +53,10 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Yeni Görev Ekle</h2>
+  <h2 className="text-xl font-bold mb-4">Add New Task</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Başlık</label>
+            <label className="block text-sm font-medium mb-1">Title</label>
             <input
               type="text"
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -68,7 +66,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Açıklama</label>
+            <label className="block text-sm font-medium mb-1">Description</label>
             <textarea
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={task.description}
@@ -77,7 +75,7 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Son Tarih</label>
+            <label className="block text-sm font-medium mb-1">Deadline</label>
             <CustomDatePicker
               selectedDate={task.deadline}
               onChange={(date) => setTask({ ...task, deadline: date })}
@@ -85,14 +83,14 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Atanacak Varlık</label>
+            <label className="block text-sm font-medium mb-1">Assigned Asset</label>
             <select
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={task.assignedAsset}
               onChange={(e) => setTask({ ...task, assignedAsset: e.target.value })}
             >
               <option value="" disabled>
-                Bir varlık seçin
+                Select an asset
               </option>
               {assets.map((asset) => (
                 <option key={asset._id} value={asset._id}>
@@ -102,16 +100,16 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Atanacak Grup</label>
+            <label className="block text-sm font-medium mb-1">Assigned Group</label>
             <select
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={task.assignedTo}
               onChange={(e) => setTask({ ...task, assignedTo: e.target.value })}
             >
-              <option value="system_group">Sistem Grubu</option>
-              <option value="a_group">A Grubu</option>
-              <option value="software_group">Yazılım Grubu</option>
-              <option value="technical_service">Teknik Servis</option>
+              <option value="system_group">System Group</option>
+              <option value="a_group">Group A</option>
+              <option value="software_group">Software Group</option>
+              <option value="technical_service">Technical Service</option>
             </select>
           </div>
           <div className="flex justify-end gap-2">
@@ -120,13 +118,13 @@ export const AddTaskModal = ({ isOpen, onClose, onSubmit }) => {
               onClick={onClose}
               className="px-4 py-2 border rounded hover:bg-gray-100"
             >
-              İptal
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Ekle
+              Add
             </button>
           </div>
         </form>

@@ -1,24 +1,24 @@
 import axios from 'axios';
 
-// Axios instance oluştur
+// Create axios instance
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Tüm isteklerin temel URL'si
+  baseURL: "http://localhost:5000/api", // Base URL for all requests
 });
 
 // Request Interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Token'i al
+    const token = localStorage.getItem("token"); // Get token
     if (token) {
-      config.headers.Authorization = token; // Header'a token ekle
+      config.headers.Authorization = token; // Add token to header
     }
     return config;
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token süresi dolmuşsa veya yetkisiz erişim varsa
-      localStorage.removeItem("token"); // Token'ı kaldır
-      window.location.href = "/login"; // Giriş sayfasına yönlendir
+      // If token expired or unauthorized
+      localStorage.removeItem("token"); // Remove token
+      window.location.href = "/login"; // Redirect to login page
   }
   return Promise.reject(error);
   }

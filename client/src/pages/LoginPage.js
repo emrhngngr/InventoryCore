@@ -23,29 +23,29 @@ const LoginPage = () => {
         }
       );
 
-      // Token'ı localStorage'da saklıyoruz
+      // store token in localStorage
       localStorage.setItem("token", response.data.token);
 
-      // Başarı mesajı göster
+      // show success message
       Swal.fire({
-        title: "Başarılı!",
-        text: "Başarıyla giriş yaptınız.",
+        title: "Success!",
+        text: "Successfully signed in.",
         icon: "success",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
 
-      // Kullanıcıyı yönlendiriyoruz
+  // Redirect the user
       window.location.href = "/user/dashboard";
     } catch (err) {
       const errorMessage =
-        err.response?.data?.message || "Giriş sırasında bir hata oluştu.";
+        err.response?.data?.message || "An error occurred during sign in.";
 
-      // Hata mesajı göster
+      // show error message
       Swal.fire({
-        title: "Hata!",
+        title: "Error!",
         text: errorMessage,
         icon: "error",
-        confirmButtonText: "Tamam",
+        confirmButtonText: "OK",
       });
     }
   };
@@ -68,7 +68,7 @@ const LoginPage = () => {
         </div>
 
         <div className="flex flex-col gap-y-4 max-w-sm w-full mx-auto lg:mx-0">
-          <h1 className="text-4xl font-bold">Giriş Yap</h1>
+          <h1 className="text-4xl font-bold">Sign In</h1>
 
           <form
             className="flex flex-col gap-y-4 mt-4 w-full text-gray-500 dark:text-gray-400"
@@ -91,7 +91,7 @@ const LoginPage = () => {
               </div>
             </div>
             <div className="flex flex-col gap-y-1">
-              <span className="text-xl">Şifre</span>
+              <span className="text-xl">Password</span>
               <div className="group flex items-center gap-x-2 border border-black/35 rounded-lg px-4 py-2 focus-within:border-blue-600 focus-within:text-blue-600">
                 <label htmlFor="password">
                   <Lock className="size-4" />
@@ -117,7 +117,7 @@ const LoginPage = () => {
               type="submit"
               className="relative flex items-center justify-center text-lg font-medium px-4 py-2 rounded-lg mt-4 text-white bg-blue-600 hover:bg-blue-700"
             >
-              <span>Giriş Yap</span>
+              <span>Sign In</span>
               <ArrowRight className="absolute right-4 size-5" />
             </button>
           </form>
@@ -134,12 +134,12 @@ const LoginPage = () => {
 
         <div className="flex flex-col m-8 p-4 max-w-lg text-center mx-auto text-white backdrop-blur rounded-lg z-10 gap-y-4">
           <p className="text-xl opacity-70">
-            InventorCore, varlıklarınızı yönetmek için harika bir platformdur.
-            Kullanıcı dostu arayüzü ve güçlü özellikleri ile varlıklarınızı
-            kolayca yönetebilirsiniz.
+            InventorCore is a great platform for managing your assets. With a
+            user-friendly interface and powerful features, you can manage your
+            assets easily.
           </p>
 
-          <p>Emirhan Güngör, CEO InventoryCore</p>
+          <p>Emirhan Gungor, CEO InventoryCore</p>
         </div>
       </div>
     </div>

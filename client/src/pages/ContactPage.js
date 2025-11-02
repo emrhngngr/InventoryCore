@@ -8,7 +8,7 @@ const ContactPage = () => {
   const contactInfo = [
     {
       icon: <Phone className="w-6 h-6" />,
-      title: "Telefon",
+      title: "Phone",
       details: ["+90 (555) 123 45 67", "+90 (555) 123 45 67"],
     },
     {
@@ -18,13 +18,13 @@ const ContactPage = () => {
     },
     {
       icon: <MapPin className="w-6 h-6" />,
-      title: "Adres",
-      details: ["Erenler Mahallesi", "Afyonkarahisar, Türkiye"],
+      title: "Address",
+      details: ["Erenler Mahallesi", "Afyonkarahisar, Turkey"],
     },
     {
       icon: <Clock className="w-6 h-6" />,
-      title: "Çalışma Saatleri",
-      details: ["Pazartesi - Cuma: 09:00 - 18:00", "Cumartesi: 09:00 - 13:00"],
+      title: "Working Hours",
+      details: ["Monday - Friday: 09:00 - 18:00", "Saturday: 09:00 - 13:00"],
     },
   ];
 
@@ -41,11 +41,11 @@ const ContactPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Bizimle İletişime Geçin
+            Contact Us
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Sorularınız için bize ulaşın. Ekibimiz size yardımcı olmaktan
-            mutluluk duyacaktır.
+            Get in touch with us for any questions. Our team will be happy to
+            assist you.
           </p>
         </div>
       </div>

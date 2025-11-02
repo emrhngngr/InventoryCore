@@ -27,12 +27,12 @@ const ProductTable = ({
   const currentItems = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
 
   const getBaseColumns = () => [
-    { key: 'name', label: 'Varlık Adı' },
-    { key: 'assignedTo', label: 'Sorumlu Grup' },
-    { key: 'category', label: 'Kategori' },
-    { key: 'amount', label: 'Adet' },
-    { key: 'criticalityDegree', label: 'Kritiklik Derecesi' },
-    { key: 'privacyDegree', label: 'Gizlilik Derecesi' }
+    { key: 'name', label: 'Product Name' },
+    { key: 'assignedTo', label: 'Assigned Group' },
+    { key: 'category', label: 'Category' },
+    { key: 'amount', label: 'Quantity' },
+    { key: 'criticalityDegree', label: 'Criticality Degree' },
+    { key: 'privacyDegree', label: 'Privacy Degree' }
   ];
 
   const getDynamicColumns = () => 
@@ -61,7 +61,7 @@ const ProductTable = ({
                 </th>
               ))}
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                İşlemler
+                Actions
               </th>
             </tr>
           </thead>
@@ -72,8 +72,8 @@ const ProductTable = ({
                   <td key={key} className="px-4 py-3">
                     {isDynamic 
                       ? product.dynamicAttributes?.[originalAttr] || '-'
-                      : key === 'category'
-                        ? product.category?.name || 'Kategori Yok'
+                        : key === 'category'
+                        ? product.category?.name || 'No Category'
                         : product[key]}
                   </td>
                 ))}
@@ -87,13 +87,13 @@ const ProductTable = ({
                       <Pen size={16} />
                     </Button>
                   )}
-                  {currentUser?.role === "admin" && (
+                    {currentUser?.role === "admin" && (
                     <Button
                       variant="destructive"
                       className="text-sm"
                       onClick={() => deleteProduct(product._id)}
                     >
-                      Sil
+                      Delete
                     </Button>
                   )}
                 </td>
@@ -111,13 +111,13 @@ const ProductTable = ({
         <div className="flex justify-between items-center p-4 border-t">
           <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-600">
-              Sayfa {currentPage} / {totalPages}
-              {` (Toplam ${totalItems} varlık)`}
+              Page {currentPage} / {totalPages}
+              {` (Total ${totalItems} products)`}
             </div>
             
             <div className="flex items-center space-x-2">
               <label htmlFor="items-per-page" className="text-sm text-gray-600">
-                Sayfa başına:
+                Items per page:
               </label>
               <select
                 id="items-per-page"
@@ -135,13 +135,13 @@ const ProductTable = ({
           </div>
 
           <div className="flex space-x-2">
-            <Button
+              <Button
               variant="outline"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="flex items-center"
             >
-              <FaChevronLeft className="mr-2" /> Önceki
+              <FaChevronLeft className="mr-2" /> Previous
             </Button>
             <Button
               variant="outline"
@@ -149,7 +149,7 @@ const ProductTable = ({
               disabled={currentPage === totalPages}
               className="flex items-center"
             >
-              Sonraki <FaChevronRight className="ml-2" />
+              Next <FaChevronRight className="ml-2" />
             </Button>
           </div>
         </div>

@@ -14,11 +14,11 @@ export const SendBackModal = ({ isOpen, onClose, onSubmit }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Düzeltilmesi Gereken İşlemler</h2>
+  <h2 className="text-xl font-bold mb-4">Corrections Required</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
-              Yapılması Gereken İşlem Açıklaması
+              Correction description
             </label>
             <textarea
               className="w-full p-2 border rounded"
@@ -33,13 +33,13 @@ export const SendBackModal = ({ isOpen, onClose, onSubmit }) => {
               onClick={onClose}
               className="px-4 py-2 border rounded"
             >
-              İptal
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-500 text-white rounded"
             >
-              Gönder
+              Send
             </button>
           </div>
         </form>

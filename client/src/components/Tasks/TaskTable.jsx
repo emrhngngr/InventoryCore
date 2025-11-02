@@ -96,22 +96,20 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
 
   if (!tasks?.length) {
     return (
-      <div className="p-8 text-center text-gray-500">
-        Şu anda yapılacak görev bulunmuyor.
-      </div>
+      <div className="p-8 text-center text-gray-500">No tasks available right now.</div>
     );
   }
 
   const columns = [
-    { key: "assignedAsset.name", label: "Varlık Adı", sortable: true },
-    { key: "title", label: "Başlık", sortable: true },
-    { key: "description", label: "Açıklama", sortable: true },
-    { key: "createdAt", label: "Oluşturulma Tarihi", sortable: true },
-    { key: "deadline", label: "Son Tarih", sortable: true },
-    { key: "status", label: "Durum", sortable: true },
-    { key: "feedback", label: "Geri Dönüş", sortable: true },
-    { key: "assignedTo", label: "Atanan Grup", sortable: true },
-    { key: "actions", label: "İşlemler", sortable: false },
+    { key: "assignedAsset.name", label: "Asset Name", sortable: true },
+    { key: "title", label: "Title", sortable: true },
+    { key: "description", label: "Description", sortable: true },
+    { key: "createdAt", label: "Created At", sortable: true },
+    { key: "deadline", label: "Deadline", sortable: true },
+    { key: "status", label: "Status", sortable: true },
+    { key: "feedback", label: "Feedback", sortable: true },
+    { key: "assignedTo", label: "Assigned Group", sortable: true },
+    { key: "actions", label: "Actions", sortable: false },
   ];
 
   return (
@@ -121,7 +119,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
       <div className="relative">
             <input
               type="text"
-              placeholder="Görev ara..."
+              placeholder="Search tasks..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 w-64"
@@ -146,10 +144,10 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
             onChange={(e) => setFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">Tüm Görevler</option>
-            <option value="active">Aktif Görevler</option>
-            <option value="reviewing">İnceleme Bekleyenler</option>
-            <option value="approved">Tamamlananlar</option>
+            <option value="all">All Tasks</option>
+            <option value="active">Active Tasks</option>
+            <option value="reviewing">Reviewing</option>
+            <option value="approved">Completed</option>
           </select>
         </div>
 
@@ -180,18 +178,18 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                       new Date(task.deadline) < new Date() &&
                       task.feedback &&
                       task.status !== "approved"
-                        ? "bg-red-200" // Deadline geçmiş, feedback alınmış ve approved değilse
-                        : new Date(task.deadline) < new Date() && task.status !== "approved" // Sadece deadline geçmiş ama feedback yok
-                        ? "bg-red-100" // Deadline geçmiş, feedback alınmamış
-                        : task.feedback && task.status !== "approved" // Feedback var ve onaylanmamış
-                        ? "bg-red-50" // Feedback var ancak onaylanmamış
+                        ? "bg-red-200" // Deadline passed, feedback received but not approved
+                        : new Date(task.deadline) < new Date() && task.status !== "approved" // Only deadline passed but no feedback
+                        ? "bg-red-100" // Deadline passed, feedback not received
+                        : task.feedback && task.status !== "approved" // Feedback exists but not approved
+                        ? "bg-red-50" // Feedback exists but not approved
                         : ""
                     }
                     
                   `}
                 >
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {task.assignedAsset.name}
+                    {task.assignedAsset?.name || "N/A"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">{task.title}</td>
                   <td className="px-4 py-3">
@@ -202,10 +200,10 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                     />
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {new Date(task.createdAt).toLocaleDateString("tr-TR")}
+                    {new Date(task.createdAt).toLocaleDateString("en-US")}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {new Date(task.deadline).toLocaleDateString("tr-TR")}
+                    {new Date(task.deadline).toLocaleDateString("en-US")}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
@@ -218,11 +216,11 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                           : "bg-green-100 text-green-800"
                       }`}
                     >
-                      {task.status === "pending"
-                        ? "Aktif"
-                        : task.status === "reviewing"
-                        ? "İnceleme Bekliyor"
-                        : "Tamamlandı"}
+                        {task.status === "pending"
+                          ? "Active"
+                          : task.status === "reviewing"
+                          ? "Reviewing"
+                          : "Completed"}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -237,7 +235,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                         onClick={() => onComplete(task._id)}
                         className="px-1.5 lg:px-3 lg:py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                       >
-                        Tamamla
+                        Complete
                       </Button>
                     ) : (
                       <Button
@@ -245,7 +243,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                         className="px-1.5 lg:px-3 py-1.5 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
                         disabled
                       >
-                        Tamamla
+                        Complete
                       </Button>
                     )}
                     {isAdmin && (
@@ -261,7 +259,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
                           onClick={() => onDelete(task._id)}
                           className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
                         >
-                          Sil
+                          Delete
                         </Button>
                       </>
                     )}
@@ -274,13 +272,12 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
 
         <div className="flex items-center justify-start mt-4">
           <div className="text-sm text-gray-600">
-            Sayfa {currentPage} / {totalPages} (Toplam{" "}
-            {filteredAndSortedTasks.length} görev)
+            Page {currentPage} / {totalPages} (Total {filteredAndSortedTasks.length} tasks)
           </div>
 
           <div className="flex items-center space-x-4 ml-7">
             <label htmlFor="items-per-page" className="text-sm text-gray-600">
-              Sayfa başına:
+              Items per page:
             </label>
             <select
               id="items-per-page"
@@ -293,7 +290,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
             >
               {[5, 10, 20].map((option) => (
                 <option key={option} value={option}>
-                  {option} Kayıt
+                  {option} Records
                 </option>
               ))}
             </select>
@@ -307,7 +304,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
               disabled={currentPage === 1}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              İlk
+              First
             </button>
 
             <button
@@ -315,7 +312,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
               disabled={currentPage === 1}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              Önceki
+              Previous
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -356,7 +353,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
               disabled={currentPage === totalPages}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              Sonraki
+              Next
             </button>
 
             <button
@@ -364,7 +361,7 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
               disabled={currentPage === totalPages}
               className="px-3 py-1 border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
-              Son
+              Last
             </button>
           </div>
         )}
@@ -375,13 +372,13 @@ export const TaskTable = ({ tasks, onComplete, onDelete, isAdmin, onEdit }) => {
 
 const translateRole = (role) => {
   const roleTranslations = {
-    admin: "Yönetici",
-    system_group: "Sistem Grubu",
-    a_group: "A Grubu",
-    software_group: "Yazılım Grubu",
-    technical_service: "Teknik Servis",
+    admin: "Admin",
+    system_group: "System Group",
+    a_group: "A Group",
+    software_group: "Software Group",
+    technical_service: "Technical Service",
   };
-  return roleTranslations[role] || "Bilinmeyen Rol";
+  return roleTranslations[role] || "Unknown Role";
 };
 
 export default TaskTable;

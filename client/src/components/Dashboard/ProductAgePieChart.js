@@ -40,16 +40,16 @@ const ProductAgePieChart = () => {
 
     setChartData([
       {
-        id: "Güncel Varlıklar",
-        label: "Güncel Varlıklar",
+        id: "Current Assets",
+        label: "Current Assets",
         value: newProductsCount,
         color: "#34D399",
         status: "new",
         icon: CheckCircle,
       },
       {
-        id: "Eski Varlıklar",
-        label: "Eski Varlıklar",
+        id: "Old Assets",
+        label: "Old Assets",
         value: oldProductsCount,
         color: "#F87171",
         status: "old",
@@ -76,7 +76,7 @@ const ProductAgePieChart = () => {
     <div className="w-full max-w mx-auto bg-white rounded-xl shadow-lg p-6 transform transition-all hover:scale-105 duration-300">
       <h2 className="text-xl font-bold text-center mb-4 text-gray-800 flex justify-center items-center space-x-2">
         <RefreshCw className="w-5 h-5 text-blue-500" />
-        <span>Varlık Güncelleme Durumu</span>
+        <span>Asset Update Status</span>
       </h2>
 
       <div style={{ height: 400 }}>
@@ -107,7 +107,7 @@ const ProductAgePieChart = () => {
                 borderRadius: "5px",
               }}
             >
-              <strong>{datum.label}</strong>: {datum.value} Varlık (
+              <strong>{datum.label}</strong>: {datum.value} assets (
               {((datum.value / products.length) * 100).toFixed(1)}%)
             </div>
           )}

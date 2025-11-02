@@ -64,14 +64,14 @@ const AssetValueTrends = ({ assetValues }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'varlik-risk-degerleri.xlsx';
+  a.download = 'asset-risk-values.xlsx';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (error) {
+      } catch (error) {
       console.error('Excel download failed:', error);
-      alert('Excel dosyası indirilirken bir hata oluştu. Lütfen tekrar deneyin.');
+      alert('An error occurred while downloading the Excel file. Please try again.');
     }
   };
 
@@ -98,17 +98,17 @@ const AssetValueTrends = ({ assetValues }) => {
     <div className="bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          Varlık Risk Değerleri İstatisliği
+          Asset Risk Value Statistics
         </h2>
         <div className="text-sm text-gray-600">
-          {products.length} Takip Edilen Varlıklar
+          {products.length} Tracked Assets
         </div>
         <button
             onClick={handleExcelDownload}
             className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
           >
             <DownloadCloud size={20} />
-            Excel İndir
+            Download Excel
           </button>
       </div>
 
@@ -159,7 +159,7 @@ const AssetValueTrends = ({ assetValues }) => {
         </div>
       ) : (
         <div className="text-center py-10 text-gray-500">
-          Uygun Veri Bulunamadı
+          No data available
         </div>
       )}
     </div>

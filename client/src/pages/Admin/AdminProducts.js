@@ -68,7 +68,7 @@ const AdminProducts = () => {
         setRoles(rolesResponse.data);
         console.log("rolesResponse.data ==> ", rolesResponse.data);
       } catch (error) {
-        toast.error("Veriler alınırken bir hata oluştu."); // Toastify Error
+  toast.error("An error occurred while fetching data."); // Toastify Error
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
@@ -196,12 +196,12 @@ const AdminProducts = () => {
       currentProduct.criticalityDegree > 5
     ) {
       toast.warn(
-        "Kritiklik derecesi ve gizlilik derecesi 1 ile 5 arasında olmalıdır."
+  "Criticality and privacy degrees must be between 1 and 5."
       );
       return;
     }
     if (currentProduct.amount < 0) {
-      toast.warn("Adet negatif bir değer olamaz.");
+  toast.warn("Quantity cannot be a negative value.");
       return;
     }
 
@@ -222,7 +222,7 @@ const AdminProducts = () => {
         Swal.fire({
           icon: "success",
           title: "Tebrikler!",
-          text: "Varlık Güncellemesi Başarılı!",
+          text: "Asset update successful!",
         });
       } else {
         // Create new product
@@ -235,7 +235,7 @@ const AdminProducts = () => {
         Swal.fire({
           icon: "success",
           title: "Tebrikler!",
-          text: "Varlık Ekleme Başarılı!",
+          text: "Asset added successfully!",
         });
       }
 
@@ -252,52 +252,52 @@ const AdminProducts = () => {
       setSelectedCategory(null);
       setDynamicAttributes({});
     } catch (error) {
-      toast.error("Varlık kaydedilirken bir hata oluştu.");
+  toast.error("An error occurred while saving the asset.");
       console.error("Error saving product:", error);
     }
   };
 
   // Delete product
   const deleteProduct = async (productId) => {
-    // Kullanıcıdan silme onayı al
+  // Get deletion confirmation from the user
     const result = await Swal.fire({
       title: "Emin misiniz?",
-      text: "Bu varlığı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+  text: "Are you sure you want to delete this asset? This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Evet, sil!",
-      cancelButtonText: "Hayır, iptal et",
+  cancelButtonText: "No, cancel",
     });
 
     if (result.isConfirmed) {
       try {
-        // Silme işlemini gerçekleştir
+  // perform the deletion
         await api.delete(`http://localhost:5000/api/products/${productId}`);
-        setProducts((prev) => prev.filter((p) => p._id !== productId)); // Listeden kaldır
+  setProducts((prev) => prev.filter((p) => p._id !== productId)); // remove from list
 
-        // Başarı mesajı göster
+  // show success message
         Swal.fire({
           title: "Silindi!",
-          text: "Varlık başarıyla silindi.",
+          text: "Asset deleted successfully.",
           icon: "success",
           confirmButtonText: "Tamam",
         });
       } catch (error) {
-        // Hata durumunda mesaj göster
+  // show message on error
         Swal.fire({
           title: "Hata!",
-          text: "Varlık silinirken bir hata oluştu.",
+          text: "An error occurred while deleting the asset.",
           icon: "error",
           confirmButtonText: "Tamam",
         });
       }
     } else {
-      // İptal durumunda bilgilendirme
+  // notify on cancel
       Swal.fire({
-        title: "İptal Edildi",
-        text: "Varlık silme işlemi iptal edildi.",
+  title: "Cancelled",
+  text: "Asset deletion cancelled.",
         icon: "info",
         confirmButtonText: "Tamam",
       });
@@ -354,12 +354,12 @@ const AdminProducts = () => {
     setIsInfoModalOpen(true);
   };
 
-  // Modalı kapama
+  // Close the modal
   const closeModal = () => {
     setIsInfoModalOpen(false);
   };
 
-  // Bilgilendirici modal dışına tıklandığında kapanması için event handler
+  // Event handler to close info modal when clicking outside
   const handleOutsideClick = (e) => {
     if (e.target.classList.contains("modal-overlay")) {
       closeModal();
@@ -391,10 +391,10 @@ const AdminProducts = () => {
         <InfoModal isOpen={isInfoModalOpen} onClose={closeModal} />
       <div className=" flex flex-col md:flex-row justify-end items-center mb-4 gap-4">
       <h1
-          onClick={openInfoModal} // Modalı açan fonksiyon
+          onClick={openInfoModal} // function that opens the modal
           className="cursor-pointer text-blue-600 hover:text-blue-800"
         >
-          Gizlilik ve Kritiklik Derecesi Nedir?
+          What are Privacy and Criticality Levels?
         </h1>
         {/* Search Input */}
         <div className="w-max">
@@ -402,7 +402,7 @@ const AdminProducts = () => {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Varlık ara..."
+            placeholder="Search assets..."
             className="w-full px-3 py-2 border rounded-md"
           />
         </div>
@@ -414,7 +414,7 @@ const AdminProducts = () => {
             onChange={(e) => setSelectedTableCategory(e.target.value)}
             className="w-full px-3 py-2 border rounded-md"
           >
-            <option value="">Tüm Kategoriler</option>
+            <option value="">All Categories</option>
             {categories.map((category) => (
               <option key={category._id} value={category._id}>
                 {category.name}
@@ -427,7 +427,7 @@ const AdminProducts = () => {
         {currentUser && currentUser?.role === "admin"&& (
           <>
             <Button variant="default" onClick={openAddModal}>
-              Varlık Ekle
+              Add Asset
             </Button>
           </>
         )}
